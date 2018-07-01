@@ -6,10 +6,11 @@ const airlineRouter = require('./airlineRouter');
 /* GET users listing. */
 
 function validateAirport(req, res, next) {
-  if ((/^[A-Z]{3}$/i).test(req.params.codeIataAirport)) {
+  if ((/^[A-Z]{3}$/i).test(req.params.iataAirport)) {
+    console.log(`Validation for ${req.params.iataAirport}`);
     next();
   } else {
-    console.error("IATA Airport not valid");
+    console.error(`IATA Airport not valid <${req.params.iataAirport}>`);
     res.sendStatus(400);
   }
 }
@@ -17,6 +18,7 @@ function validateAirport(req, res, next) {
 function validateAirports(req, res, next) {
   if ((/^[A-Z]{3}$/i).test(req.params.iataDeparture) && (/^[A-Z]{3}$/i).test(req.params.iataArrival)) {
     if (req.params.iataDeparture.toUpperCase() !== req.params.iataArrival.toUpperCase()) {
+      console.log(`Validation for ${req.params.iataDeparture} to ${req.params.iataArrival}`);
       next();
     } else {
       console.error("IATA Departure and Destination Airports can't be the same");
@@ -29,13 +31,21 @@ function validateAirports(req, res, next) {
 }
 
 function reqAirport (req, res, next) {
-  aviationEdge.service({
-    'resource': 'airportDatabase',
-    'static': true
-  }).then((data = []) => {
-    res.airportData = data;
-
-    next();
+  Promise.all([
+    aviationEdge.service({
+      'resource': 'airportDatabase',
+      'static': true
+    }),
+    aviationEdge.service({
+      'resource': 'cityDatabase',
+      'static': true
+    })
+  ]).then(responses => {
+      res.airportData = responses[0].map(airport => {
+        return Object.assign({}, airport, responses[1].find(city => city.codeIataCity === airport.codeIataCity) || {})
+      });
+      console.log(`Retrieved Airport and City informations`);
+      next();
   }, err => {
     console.error(err);
     res.sendStatus(500);
@@ -52,6 +62,8 @@ function reqRoutes(req, res, next) {
       }
     }).then((data = []) => {
       res.routesData = data;
+
+      console.log(`Routes for ${res.airportDeparture.codeIataAirport} to ${res.airportArrival.codeIataAirport}`);
       
       delete res.airportDeparture;
       delete res.airportArrival;
@@ -64,7 +76,7 @@ function reqRoutes(req, res, next) {
   }
 }
 
-function getAirportByIata(airportList, iata) {
+function getAirportByIata(airportList = [], iata = "") {
   const iataAirportMatcher = new RegExp(`^${iata.trim()}$`, 'i');
   return airportList.find((airport = {}) => {
     return iataAirportMatcher ? iataAirportMatcher.test(airport.codeIataAirport) : true;
@@ -72,36 +84,42 @@ function getAirportByIata(airportList, iata) {
 }
 
 function airportByIata(req, res, next) {
-  if ((/^[a-z]{3}$/i).test(req.params.iataAirport)) {
-    const iataAirport = req.params.iataAirport.toUpperCase();
-    const airport = getAirportByIata(res.airportData, iataAirport);
-    if (airport) {
-      res.airportData = [airport];
-      next();
-    } else {
-      res.sendStatus(404);
-    }
+  const iataAirport = req.params.iataAirport.toUpperCase();
+  const airport = getAirportByIata(res.airportData, iataAirport);
+  if (airport) {
+    res.airportData = [airport];
+    console.log(`Airport ${req.params.iataAirport}`);
+    next();
   } else {
-    res.sendStatus(400);
+    console.error(`Couldn't find Airport for IATA ${req.params.iataAirport}`);
+    res.sendStatus(404);
   }
 }
 
 function airportsByIata(req, res, next) {
-  if (req.params.iataDeparture && req.params.iataArrival) {
-    res.airportDeparture = getAirportByIata(res.airportData, req.params.iataDeparture);
-    res.airportArrival = getAirportByIata(res.airportData, req.params.iataArrival);
-    delete res.airportData;
+  res.airportDeparture = getAirportByIata(res.airportData, req.params.iataDeparture);
+  res.airportArrival = getAirportByIata(res.airportData, req.params.iataArrival);
+  delete res.airportData;
+  if (res.airportDeparture && res.airportArrival) {
+    console.log(`Routes for ${res.airportDeparture.codeIataAirport} to ${res.airportArrival.codeIataAirport}`);
+    next();
+  } else if (!res.airportDeparture) {
+    console.error(`Departure Airport Not Found: ${req.params.iataDeparture}`);
+    res.sendStatus(404);
+  } else {
+    console.error(`Arrival Airport Not Found: ${req.params.iataArrival}`);
+    res.sendStatus(404);
   }
-
-  next();
 }
 
 function airportStartsWith(req, res, next) {
-  const startsWithMatcher = req.query.startsWith && new RegExp(`^${req.query.startsWith}`, 'i');
-  res.airportData = (res.airportData || []).filter((airport = {}) => {
-    return startsWithMatcher ? startsWithMatcher.test(airport.nameAirport) : true;
-  });
-  
+  if(req.query.startsWith){
+    const startsWithMatcher = req.query.startsWith && new RegExp(`^${req.query.startsWith}`, 'i');
+    res.airportData = (res.airportData || []).filter((airport = {}) => {
+      return startsWithMatcher ? (startsWithMatcher.test(airport.nameAirport) || startsWithMatcher.test(airport.nameCity)) : true;
+    });
+    console.log(`Airports filtered by name or city starting with ${req.query.startsWith}`);
+  }
   next();
 }
 

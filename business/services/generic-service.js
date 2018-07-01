@@ -14,6 +14,6 @@ module.exports = (serviceUrl) => async (cfg = {}) => {
     if (response.status < 300) {
         return (/^xml$/i).test(cfg.type) ? JSON.parse(xml2json.toJson(response.data)) : response.data;
     } else {
-        throw "Remote Service error";
+        throw new Error("Remote Service error");
     }
 };
