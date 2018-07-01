@@ -6,6 +6,8 @@ const logger = require('morgan');
 
 const indexRouter = require('./routes/index');
 const airportRouter = require('./routes/airportRouter');
+const airlineRouter = require('./routes/airlineRouter');
+const flightRouter = require('./routes/flightRouter');
 const compression = require('compression');
 
 const app = express();
@@ -26,6 +28,8 @@ app.use(compression({
 
 app.use('/', indexRouter);
 app.use('/airport', airportRouter);
+app.use('/airline', airlineRouter);
+app.use('/airport/:iataDeparture/to/:iataArrival/airline/:iataAirline/flight/:date', flightRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -34,13 +38,10 @@ app.use(function(req, res, next) {
 
 // error handler
 app.use(function(err, req, res, next) {
-  // set locals, only providing error in development
-  res.locals.message = err.message;
-  res.locals.error = req.app.get('env') === 'development' ? err : {};
-
+  console.error(err);
   // render the error page
   res.status(err.status || 500);
-  res.render('error');
+  res.send(req.app.get('env') === 'development' ? err : {});
 });
 
 module.exports = app;

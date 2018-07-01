@@ -1,3 +1,4 @@
 {
-    "aviationEdgeUri" : "https://aviation-edge.com/api/public/"
+    "aviationEdgeUri" : "https://aviation-edge.com/api/public/",
+    "flightLookupUri" : "https://flightlookup.azure-api.net/v1/xml/"
 }
