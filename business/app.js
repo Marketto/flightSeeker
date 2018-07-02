@@ -29,7 +29,7 @@ app.use(compression({
 app.use('/', indexRouter);
 app.use('/airport', airportRouter);
 app.use('/airline', airlineRouter);
-app.use('/airport/:iataDeparture/to/:iataArrival/airline/:iataAirline/flight/:date', flightRouter);
+app.use('/flight', flightRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

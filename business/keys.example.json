@@ -1,3 +1,4 @@
 {
-    "aviationEdgeKey": "your-aviation-edge-key"
+    "aviationEdgeKey": "your-aviation-edge-key",
+    "flightLookupKey": "your-flight-lookup-key"
 }

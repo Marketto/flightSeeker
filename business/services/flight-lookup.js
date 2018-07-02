@@ -3,7 +3,6 @@ const config = require('../config.json');
 const keys = require('../keys.json');
 const genericService = require('./generic-service');
 
-const cacheAge = 36 * 60 * 60;
 
 function getServiceUrl(cfg = {}) {
     let flightLookupUrl = new URL(cfg.resource, config.flightLookupUri);
@@ -12,8 +11,10 @@ function getServiceUrl(cfg = {}) {
     let flightLookupParams = new URLSearchParams(flightLookupUrl.search);
 
     flightLookupParams.set('key', keys.flightLookupKey);
+    
+    cfg.params = cfg.params||{};
 
-    Object.keys(cfg.params||{}).forEach(p => {
+    Object.keys(cfg.params).filter(p => !!cfg.params[p]).forEach(p => {
         flightLookupParams.set(p, cfg.params[p]);
     });
 

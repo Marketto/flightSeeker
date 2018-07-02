@@ -3,8 +3,6 @@ const config = require('../config.json');
 const keys = require('../keys.json');
 const genericService = require('./generic-service');
 
-const cacheAge = 36 * 60 * 60;
-
 function getServiceUrl (cfg = {}) {
     let aviationEdgeUrl = new URL(cfg.resource, config.aviationEdgeUri);
 
@@ -25,7 +23,7 @@ function getServiceUrl (cfg = {}) {
 
 module.exports = {
     'service': async cfg => {
-        const data = await genericService(getServiceUrl(cfg))(cfg);
+        const data = await genericService(getServiceUrl(cfg))(Object.assign({static:true}, cfg));
 
         if (!(data || {}).error) {
             return data;
