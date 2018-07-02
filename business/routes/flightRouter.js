@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 const flightLookup = require('../services/flight-lookup');
-const openFlights = require('../services/open-flights');
+const mongo = require('../services/mongo');
 const moment = require('moment-timezone');
 
 function fixXmlObject(obj){
@@ -22,15 +22,6 @@ function fixXmlObject(obj){
     return fixedObj;
 }
 
-function validateFlightNumber(req, res, next) {
-    if ((/^\d{4}$/).test(req.params.flightNumber)) {
-        next();
-    } else {
-        console.error("Flight number not valid");
-        res.sendStatus(400);
-    }
-}
-
 function reqFlight(req, res, next) {
     if (req.params.iataDeparture && req.params.iataArrival && req.params.date) {
         const from = req.params.iataDeparture;
@@ -45,54 +36,71 @@ function reqFlight(req, res, next) {
                     'Connection': req.query.stopOver ? 'AUTO' : 'DIRECT'
                 }
             }),
-            openFlights.service({
-                'resource': "airports"
-            })
+            mongo()
         ]).then(responses => {
-            function calculateDTvalues(flight={}){
-                try {
+            const db = responses[1];
+
+            async function calculateDTvalues(flight={}){
+                return await new Promise((resolve, reject)=>{
                     const departureIataCode = flight.departureCode || (flight.departureAirport || {}).locationCode;
                     const arrivalIataCode = flight.arrivalCode || (flight.arrivalAirport || {}).locationCode;
 
-                    const departureTimeZone = (responses[1].find(airport => airport.iata === departureIataCode) || {}).tz;
-                    const arrivalTimeZone = (responses[1].find(airport => airport.iata === arrivalIataCode) || {}).tz;
-                    
-                    const departureDateTime = moment.tz(flight.departureDateTime, departureTimeZone);
-                    const arrivalDateTime = moment.tz(flight.arrivalDateTime, arrivalTimeZone);
+                    db.collection("airports").find({
+                        iata : {
+                            '$in' : [
+                                departureIataCode,
+                                arrivalIataCode
+                            ]
+                        }
+                    }).toArray().then(result => {
+                        try {
+                            const departureTimeZone = (result.find(airport => airport.iata === departureIataCode) || {}).tz;
+                            const arrivalTimeZone = (result.find(airport => airport.iata === arrivalIataCode) || {}).tz;
 
-                    const departureTimeOffset = departureDateTime.format('Z');
-                    const arrivalTimeOffset = arrivalDateTime.format('Z');
+                            const departureDateTime = moment.tz(flight.departureDateTime, departureTimeZone);
+                            const arrivalDateTime = moment.tz(flight.arrivalDateTime, arrivalTimeZone);
 
-                    const flightDuration = moment.duration(arrivalDateTime.diff(departureDateTime));
+                            const departureTimeOffset = departureDateTime.format('Z');
+                            const arrivalTimeOffset = arrivalDateTime.format('Z');
 
-                    return {
-                        departureTimeZone,
-                        arrivalTimeZone,
-                        departureTimeOffset,
-                        arrivalTimeOffset,
-                        [flight.totalTripTime ? "totalTripTime" : "journeyDuration"]: flightDuration
-                    };
+                            const flightDuration = moment.duration(arrivalDateTime.diff(departureDateTime));
+
+                            resolve({
+                                departureTimeZone,
+                                arrivalTimeZone,
+                                departureTimeOffset,
+                                arrivalTimeOffset,
+                                [flight.totalTripTime ? "totalTripTime" : "journeyDuration"]: flightDuration
+                            });
+                        } catch (err) {
+                            reject(err);
+                        }
+                    },reject);
+                });
+            }
+
+            
+            const flightDetails = (responses[0].FlightDetails || []).map(fixXmlObject);
+            res.flightData = Promise.all(flightDetails.map(async function (flight) {
+                try {
+                    return await Object.assign(
+                        flight,
+                        await calculateDTvalues(flight),
+                        {
+                            "flightLegDetails": await Promise.all(([].concat(flight.flightLegDetails)).map(async function(fd = {}){
+                                return await Object.assign(fd, await calculateDTvalues(fd))
+                            }))
+                        });
                 } catch (err) {
                     console.error(err);
                     res.sendStatus(500);
                 }
-            }
-
-            try {
-                res.flightData = (responses[0].FlightDetails || []).map(fixXmlObject).map(flight => {
-                    return Object.assign(
-                        flight,
-                        calculateDTvalues(flight),
-                        {
-                            "flightLegDetails": ([].concat(flight.flightLegDetails)).map((fd = {}) => Object.assign(fd, calculateDTvalues(fd)))
-                        });
-                });
-
+            })).then(flightData=>{
+                res.flightData = flightData;
                 next();
-            } catch(err){
-                console.error(err);
-                res.sendStatus(500);
-            }
+            }, err=>{
+                throw err;
+            });
         }, err => {
             console.error(err);
             res.sendStatus((/Missing/i).test(err) ? 400 : 500);

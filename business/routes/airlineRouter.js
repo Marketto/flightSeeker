@@ -1,53 +1,37 @@
 const express = require('express');
 const router = express.Router({mergeParams: true});
-const aviationEdge = require('../services/aviation-edge');
 const flightRouter = require('./flightRouter');
 
-
-/*function validateAirline(req, res, next) {
-  if ((/^[A-Z]{2}$/i).test(req.params.iataAirline)) {
-    next();
-  } else {
-    console.error("IATA Airline not valid");
-    res.sendStatus(400);
-  }
-}*/
-
 function reqAirline(req, res, next) {
-  aviationEdge.service({
-    'resource': 'airlineDatabase'
-  }).then((data = []) => {
-    res.airlineData = data;
+  mongo().then(db => {
+    const startsWithRegExp = req.query.startsWith ? {
+      '$regex': new RegExp(`^${req.query.startsWith}`, 'i')
+    } : null;
+    const query = (req.params.iataAirport || res.routesData) ? {
+      iata: req.params.iataAirline || {
+        '$in': res.routesData.map(route=>route.iata)
+      },
+    } : (
+      req.query.startsWith ? {
+        '$or': [{
+            'name': startsWithRegExp
+          }
+        ]
+      } : {}
+    );
 
-    next();
+    db.collection("airlines").find(query).toArray().then(result => {
+      res.airlineData = result || [];
+      console.log(result);
+      next();
+    }, err => {
+      console.error(err);
+      res.sendStatus(500);
+    });
   }, err => {
     console.error(err);
     res.sendStatus(500);
   });
-}
-
-function airlineByIata(req, res, next) {
-  const iataAirlineMatcher = req.params.iataAirline && new RegExp(`^${req.params.iataAirline.trim()}$`, 'i');
-  res.airlineData = [res.airlineData.find((airline = {}) => {
-    return iataAirlineMatcher ? iataAirlineMatcher.test(airline.codeIataAirline) : true;
-  })].filter(e => !!e);
-
-  next();
-}
-
-function airlineByRoute(req, res, next) {
-  if (res.routesData) {
-    const routesAirlineIata = res.routesData
-      .map(r => r.airlineIata)
-      .filter((r, idx, routes) => routes.indexOf(r) == idx);
-    
-    res.airlineData = (res.airlineData||[]).filter((airline = {}) => {
-      return routesAirlineIata.includes(airline.codeIataAirline);
-    }).filter(e => !!e);
-
-    delete res.routesData;
-  }
-  next();
 }
 
 function airlineByCountry(req, res, next){
@@ -61,17 +45,6 @@ function airlineByCountry(req, res, next){
   next();
 }
 
-function airlineStartsWith(req, res, next) {
-  const startsWithMatcher = req.query.startsWith && new RegExp(`^${req.query.startsWith}`, 'i');
-  res.airlineData = (res.airlineData || []).filter((airline = {}) => {
-    const startsWithFilter = startsWithMatcher ? startsWithMatcher.test(airline.nameAirline) : true;
-
-    return startsWithFilter;
-  });
-
-  next();
-}
-
 function resAirline(req, res) {
   if (res.airlineData.length > 0) {
     res.send(res.airlineData);
@@ -81,8 +54,8 @@ function resAirline(req, res) {
 }
 
 /* GET users listing. */
-router.get('/', reqAirline, airlineByRoute, airlineByCountry, airlineStartsWith, resAirline);
-router.get('/:iataAirline([A-Z]{2})', reqAirline, airlineByRoute, airlineByIata, resAirline);
+router.get('/', reqAirline, resAirline);
+router.get('/:iataAirline([A-Z]{2})', reqAirline, resAirline);
 router.use('/:iataAirline([A-Z]{2})/flight', flightRouter);
 
 module.exports = router;

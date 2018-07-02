@@ -1,27 +1,9 @@
 {
     "aviationEdgeUri"   : "https://aviation-edge.com/api/public/",
     "flightLookupUri"   : "https://flightlookup.azure-api.net/v1/xml/",
-    "openFlights"       : {
-        "uri"               : "https://raw.githubusercontent.com/jpatokal/openflights/master/data/",
-        "airports"          : [
-            "airportId",
-            "name",
-            "city",
-            "country",
-            "iata",
-            "icao",
-            "latitude",
-            "longitude",
-            "altitude",
-            "tmz",
-            "dst",
-            "tz",
-            "type",
-            "source"
-        ]
-    },
     "cache"             : {
         "staticResourceTimeout"     : 300000,
         "dynamicResourceTimeout"    : 900
-    }
+    },
+    "mongodb"           : "mongodb://localhost:27017/flightSeeker"
 }
