@@ -80,7 +80,7 @@ function reqFlight(req, res, next) {
             }
 
             
-            const flightDetails = (responses[0].FlightDetails || []).map(fixXmlObject);
+            const flightDetails = ((responses[0]||{}).FlightDetails || []).map(fixXmlObject);
             res.flightData = Promise.all(flightDetails.map(async function (flight) {
                 try {
                     return await Object.assign(
