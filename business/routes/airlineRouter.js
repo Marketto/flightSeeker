@@ -23,13 +23,19 @@ function reqAirline(req, res, next) {
       'countryCode' : countryCode
     } : null;
 
-    const queryConditions = [airlineQuery, startsWithQuery, airPortQuery].filter(c=>!!c);
+    const queryConditions = [
+      {
+        'iata' : /^[A-Z\d]{2}$/
+      },
+      airlineQuery, 
+      startsWithQuery, 
+      airPortQuery
+    ].filter(c=>!!c);
     
     const query = queryConditions.length > 1 ? {
       '$and': queryConditions
-    } : queryConditions[0]||{};
+    } : queryConditions[0];
 
-    console.log(query);
 
     db.collection("airlines").find(query).toArray().then(result => {
       res.airlineData = result || [];
@@ -54,7 +60,7 @@ function resAirline(req, res) {
 
 /* GET users listing. */
 router.get('/', reqAirline, resAirline);
-router.get('/:iataAirline([A-Z]{2})', reqAirline, resAirline);
-router.use('/:iataAirline([A-Z]{2})/flight', flightRouter);
+router.get('/:iataAirline([A-Z\d]{2})', reqAirline, resAirline);
+router.use('/:iataAirline([A-Z\d]{2})/flight', flightRouter);
 
 module.exports = router;

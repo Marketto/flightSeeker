@@ -6,7 +6,7 @@ const routeRouter = require('./routeRouter');
 const airlineRouter = require('./airlineRouter');
 const flightRouter = require('./flightRouter');
 
-function reqAirport(req, res, next){
+function reqAirport(req, res, next) {
   mongo().then(db => {
     const startsWith = req.query.startsWith;
     const startsWithRegExp = startsWith ? {
@@ -54,9 +54,9 @@ function resAirport(req, res) {
 }
 
 router.get('/', reqAirport, resAirport);
-router.get('/:iataAirport([A-Z\d\*]{3})', reqAirport, resAirport);
-router.use('/:iataDeparture([A-Z\d\*]{3})/airline', reqAirport, airlineRouter);
-router.use('/:iataDeparture([A-Z\d\*]{3})/to/:iataArrival([A-Z\d\*]{3})/flight', flightRouter);
-router.use('/:iataDeparture([A-Z\d\*]{3})/to/:iataArrival([A-Z\d\*]{3})/airline', routeRouter);
+router.get('/:iataAirport([A-Z\d]{3})', reqAirport, resAirport);
+router.use('/:iataDeparture([A-Z\d]{3})/airline', reqAirport, airlineRouter);
+router.use('/:iataDeparture([A-Z\d]{3})/to/:iataArrival([A-Z\d]{3})/flight', flightRouter);
+router.use('/:iataDeparture([A-Z\d]{3})/to/:iataArrival([A-Z\d]{3})/airline', routeRouter);
 
 module.exports = router;
