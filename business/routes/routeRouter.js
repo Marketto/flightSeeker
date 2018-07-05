@@ -13,14 +13,14 @@ function reqRoutes(req, res, next) {
         }
     }).then((data = []) => {
         res.routesData = data.filter((route, idx, routes)=>{
-            return idx === routes.findIndex(r2 => r2.airlineIata === route.airlineIata && route.airlineIcao === r2.airlineIcao)
+            return idx === routes.findIndex(r2 => r2.airlineIata === route.airlineIata && r2.airlineIcao === route.airlineIcao)
         }).map(route=>{
             return {
                 icao: route.airlineIcao,
                 iata: route.airlineIata
             };
         });
-        console.log(data);
+        
         console.log(`Routes for ${req.params.iataDeparture} to ${req.params.iataArrival}`);
 
         next();
@@ -31,6 +31,7 @@ function reqRoutes(req, res, next) {
 }
 
 router.get('/', reqRoutes, airlineRouter);
-router.use('/:iataAirline([A-Z]{2})/flight', flightRouter);
+router.get('/:iataAirline([A-Z0-9]{2})', reqRoutes, airlineRouter);
+router.use('/:iataAirline([A-Z0-9]{2})/flight', flightRouter);
 
 module.exports = router;

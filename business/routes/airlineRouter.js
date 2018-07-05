@@ -5,9 +5,6 @@ const flightRouter = require('./flightRouter');
 
 function reqAirline(req, res, next) {
   mongo().then(db => {
-    const startsWithRegExp = req.query.startsWith ? {
-      '$regex': new RegExp(`^${req.query.startsWith}`, 'i')
-    } : null;
 
     const countryCode = ((res.airportData || [])[0] || {}).countryCode;
 
@@ -17,7 +14,9 @@ function reqAirline(req, res, next) {
       },
     } : null;
     const startsWithQuery = req.query.startsWith ? {
-      'name': startsWithRegExp
+      'name': {
+        '$regex': new RegExp(`^${req.query.startsWith}`, 'i')
+      }
     } : null;
     const airPortQuery = countryCode ? {
       'countryCode' : countryCode
@@ -60,7 +59,7 @@ function resAirline(req, res) {
 
 /* GET users listing. */
 router.get('/', reqAirline, resAirline);
-router.get('/:iataAirline([A-Z\d]{2})', reqAirline, resAirline);
-router.use('/:iataAirline([A-Z\d]{2})/flight', flightRouter);
+router.get('/:iataAirline([A-Z0-9]{2})', reqAirline, resAirline);
+router.use('/:iataAirline([A-Z0-9]{2})/flight', flightRouter);
 
 module.exports = router;
