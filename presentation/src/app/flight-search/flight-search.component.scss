@@ -1,0 +1,20 @@
+.hint-list{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  .famfamfam-flags {
+    margin: auto 0;
+    display: block;
+  }
+  .name {
+    margin: auto 1em;
+    text-align: justify;
+    width: 100%;
+  }
+  .iata {
+    width: 3em;
+    text-align: right;
+    margin: auto 0;
+    font-weight: bold;
+  }
+}
