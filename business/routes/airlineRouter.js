@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router({mergeParams: true});
+const mongo = require('../services/mongo');
 const flightRouter = require('./flightRouter');
 
 function reqAirline(req, res, next) {
@@ -7,22 +8,31 @@ function reqAirline(req, res, next) {
     const startsWithRegExp = req.query.startsWith ? {
       '$regex': new RegExp(`^${req.query.startsWith}`, 'i')
     } : null;
-    const query = (req.params.iataAirport || res.routesData) ? {
-      iata: req.params.iataAirline || {
-        '$in': res.routesData.map(route=>route.iata)
+
+    const countryCode = ((res.airportData || [])[0] || {}).countryCode;
+
+    const airlineQuery = (req.params.iataAirline || res.routesData) ? {
+      'iata': req.params.iataAirline || {
+        '$in': res.routesData.map(route => route.iata)
       },
-    } : (
-      req.query.startsWith ? {
-        '$or': [{
-            'name': startsWithRegExp
-          }
-        ]
-      } : {}
-    );
+    } : null;
+    const startsWithQuery = req.query.startsWith ? {
+      'name': startsWithRegExp
+    } : null;
+    const airPortQuery = countryCode ? {
+      'countryCode' : countryCode
+    } : null;
+
+    const queryConditions = [airlineQuery, startsWithQuery, airPortQuery].filter(c=>!!c);
+    
+    const query = queryConditions.length > 1 ? {
+      '$and': queryConditions
+    } : queryConditions[0]||{};
+
+    console.log(query);
 
     db.collection("airlines").find(query).toArray().then(result => {
       res.airlineData = result || [];
-      console.log(result);
       next();
     }, err => {
       console.error(err);
@@ -32,17 +42,6 @@ function reqAirline(req, res, next) {
     console.error(err);
     res.sendStatus(500);
   });
-}
-
-function airlineByCountry(req, res, next){
-  if((res.airportData||[]).length){
-    const countryMatcher = new RegExp(`^${res.airportData[0].countryCode}$`, 'i');
-    res.airlineData = (res.airlineData || []).filter((airline = {}) => {
-      return countryMatcher ? countryMatcher.test(airline.codeIso2Country) : true;
-    });
-  }
-
-  next();
 }
 
 function resAirline(req, res) {
