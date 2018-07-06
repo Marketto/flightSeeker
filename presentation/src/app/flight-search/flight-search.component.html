@@ -3,8 +3,7 @@
     <div class="ui-g ui-fluid">
       <div class="ui-g-12 ui-md-6">
         <h3>Partenza</h3>
-        <p-autoComplete [(ngModel)]="departureAirport" [suggestions]="departureAirports" (completeMethod)="searchAirport($event.query)"
-          [forceSelection]="true" field="name">
+        <p-autoComplete [(ngModel)]="departureAirport" [suggestions]="departureAirports" (completeMethod)="searchDepartureAirport($event.query)" [forceSelection]="true" field="name" (keydown.enter)="departureAirport = autoSelectFromList(departureAirport, departureAirports)">
           <ng-template let-airport pTemplate="departureAirport">
             <div class="hint-list">
               <div>
@@ -19,8 +18,7 @@
 
       <div class="ui-g-12 ui-md-6">
         <h3>Arrivo</h3>
-        <p-autoComplete [(ngModel)]="arrivalAirport" [suggestions]="arrivalAirports" (completeMethod)="searchAirport($event.query)"
-          forceSelection="true" field="name">
+        <p-autoComplete [(ngModel)]="arrivalAirport" [suggestions]="arrivalAirports" (completeMethod)="searchArrivalAirport($event.query)" forceSelection="true" field="name" (keydown.enter)="arrivalAirport = autoSelectFromList(arrivalAirport, arrivalAirports)">
           <ng-template let-airport pTemplate="arrivalAirport">
             <div class="hint-list">
               <div>
@@ -35,8 +33,7 @@
 
       <div class="ui-g-12 ui-md-4">
         <h3>Compagnia aerea</h3>
-        <p-autoComplete [(ngModel)]="airline" [suggestions]="airlines" (completeMethod)="searchAirline($event.query)" forceSelection="true"
-          field="name">
+        <p-autoComplete [(ngModel)]="airline" [suggestions]="airlines" (completeMethod)="searchAirline($event.query)" forceSelection="true" field="name" (keydown.enter)="airline = autoSelectFromList(airline, airlines)">
           <ng-template let-airline pTemplate="airline">
             <div class="hint-list">
               <div>
@@ -51,7 +48,7 @@
 
       <div class="ui-g-7 ui-md-4">
         <h3>Data di partenza</h3>
-        <p-calendar [(ngModel)]="departureDate" dateFormat="dd/mm/yyyy"></p-calendar>
+        <p-calendar [(ngModel)]="departureDate" dateFormat="dd/mm/yy"></p-calendar>
       </div>
 
       <div class="ui-g-5 ui-md-4">
@@ -64,9 +61,9 @@
   <p-card class="ui-g-12 ui-md-6" title="Andata" *ngIf="departureAirport && arrivalAirport && departureDate && flights">
     <div class="ui-helper-clearfix" *ngFor="let flight of flights" (click)="searchReturnFlight(flight)">
       <p>{{flight.departureName}}</p>
-      <p>{{flight.departureDateTime}}</p>
+      <p>{{flight.departureDateTime | amCalendar}}</p>
       <p>{{flight.arrivalName}}</p>
-      <p>{{flight.arrivalDateTime}}</p>
+      <p>{{flight.arrivalDateTime | amCalendar}}</p>
       <p-progressBar [value]="flight.progress"></p-progressBar>
 
     </div>

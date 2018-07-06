@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import * as moment from 'moment-timezone';
+import { TranslateService } from '@ngx-translate/core';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,10 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'Flight Seeker';
+
+  constructor(
+    private translate: TranslateService
+  ) {
+    moment.locale(this.translate.getBrowserLang());
+  }
 }

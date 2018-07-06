@@ -9,6 +9,7 @@ import { Airline } from '../class/airline/airline';
 import { FlightService } from '../web-services/flight/flight.service';
 import { FlightQuery } from '../class/flight/flight-query';
 import * as moment from 'moment-timezone';
+import { isString } from 'util';
 
 @Component({
   selector: 'app-flight-search',
@@ -70,12 +71,35 @@ export class FlightSearchComponent implements OnInit {
     this.searchFlight();
   }
 
-  searchAirport(airportCriteria) {
+  searchDepartureAirport(airportCriteria: string) {
     this.airportService.search(new AirportQuery({
       'startsWith': airportCriteria
-    })).subscribe((data: Airport[]) => {
-      this.departureAirports = data.filter(airport => airport.iata !== (this.arrivalAirport || new Airport()).iata);
-      this.arrivalAirports = data.filter(airport => airport.iata !== (this.departureAirport || new Airport()).iata);
+    })).subscribe((data: Airport[] = []) => {
+      const departureAirports = data.filter(airport => airport.iata !== (this.arrivalAirport || new Airport()).iata);
+
+      const matchingDepartureAirport = departureAirports.find(airport => {
+        return airport.name.toLowerCase() === airportCriteria.toLowerCase() || airport.iata === airportCriteria;
+      });
+      if (matchingDepartureAirport) {
+        this.departureAirport = matchingDepartureAirport;
+      }
+      this.departureAirports = departureAirports;
+    });
+  }
+
+  searchArrivalAirport(airportCriteria: string) {
+    this.airportService.search(new AirportQuery({
+      'startsWith': airportCriteria
+    })).subscribe((data: Airport[] = []) => {
+      const arrivalAirports = data.filter(airport => airport.iata !== (this.departureAirport || new Airport()).iata);
+
+      const matchingArrivalAirport = arrivalAirports.find(airport => {
+        return airport.name.toLowerCase() === airportCriteria.toLowerCase() || airport.iata === airportCriteria;
+      });
+      if (matchingArrivalAirport) {
+        this.arrivalAirport = matchingArrivalAirport;
+      }
+      this.arrivalAirports = arrivalAirports;
     });
   }
 
@@ -84,7 +108,13 @@ export class FlightSearchComponent implements OnInit {
       'startsWith': airlineCriteria,
       'fromAirportIata': (this.departureAirport || new Airport()).iata,
       'toAirportIata': (this.arrivalAirport || new Airport()).iata
-    })).subscribe((data: Airline[]) => {
+    })).subscribe((data: Airline[] = []) => {
+      const matchingAirline = data.find(airline => {
+        return airline.name.toLowerCase() === airlineCriteria.toLowerCase() || airline.iata === airlineCriteria;
+      });
+      if (matchingAirline) {
+        this.airline = matchingAirline;
+      }
       this.airlines = data;
     });
   }
@@ -115,6 +145,13 @@ export class FlightSearchComponent implements OnInit {
     })).subscribe((data: Flight[]) => {
       this.returnFlights = data;
     });
+  }
+
+  autoSelectFromList(value: string|any, list: any[]) {
+    if ((isString(value) || !value) && list) {
+      return list[0];
+    }
+    return value;
   }
 
   constructor(
