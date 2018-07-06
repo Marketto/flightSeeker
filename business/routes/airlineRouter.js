@@ -6,20 +6,24 @@ const flightRouter = require('./flightRouter');
 function reqAirline(req, res, next) {
   mongo().then(db => {
 
-    const countryCode = ((res.airportData || [])[0] || {}).countryCode;
-
     const airlineQuery = (req.params.iataAirline || res.routesData) ? {
       'iata': req.params.iataAirline || {
         '$in': res.routesData.map(route => route.iata)
       },
     } : null;
     const startsWithQuery = req.query.startsWith ? {
-      'name': {
-        '$regex': new RegExp(`^${req.query.startsWith}`, 'i')
-      }
-    } : null;
-    const airPortQuery = countryCode ? {
-      'countryCode' : countryCode
+      '$or' : [
+        {
+          'name': {
+            '$regex': new RegExp(`^${req.query.startsWith}`, 'i')
+          }
+        },
+        {
+          'iata': {
+            '$regex': new RegExp(`^${req.query.startsWith}`, 'i')
+          }
+        }
+      ]
     } : null;
 
     const queryConditions = [
@@ -27,15 +31,14 @@ function reqAirline(req, res, next) {
         'iata' : /^[A-Z\d]{2}$/
       },
       airlineQuery, 
-      startsWithQuery, 
-      airPortQuery
+      startsWithQuery
     ].filter(c=>!!c);
     
     const query = queryConditions.length > 1 ? {
       '$and': queryConditions
     } : queryConditions[0];
 
-
+    console.log(query);
     db.collection("airlines").find(query).toArray().then(result => {
       res.airlineData = result || [];
       next();

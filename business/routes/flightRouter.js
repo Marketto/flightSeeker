@@ -54,8 +54,8 @@ function reqFlight(req, res, next) {
                         }
                     }).toArray().then(result => {
                         try {
-                            const departureTimeZone = (result.find(airport => airport.iata === departureIataCode) || {}).tz;
-                            const arrivalTimeZone = (result.find(airport => airport.iata === arrivalIataCode) || {}).tz;
+                            const departureTimeZone = (result.find(airport => airport.iata === departureIataCode) || {}).timeZone;
+                            const arrivalTimeZone = (result.find(airport => airport.iata === arrivalIataCode) || {}).timeZone;
 
                             const departureDateTime = moment.tz(flight.departureDateTime, departureTimeZone);
                             const arrivalDateTime = moment.tz(flight.arrivalDateTime, arrivalTimeZone);
@@ -80,7 +80,9 @@ function reqFlight(req, res, next) {
             }
 
             
-            const flightDetails = ((responses[0]||{}).FlightDetails || []).map(fixXmlObject);
+            const flightDetails = ([].concat((responses[0]||{}).FlightDetails)).map(fixXmlObject).filter(f=>{
+                return req.query.stopOver || !req.params.iataAirline || (![].concat(f.flightLegDetails).filter(fld=>!!fld).some(fld => fld.operatingAirline));
+            });
             res.flightData = Promise.all(flightDetails.map(async function (flight) {
                 try {
                     return await Object.assign(
