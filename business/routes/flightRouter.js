@@ -40,22 +40,32 @@ function reqFlight(req, res, next) {
         ]).then(responses => {
             const db = responses[1];
 
-            async function calculateDTvalues(flight={}){
+            async function enrichFlight(flight = {}) {
                 return await new Promise((resolve, reject)=>{
                     const departureIataCode = flight.departureCode || (flight.departureAirport || {}).locationCode;
                     const arrivalIataCode = flight.arrivalCode || (flight.arrivalAirport || {}).locationCode;
-
-                    db.collection("airports").find({
-                        iata : {
-                            '$in' : [
-                                departureIataCode,
-                                arrivalIataCode
-                            ]
-                        }
-                    }).toArray().then(result => {
+                    Promise.all([
+                        db.collection("airports").findOne({
+                            'iata': departureIataCode
+                        }),
+                        db.collection("airports").findOne({
+                            'iata': arrivalIataCode
+                        })
+                    ]).then(result => {
                         try {
-                            const departureTimeZone = (result.find(airport => airport.iata === departureIataCode) || {}).timeZone;
-                            const arrivalTimeZone = (result.find(airport => airport.iata === arrivalIataCode) || {}).timeZone;
+                            const departureAirport = Object.assign(result[0]||{}, {
+                                '_id':undefined,
+                                'cityNames': undefined,
+                                'terminal': (flight.departureAirport || {}).terminal
+                            });
+                            const arrivalAirport = Object.assign(result[1] || {}, {
+                                '_id': undefined,
+                                'cityNames': undefined,
+                                'terminal': (flight.arrivalAirport || {}).terminal
+                            });
+
+                            const departureTimeZone = departureAirport.timeZone;
+                            const arrivalTimeZone = arrivalAirport.timeZone;
 
                             const departureDateTime = moment.tz(flight.departureDateTime, departureTimeZone);
                             const arrivalDateTime = moment.tz(flight.arrivalDateTime, arrivalTimeZone);
@@ -65,17 +75,23 @@ function reqFlight(req, res, next) {
 
                             const flightDuration = moment.duration(arrivalDateTime.diff(departureDateTime));
 
-                            resolve({
+                            resolve(Object.assign({
                                 departureTimeZone,
                                 arrivalTimeZone,
                                 departureTimeOffset,
                                 arrivalTimeOffset,
                                 [flight.totalTripTime ? "totalTripTime" : "journeyDuration"]: flightDuration
-                            });
+                            }, (flight.departureAirport && flight.arrivalAirport) ? {
+                                departureAirport,
+                                arrivalAirport
+                            } : {
+                                departureTimeZone,
+                                arrivalTimeZone
+                            }));
                         } catch (err) {
                             reject(err);
                         }
-                    },reject);
+                    }, reject);
                 });
             }
 
@@ -87,10 +103,10 @@ function reqFlight(req, res, next) {
                 try {
                     return await Object.assign(
                         flight,
-                        await calculateDTvalues(flight),
+                        await enrichFlight(flight),
                         {
                             "flightLegDetails": await Promise.all(([].concat(flight.flightLegDetails)).map(async function(fd = {}){
-                                return await Object.assign(fd, await calculateDTvalues(fd))
+                                return await Object.assign(fd, await enrichFlight(fd))
                             }))
                         });
                 } catch (err) {

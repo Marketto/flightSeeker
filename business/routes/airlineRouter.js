@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router({mergeParams: true});
 const mongo = require('../services/mongo');
 const flightRouter = require('./flightRouter');
+const escapeStringRegexp = require('escape-string-regexp');
 
 function reqAirline(req, res, next) {
   mongo().then(db => {
@@ -11,16 +12,19 @@ function reqAirline(req, res, next) {
         '$in': res.routesData.map(route => route.iata)
       },
     } : null;
+
+    const startsWith = req.query.startsWith;
+
     const startsWithQuery = req.query.startsWith ? {
       '$or' : [
         {
           'name': {
-            '$regex': new RegExp(`^${req.query.startsWith}`, 'i')
+            '$regex': new RegExp(`^${escapeStringRegexp(startsWith)}`, 'i')
           }
         },
         {
           'iata': {
-            '$regex': new RegExp(`^${req.query.startsWith}`, 'i')
+            '$regex': new RegExp(`^${escapeStringRegexp(startsWith)}`, 'i')
           }
         }
       ]

@@ -5,12 +5,13 @@ const mongo = require('../services/mongo');
 const routeRouter = require('./routeRouter');
 const airlineRouter = require('./airlineRouter');
 const flightRouter = require('./flightRouter');
+const escapeStringRegexp = require('escape-string-regexp');
 
 function reqAirport(req, res, next) {
   mongo().then(db => {
     const startsWith = req.query.startsWith;
     const startsWithRegExp = startsWith ? {
-        '$regex': new RegExp(`^${startsWith}`, 'i')
+        '$regex': new RegExp(`^${escapeStringRegexp(startsWith)}`, 'i')
       } : null;
     const query = req.params.iataAirport ? {
       'iata' : req.params.iataAirport,
@@ -27,6 +28,9 @@ function reqAirport(req, res, next) {
             'cityNames' : {
               '$elemMatch': startsWithRegExp
             }
+          },
+          {
+            'iata': startsWithRegExp
           }
         ]
       } : {}

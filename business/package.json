@@ -10,6 +10,7 @@
     "compression": "^1.7.2",
     "cookie-parser": "~1.4.3",
     "debug": "~2.6.9",
+    "escape-string-regexp": "^1.0.5",
     "express": "~4.16.0",
     "http-errors": "~1.6.2",
     "moment-timezone": "^0.5.21",
