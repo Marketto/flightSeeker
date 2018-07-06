@@ -23,6 +23,7 @@ function fixXmlObject(obj){
 }
 
 function reqFlight(req, res, next) {
+    console.log('[reqFlight]');
     if (req.params.iataDeparture && req.params.iataArrival && req.params.date) {
         const from = req.params.iataDeparture;
         const to = req.params.iataArrival;
@@ -96,7 +97,7 @@ function reqFlight(req, res, next) {
             }
 
             
-            const flightDetails = ([].concat((responses[0]||{}).FlightDetails)).map(fixXmlObject).filter(f=>{
+            const flightDetails = ([].concat([].concat((responses[0]||{}).FlightDetails||{}))).map(fixXmlObject).filter(f=>{
                 return req.query.stopOver || !req.params.iataAirline || (![].concat(f.flightLegDetails).filter(fld=>!!fld).some(fld => fld.operatingAirline));
             });
             res.flightData = Promise.all(flightDetails.map(async function (flight) {
@@ -128,8 +129,9 @@ function reqFlight(req, res, next) {
     }
 }
 
-function flightByNumber(req, res, next){
-    if (req.params.flightNumber){
+function flightByNumber(req, res, next) {
+    console.log('[flightByNumber]');
+    if (req.params.flightNumber) {
         res.flightData = [res.flightData.find(route => route.flightLegDetails
             .some(flight => flight.flightNumber === req.params.flightNumber)
         )].filter(e => !!e);
@@ -138,6 +140,7 @@ function flightByNumber(req, res, next){
 }
 
 function resFlight(req, res) {
+    console.log('[resFlight]');
     if (res.flightData.length > 0) {
         res.send(res.flightData);
     } else {
@@ -159,9 +162,9 @@ function flightUUIDParse(req, res, next) {
 
 function flightByTime(req, res, next){
     if ((/^\d{2}:\d{2}$/).test(req.query.at)) {
-        res.flightData = [res.flightData.find(route => moment(route.departureDateTime).isSame(`${req.params.date}T${req.query.at}`, 'hour'))].filter(e => !!e);
+        res.flightData = [res.flightData.find(route => Math.abs(moment(route.departureDateTime).diff(`${req.params.date}T${req.query.at}:00`, 'hour'))<2)].filter(e => !!e);
     } else if ((/^\d{2}:\d{2}$/).test(req.query.after)) {
-        res.flightData = res.flightData.filter(route => moment(route.departureDateTime).isSameOrAfter(`${req.params.date}T${req.query.after}`, 'hour')).filter(e => !!e);
+        res.flightData = res.flightData.filter(route => moment(route.departureDateTime).diff(`${req.params.date}T${req.query.after}`, 'hour')>=0).filter(e => !!e);
     }
     next();
 }

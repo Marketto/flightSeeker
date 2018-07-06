@@ -8,6 +8,7 @@ const flightRouter = require('./flightRouter');
 const escapeStringRegexp = require('escape-string-regexp');
 
 function reqAirport(req, res, next) {
+  console.log('[reqAirport]');
   mongo().then(db => {
     const startsWith = req.query.startsWith;
     const startsWithRegExp = startsWith ? {
@@ -50,6 +51,7 @@ function reqAirport(req, res, next) {
 }
 
 function resAirport(req, res) {
+  console.log('[resAirline]');
   if (res.airportData.length > 0) {
     res.send(res.airportData);
   } else {

@@ -5,6 +5,7 @@ const flightRouter = require('./flightRouter');
 const escapeStringRegexp = require('escape-string-regexp');
 
 function reqAirline(req, res, next) {
+  console.log('[reqAirline]');
   mongo().then(db => {
 
     const airlineQuery = (req.params.iataAirline || res.routesData) ? {
@@ -42,7 +43,7 @@ function reqAirline(req, res, next) {
       '$and': queryConditions
     } : queryConditions[0];
 
-    console.log(query);
+    //console.log(query);
     db.collection("airlines").find(query).toArray().then(result => {
       res.airlineData = result || [];
       next();
@@ -57,6 +58,7 @@ function reqAirline(req, res, next) {
 }
 
 function resAirline(req, res) {
+  console.log('[resAirline]');
   if (res.airlineData.length > 0) {
     res.send(res.airlineData);
   } else {

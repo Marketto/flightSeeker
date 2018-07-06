@@ -5,6 +5,7 @@ const airlineRouter = require('./airlineRouter');
 const flightRouter = require('./flightRouter');
 
 function reqRoutes(req, res, next) {
+    console.log('[reqRoutes]');
     aviationEdge.service({
         'resource': 'routes',
         'params': {
@@ -12,7 +13,7 @@ function reqRoutes(req, res, next) {
             'arrivalIata': req.params.iataArrival
         }
     }).then((data = []) => {
-        res.routesData = data.filter((route, idx, routes)=>{
+        res.routesData = (data||[]).filter((route, idx, routes)=>{
             return idx === routes.findIndex(r2 => r2.airlineIata === route.airlineIata && r2.airlineIcao === route.airlineIcao)
         }).map(route=>{
             return {
