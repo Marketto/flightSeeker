@@ -8,6 +8,7 @@ import { AirportQuery } from '../class/airport/airport-query';
 import { Airline } from '../class/airline/airline';
 import { FlightService } from '../web-services/flight/flight.service';
 import { FlightQuery } from '../class/flight/flight-query';
+import * as moment from 'moment-timezone';
 
 @Component({
   selector: 'app-flight-search',
@@ -20,11 +21,13 @@ export class FlightSearchComponent implements OnInit {
   private $arrivalAirport: Airport;
   private $airline: Airline;
   private $departureDate: Date;
+  private $departureTime: Date;
 
   departureAirports: Airport[];
   arrivalAirports: Airport[];
   airlines: Airline[];
-  flights: Flights[];
+  flights: Flight[];
+  returnFlights: Flight[];
 
 
   public get departureAirport() {
@@ -59,6 +62,13 @@ export class FlightSearchComponent implements OnInit {
     this.searchFlight();
   }
 
+  public get departureTime() {
+    return this.$departureTime;
+  }
+  public set departureTime(date: Date) {
+    this.$departureTime = date;
+    this.searchFlight();
+  }
 
   searchAirport(airportCriteria) {
     this.airportService.search(new AirportQuery({
@@ -80,13 +90,31 @@ export class FlightSearchComponent implements OnInit {
   }
 
   searchFlight() {
+    this.flights = null;
+    this.returnFlights = null;
     if (this.departureAirport && this.arrivalAirport && this.departureDate) {
       this.flightService.search(this.departureAirport.iata, this.arrivalAirport.iata, this.departureDate, new FlightQuery({
-
+        'airlineIata': this.airline ? this.airline.iata : undefined,
+        'at': this.departureTime ? moment(this.departureTime) : undefined
       })).subscribe((data: Flight[]) => {
         this.flights = data;
+        if (this.flights.length === 1) {
+          this.searchReturnFlight(this.flights[0]);
+        }
       });
     }
+  }
+
+  searchReturnFlight(flight: Flight) {
+    const returnDepartureDateTime = moment(flight.arrivalDateTime);
+    returnDepartureDateTime.add(40, 'm');
+    this.flightService.search(flight.arrivalCode, flight.departureCode, returnDepartureDateTime.toDate(), new FlightQuery({
+      'after' : returnDepartureDateTime,
+      'limit' : 1,
+      'airlineIata': flight.flightLegDetails[flight.flightLegDetails.length - 1].marketingAirline.iata
+    })).subscribe((data: Flight[]) => {
+      this.returnFlights = data;
+    });
   }
 
   constructor(

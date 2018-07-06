@@ -6,7 +6,7 @@ export abstract class Search {
     Object.keys(this).forEach(key => {
       const param = key.replace(/^\$/, '');
       if (this[param]) {
-        params = params.append(param, this[param]);
+        params = params.set(param, this[param]);
       }
     });
 

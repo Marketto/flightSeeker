@@ -1,3 +1,4 @@
+import * as moment from 'moment-timezone';
 import { FlightQuery } from './../../class/flight/flight-query';
 import { GenericWebServiceService } from './../generic-web-service.service';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
@@ -28,7 +29,7 @@ export class FlightService {
 
     const serviceURI = `${servicesUrl}/airport/${departureAirportIata}/to/${arrivalAirportIata}/`
       + (criteria.airlineIata ? `airline/${criteria.airlineIata}/` : '')
-      + `flight/${departureDate.toJSON().substr(0, 10)}`;
+      + `flight/${moment(departureDate).format('YYYY-MM-DD')}`;
 
     return Observable.create(observer => {
       this.genericWebService.webService(

@@ -1,56 +1,84 @@
-<p-card title="Ricerca voli">
-  <div class="ui-g ui-fluid">
-    <div class="ui-g-12 ui-md-6">
-      <h3>Partenza</h3>
-      <p-autoComplete [(ngModel)]="departureAirport" [suggestions]="departureAirports" (completeMethod)="searchAirport($event.query)" [forceSelection]="true" field="name">
-        <ng-template let-airport pTemplate="departureAirport">
-          <div class="hint-list">
-            <div>
-              <div class="famfamfam-flags" [ngClass]="airport.countryCode|lowercase"></div>
+<div class="ui-g ui-fluid">
+  <p-card title="Ricerca voli"class="ui-g-12 ui-md-12">
+    <div class="ui-g ui-fluid">
+      <div class="ui-g-12 ui-md-6">
+        <h3>Partenza</h3>
+        <p-autoComplete [(ngModel)]="departureAirport" [suggestions]="departureAirports" (completeMethod)="searchAirport($event.query)"
+          [forceSelection]="true" field="name">
+          <ng-template let-airport pTemplate="departureAirport">
+            <div class="hint-list">
+              <div>
+                <div class="famfamfam-flags" [ngClass]="airport.countryCode|lowercase"></div>
+              </div>
+              <p class="name">{{airport.name}}</p>
+              <p class="iata">{{airport.iata}}</p>
             </div>
-            <p class="name">{{airport.name}}</p>
-            <p class="iata">{{airport.iata}}</p>
-          </div>
-        </ng-template>
-      </p-autoComplete>
-    </div>
+          </ng-template>
+        </p-autoComplete>
+      </div>
 
-    <div class="ui-g-12 ui-md-6">
-      <h3>Arrivo</h3>
-      <p-autoComplete [(ngModel)]="arrivalAirport" [suggestions]="arrivalAirports" (completeMethod)="searchAirport($event.query)" [forceSelection]="true" field="name">
-        <ng-template let-airport pTemplate="arrivalAirport">
-          <div class="hint-list">
-            <div>
-              <div class="famfamfam-flags" [ngClass]="airport.countryCode|lowercase"></div>
+      <div class="ui-g-12 ui-md-6">
+        <h3>Arrivo</h3>
+        <p-autoComplete [(ngModel)]="arrivalAirport" [suggestions]="arrivalAirports" (completeMethod)="searchAirport($event.query)"
+          forceSelection="true" field="name">
+          <ng-template let-airport pTemplate="arrivalAirport">
+            <div class="hint-list">
+              <div>
+                <div class="famfamfam-flags" [ngClass]="airport.countryCode|lowercase"></div>
+              </div>
+              <p class="name">{{airport.name}}</p>
+              <p class="iata">{{airport.iata}}</p>
             </div>
-            <p class="name">{{airport.name}}</p>
-            <p class="iata">{{airport.iata}}</p>
-          </div>
-        </ng-template>
-      </p-autoComplete>
-    </div>
+          </ng-template>
+        </p-autoComplete>
+      </div>
 
-    <div class="ui-g-12 ui-md-6">
-      <h3>Compagnia aerea</h3>
-      <p-autoComplete [(ngModel)]="airline" [suggestions]="airlines" (completeMethod)="searchAirline($event.query)" [forceSelection]="true" field="name">
-        <ng-template let-airline pTemplate="airline">
-          <div class="hint-list">
-            <div>
-              <div class="famfamfam-flags" [ngClass]="airline.countryCode|lowercase"></div>
+      <div class="ui-g-12 ui-md-4">
+        <h3>Compagnia aerea</h3>
+        <p-autoComplete [(ngModel)]="airline" [suggestions]="airlines" (completeMethod)="searchAirline($event.query)" forceSelection="true"
+          field="name">
+          <ng-template let-airline pTemplate="airline">
+            <div class="hint-list">
+              <div>
+                <div class="famfamfam-flags" [ngClass]="airline.countryCode|lowercase"></div>
+              </div>
+              <p class="name">{{airline.name}}</p>
+              <p class="iata">{{airline.iata}}</p>
             </div>
-            <p class="name">{{airline.name}}</p>
-            <p class="iata">{{airline.iata}}</p>
-          </div>
-        </ng-template>
-      </p-autoComplete>
-    </div>
+          </ng-template>
+        </p-autoComplete>
+      </div>
 
-    <div class="ui-g-12 ui-md-6">
-      <h3>Data partenza</h3>
-      <p-calendar [(ngModel)]="departureDate"></p-calendar>
-    </div>
-  </div>
-</p-card>
-<p-card title="Risultati" *ngIf="departureAirport && arrivalAirport && departureDate && flights">
+      <div class="ui-g-7 ui-md-4">
+        <h3>Data di partenza</h3>
+        <p-calendar [(ngModel)]="departureDate" dateFormat="dd/mm/yyyy"></p-calendar>
+      </div>
 
-</p-card>
+      <div class="ui-g-5 ui-md-4">
+        <h3>Orario di partenza</h3>
+        <p-calendar [(ngModel)]="departureTime" timeOnly="true" hourFormat="24"></p-calendar>
+      </div>
+    </div>
+  </p-card>
+
+  <p-card class="ui-g-12 ui-md-6" title="Andata" *ngIf="departureAirport && arrivalAirport && departureDate && flights">
+    <div class="ui-helper-clearfix" *ngFor="let flight of flights" (click)="searchReturnFlight(flight)">
+      <p>{{flight.departureName}}</p>
+      <p>{{flight.departureDateTime}}</p>
+      <p>{{flight.arrivalName}}</p>
+      <p>{{flight.arrivalDateTime}}</p>
+      <p-progressBar [value]="flight.progress"></p-progressBar>
+
+    </div>
+  </p-card>
+
+  <p-card class="ui-g-12 ui-md-6" title="Ritorno" *ngIf="returnFlights">
+    <div class="ui-helper-clearfix" *ngFor="let flight of returnFlights">
+      <p>{{flight.departureName}}</p>
+      <p>{{flight.departureDateTime}}</p>
+      <p>{{flight.arrivalName}}</p>
+      <p>{{flight.arrivalDateTime}}</p>
+      <p-progressBar [value]="flight.progress"></p-progressBar>
+    </div>
+  </p-card>
+</div>
