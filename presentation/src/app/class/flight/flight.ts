@@ -19,13 +19,11 @@ export class Flight {
   public arrivalTimeZone: string;
   public flightLegDetails: FlightDetail[];
 
-  public get progress() {
-    const diffToNow = moment().diff(this.departureDateTime, 'minutes');
-    const diffToArrival = this.totalFlightTime.asMinutes();
-
-    return diffToNow < 0 ? null : (diffToNow > diffToArrival ? 100 : Math.round(diffToNow * 100 / diffToArrival));
+  public get airlineIata() {
+    if (this.flightLegDetails && this.flightLegDetails[0] && this.flightLegDetails[0].marketingAirline) {
+      return this.flightLegDetails[0].marketingAirline.iata;
+    }
   }
-
 
   constructor(obj?: any) {
     if (obj) {

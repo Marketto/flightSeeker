@@ -18,3 +18,17 @@
     font-weight: bold;
   }
 }
+
+app-flight-detail {
+  &.action ::ng-deep .flight-container {
+    cursor: pointer;
+    &:hover {
+      background-color: #dfefff;
+    }
+  }
+  &.active ::ng-deep .flight-container {
+    color: hsla(270, 50%, 60%, 1);
+    border-color: hsla(270, 50%, 60%, 1);
+    background-color: hsla(270, 100%, 94%, 1);
+  }
+}

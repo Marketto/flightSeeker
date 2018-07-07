@@ -1,0 +1,21 @@
+<div class="ui-helper-clearfix ui-g ui-fluid flight-container">
+  <div class="ui-g-6 ui-md-6 departure">
+    <p>{{flight.departureName}}</p>
+    <p>{{flight.departureDateTime | amCalendar}}</p>
+  </div>
+  <div class="ui-g-6 ui-md-6 arrival">
+    <p>{{flight.arrivalName}}</p>
+    <p>{{flight.arrivalDateTime | amCalendar}}</p>
+  </div>
+  <div class="ui-g-12 ui-md-12">
+    <p-progressBar [value]="progress" [showValue]="false"></p-progressBar>
+    <p class="arrival-eta" [ngSwitch]="progress">
+      <span *ngSwitchCase="null">In partenza tra {{timeToDepartureLeft | amDuration : 'minutes'}}</span>
+      <span *ngSwitchCase="100">Atterrato {{timeToArrivalLeft | amDuration : 'minutes'}} fa</span>
+      <span *ngSwitchDefault [ngSwitch]="progress < 10">
+        <span *ngSwitchDefault>In arrivo tra {{timeToArrivalLeft | amDuration : 'minutes'}}</span>
+        <span *ngSwitchCase="true">Partito da {{timeToDepartureLeft | amDuration : 'minutes'}}</span>
+      </span>
+    </p>
+  </div>
+</div>

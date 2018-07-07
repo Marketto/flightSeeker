@@ -25,7 +25,7 @@ export class FlightService {
     private genericWebService: GenericWebServiceService
   ) { }
 
-  public search(departureAirportIata: string, arrivalAirportIata: string, departureDate: Date, criteria?: FlightQuery = new FlightQuery()) {
+  public search(departureAirportIata: string, arrivalAirportIata: string, departureDate: Date, criteria: FlightQuery = new FlightQuery()) {
 
     const serviceURI = `${servicesUrl}/airport/${departureAirportIata}/to/${arrivalAirportIata}/`
       + (criteria.airlineIata ? `airline/${criteria.airlineIata}/` : '')

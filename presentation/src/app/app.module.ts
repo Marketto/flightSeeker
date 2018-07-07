@@ -14,11 +14,13 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { MomentModule } from 'angular2-moment';
 import { TranslateModule } from '@ngx-translate/core';
+import { FlightDetailComponent } from './flight-search/flight-detail/flight-detail.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    FlightSearchComponent
+    FlightSearchComponent,
+    FlightDetailComponent
   ],
   imports: [
     BrowserModule,
