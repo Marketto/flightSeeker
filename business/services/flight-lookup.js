@@ -5,10 +5,10 @@ const genericService = require('./generic-service');
 
 
 function getServiceUrl(cfg = {}) {
-    let flightLookupUrl = new URL(cfg.resource, config.flightLookupUri);
+    const flightLookupUrl = new URL(cfg.resource, config.flightLookupUri);
 
     //Params
-    let flightLookupParams = new URLSearchParams(flightLookupUrl.search);
+    const flightLookupParams = new URLSearchParams(flightLookupUrl.search);
 
     flightLookupParams.set('key', keys.flightLookupKey);
     

@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
+const { URL, URLSearchParams } = require('url');
 const flightLookup = require('../services/flight-lookup');
 const mongo = require('../services/mongo');
 const moment = require('moment-timezone');
@@ -23,8 +24,12 @@ function fixXmlObject(obj){
 }
 
 function reqFlight(req, res, next) {
-    console.log('[reqFlight]');
-    if (req.params.iataDeparture && req.params.iataArrival && req.params.date) {
+    if (
+        req.params.iataDeparture && 
+        req.params.iataArrival && 
+        req.params.date
+    ) {
+    
         const from = req.params.iataDeparture;
         const to = req.params.iataArrival;
         const date = new moment(req.params.date);
@@ -97,7 +102,7 @@ function reqFlight(req, res, next) {
             }
 
             
-            const flightDetails = ([].concat([].concat((responses[0]||{}).FlightDetails||{}))).map(fixXmlObject).filter(f=>{
+            const flightDetails = ([].concat((responses[0] || {}).FlightDetails)).filter(e=>!!e).map(fixXmlObject).filter(f => {
                 return req.query.stopOver || !req.params.iataAirline || (![].concat(f.flightLegDetails).filter(fld=>!!fld).some(fld => fld.operatingAirline));
             });
             res.flightData = Promise.all(flightDetails.map(async function (flight) {
@@ -164,7 +169,7 @@ function flightByTime(req, res, next){
     if ((/^\d{2}:\d{2}$/).test(req.query.at)) {
         res.flightData = [res.flightData.find(route => Math.abs(moment(route.departureDateTime).diff(`${req.params.date}T${req.query.at}:00`, 'hour'))<2)].filter(e => !!e);
     } else if ((/^\d{2}:\d{2}$/).test(req.query.after)) {
-        res.flightData = res.flightData.filter(route => moment(route.departureDateTime).diff(`${req.params.date}T${req.query.after}`, 'hour')>=0).filter(e => !!e);
+        res.flightData = res.flightData.filter(route => moment(route.departureDateTime).diff(`${req.params.date}T${req.query.after}`, 'minute')>=0).filter(e => !!e);
     }
     next();
 }
@@ -177,8 +182,24 @@ function flightLimit(req, res, next) {
     next();
 }
 
+function nextDay(req, res, next) {
+    if (!(res.flightData || []).length && (/^\d{2}:\d{2}$/).test(req.query.after)) {
+        //Params
+        const nextDayUrlSearch = new URLSearchParams();
+        if(req.query.limit){
+            nextDayUrlSearch.set('limit', req.query.limit);
+        }
+
+        const nextDayUrl = `${moment(req.params.date).add(1, 'day').format('YYYY-MM-DD')}?${nextDayUrlSearch.toString()}`;
+
+        res.redirect(nextDayUrl);
+    } else {
+        next();
+    }
+}
+
 /* GET users listing. */
-router.get('/:date(\\d{4}-?\\d{2}-?\\d{2})', reqFlight, flightByTime, flightLimit, resFlight);
+router.get('/:date(\\d{4}-?\\d{2}-?\\d{2})', reqFlight, flightByTime, nextDay, flightLimit, resFlight);
 router.get('/:date(\\d{4}-?\\d{2}-?\\d{2})/:flightNumber(\\d{4})', reqFlight, flightByNumber, flightLimit, resFlight);
 router.get('/:flightUUID([A-Za-z]{6}\\d{8}[A-Za-z]{2}\\d{4})', flightUUIDParse, reqFlight, flightByNumber, flightLimit, resFlight);
 module.exports = router;
