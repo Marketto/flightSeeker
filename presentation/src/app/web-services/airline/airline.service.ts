@@ -46,4 +46,17 @@ export class AirlineService {
       });
     });
   }
+
+  public read(iata: string) {
+    const serviceURI = `${servicesUrl}/airline/${iata}`;
+
+    return Observable.create(observer => {
+      this.genericWebService.webService(
+        this.httpClient.get(serviceURI)
+      ).subscribe((data: any[]) => {
+        observer.next((data || [])[0]);
+        observer.complete();
+      });
+    });
+  }
 }

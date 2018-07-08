@@ -10,6 +10,7 @@ import { FlightService } from '../web-services/flight/flight.service';
 import { FlightQuery } from '../class/flight/flight-query';
 import * as moment from 'moment-timezone';
 import { isString } from 'util';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-flight-search',
@@ -98,6 +99,12 @@ export class FlightSearchComponent implements OnInit {
     });
   }
 
+  setDepartureAirport(airportIata: string) {
+    this.airportService.read(airportIata).subscribe((data: Airport) => {
+      this.departureAirport = data;
+    });
+  }
+
   searchArrivalAirport(airportCriteria: string) {
     this.airportService.search(new AirportQuery({
       'startsWith': airportCriteria
@@ -111,6 +118,12 @@ export class FlightSearchComponent implements OnInit {
         this.arrivalAirport = matchingArrivalAirport;
       }
       this.arrivalAirports = arrivalAirports;
+    });
+  }
+
+  setArrivalAirport(airportIata: string) {
+    this.airportService.read(airportIata).subscribe((data: Airport) => {
+      this.arrivalAirport = data;
     });
   }
 
@@ -130,9 +143,26 @@ export class FlightSearchComponent implements OnInit {
     });
   }
 
+  setAirline(airlineIata: string) {
+    this.airlineService.read(airlineIata).subscribe((data: Airline) => {
+      this.airline = data;
+    });
+  }
+
   private searchGoingFlight() {
     this.goingFlights = null;
     this.returnFlights = null;
+
+    this.router.navigate([], {
+      queryParams: {
+        from: this.departureAirport && this.departureAirport.iata,
+        to: this.arrivalAirport && this.arrivalAirport.iata,
+        by: this.airline && this.airline.iata,
+        date: this.departureDate && moment(this.departureDate).format('YYYY-MM-DD'),
+        time: this.departureTime && moment(this.departureTime).format('HH:mm')
+      }
+    });
+
     if (this.departureAirport && this.arrivalAirport && this.departureDate) {
       this.flightService.search(this.departureAirport.iata, this.arrivalAirport.iata, this.departureDate, new FlightQuery({
         'airlineIata': this.airline ? this.airline.iata : undefined,
@@ -168,10 +198,34 @@ export class FlightSearchComponent implements OnInit {
   constructor(
     private airportService: AirportService,
     private airlineService: AirlineService,
-    private flightService: FlightService
+    private flightService: FlightService,
+    private router: Router,
+    private activeRoute: ActivatedRoute
   ) {}
 
   ngOnInit() {
+    const AIRPORT_VALIDATOR = /^[A-Z\d\*]{3}$/i;
+    const AIRLINE_VALIDATOR = /^[A-Z\d\*]{2}$/i;
+    const DATE_VALIDATOR = /^\d{4}(?:\-\d{2}){2}$/;
+    const TIME_VALIDATOR = /^\d{2}:\d{2}$/;
+
+    this.activeRoute.queryParams.subscribe(params => {
+      if (AIRPORT_VALIDATOR.test(params.from)) {
+        this.setDepartureAirport(params.from.toUpperCase());
+      }
+      if (AIRPORT_VALIDATOR.test(params.to)) {
+        this.setArrivalAirport(params.to.toUpperCase());
+      }
+      if (AIRLINE_VALIDATOR.test(params.by)) {
+        this.setAirline(params.by.toUpperCase());
+      }
+      if (DATE_VALIDATOR.test(params.date) && moment(params.date, 'YYYY-MM-DD').isValid()) {
+        this.departureDate = new moment(params.date, 'YYYY-MM-DD').toDate();
+      }
+      if (TIME_VALIDATOR.test(params.time) && moment(params.time, 'HH:mm').isValid()) {
+        this.departureTime = new moment(params.time, 'HH:mm').toDate();
+      }
+    });
   }
 
 }

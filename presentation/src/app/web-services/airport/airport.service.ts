@@ -38,9 +38,15 @@ export class AirportService {
     });
   }
 
-  public read(iata: String) {
-    return this.genericWebService.webService(
-      this.httpClient.get(`${serviceURI}/${iata}`, httpOptions));
+  public read(iata: string) {
+    return Observable.create(observer => {
+      return this.genericWebService.webService(
+        this.httpClient.get(`${serviceURI}/${iata}`, httpOptions)
+      ).subscribe((data: any[]) => {
+        observer.next((data || [])[0]);
+        observer.complete();
+      });
+    });
   }
 
 }

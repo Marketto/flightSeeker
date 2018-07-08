@@ -4,7 +4,7 @@ import { map } from 'rxjs/operators';
 import * as moment from 'moment-timezone';
 import { Moment } from 'moment-timezone';
 
-const MID_TIME_INTERVAL = 5 * 60 * 1000;
+const MID_TIME_INTERVAL = 1 * 60 * 1000;
 
 @Injectable({
   providedIn: 'root'

@@ -1,16 +1,17 @@
 import * as moment from 'moment-timezone';
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { Flight } from '../../class/flight/flight';
 import { Moment } from 'moment-timezone';
 import { NowService } from '../../services/now.service';
 import { Duration } from 'moment-timezone';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-flight-detail',
   templateUrl: './flight-detail.component.html',
   styleUrls: ['./flight-detail.component.scss']
 })
-export class FlightDetailComponent {
+export class FlightDetailComponent implements OnInit, OnDestroy {
   private $flight:Flight;
 
   @Input() public set flight(flight: Flight) {
@@ -23,6 +24,7 @@ export class FlightDetailComponent {
   }
 
   private now: Moment = new moment();
+  private nowMidTimetSubscription: Subscription;
   public timeToDepartureLeft: Duration;
   public timeToArrivalLeft: Duration;
   public progress: number;
@@ -43,11 +45,17 @@ export class FlightDetailComponent {
   constructor(
     private nowService: NowService
   ) {
-    this.nowService.midTime.subscribe(now => {
+
+  }
+
+  ngOnInit() {
+    this.nowMidTimetSubscription = this.nowService.midTime.subscribe(now => {
       this.now = now;
 
       this.calculateDurations();
     });
   }
-
+  ngOnDestroy() {
+    this.nowMidTimetSubscription.unsubscribe();
+  }
 }
