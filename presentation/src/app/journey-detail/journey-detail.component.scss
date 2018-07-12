@@ -7,3 +7,9 @@ p-card:last-of-type {
     text-align: end;
   }
 }
+
+.flight-map::ng-deep {
+  .ui-card-title {
+    text-align: center;
+  }
+}

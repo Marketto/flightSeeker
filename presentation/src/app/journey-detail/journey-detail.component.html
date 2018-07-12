@@ -6,7 +6,7 @@
   <app-flight-detail [flight]="backFlight" (progressChange)="setBackProgress($event)"></app-flight-detail>
 </p-card>
 
-<p-card class="ui-g-12 ui-md-12" title="Mappa" *ngIf="goingFlight && backFlight">
+<p-card class="ui-g-12 ui-md-12 flight-map" title="Mappa" *ngIf="goingFlight && backFlight">
   <aol-map>
     <aol-interaction-default></aol-interaction-default>
     <aol-view [zoom]="2">
