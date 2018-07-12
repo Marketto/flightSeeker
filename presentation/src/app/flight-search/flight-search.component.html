@@ -1,8 +1,8 @@
 <div class="ui-g ui-fluid">
-  <p-card title="Ricerca voli"class="ui-g-12 ui-md-12">
+  <p-card title="Ricerca voli"class="ui-g-12 ui-md-12 flight-search">
     <div class="ui-g ui-fluid">
       <div class="ui-g-12 ui-md-5">
-        <h3>Partenza</h3>
+        <h3 class="text-start">Partenza</h3>
         <p-autoComplete [(ngModel)]="departureAirport" [suggestions]="departureAirports" (completeMethod)="searchDepartureAirport($event.query)" [forceSelection]="true" field="name" (keydown.enter)="departureAirport = autoSelectFromList(departureAirport, departureAirports)">
           <ng-template let-airport pTemplate="departureAirport">
             <div class="hint-list">
@@ -19,7 +19,7 @@
         <p-button icon="pi pi-refresh" (click)="switchAirports()"></p-button>
       </div>
       <div class="ui-g-12 ui-md-5">
-        <h3>Arrivo</h3>
+        <h3 class="text-end">Arrivo</h3>
         <p-autoComplete [(ngModel)]="arrivalAirport" [suggestions]="arrivalAirports" (completeMethod)="searchArrivalAirport($event.query)" forceSelection="true" field="name" (keydown.enter)="arrivalAirport = autoSelectFromList(arrivalAirport, arrivalAirports)">
           <ng-template let-airport pTemplate="arrivalAirport">
             <div class="hint-list">
@@ -34,7 +34,7 @@
       </div>
 
       <div class="ui-g-12 ui-md-4">
-        <h3>Compagnia aerea</h3>
+        <h3 class="text-start">Compagnia aerea</h3>
         <p-autoComplete [(ngModel)]="airline" [suggestions]="airlines" (completeMethod)="searchAirline($event.query)" forceSelection="true" field="name" (keydown.enter)="airline = autoSelectFromList(airline, airlines)">
           <ng-template let-airline pTemplate="airline">
             <div class="hint-list">
@@ -49,12 +49,12 @@
       </div>
 
       <div class="ui-g-7 ui-md-4">
-        <h3>Data di partenza</h3>
+        <h3 class="text-center">Data di partenza</h3>
         <p-calendar [(ngModel)]="departureDate" dateFormat="dd/mm/yy"></p-calendar>
       </div>
 
       <div class="ui-g-5 ui-md-4">
-        <h3>Orario di partenza</h3>
+        <h3 class="text-end">Orario di partenza</h3>
         <p-calendar [(ngModel)]="departureTime" timeOnly="true" hourFormat="24"></p-calendar>
       </div>
     </div>

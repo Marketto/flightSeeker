@@ -1,6 +1,6 @@
 <div class="ui-helper-clearfix ui-g ui-fluid flight-container">
   <div class="ui-g-5 ui-md-5 departure">
-    <p>{{flight.departureName}}</p>
+    <p>{{flight.departureAirport.name}}</p>
     <p>{{flight.departureAirport.country}}</p>
     <p>{{flight.departureDateTime | amCalendar}}</p>
   </div>
@@ -8,7 +8,7 @@
     <img [src]="'../../assets/img/meal_' + detail.meals + '.png'" *ngFor="let detail of flight.flightLegDetails"/>
   </div>
   <div class="ui-g-5 ui-md-5 arrival">
-    <p>{{flight.arrivalName}}</p>
+    <p>{{flight.arrivalAirport.name}}</p>
     <p>{{flight.arrivalAirport.country}}</p>
     <p>{{flight.arrivalDateTime | amCalendar}}</p>
   </div>

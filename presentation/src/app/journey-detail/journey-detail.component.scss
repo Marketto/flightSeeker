@@ -1,3 +1,9 @@
 p-card:last-of-type {
   margin-bottom: 0.5em;
 }
+
+.back-flight::ng-deep {
+  .ui-card-title {
+    text-align: end;
+  }
+}

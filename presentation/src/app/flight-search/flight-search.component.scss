@@ -26,6 +26,24 @@
   align-items: flex-end;
 }
 
+::ng-deep.flight-search {
+  .ui-card-title {
+    text-align: center;
+  }
+
+  h3 {
+    &.text-start {
+      text-align: start;
+    }
+    &.text-end {
+      text-align: end;
+    }
+    &.text-center {
+      text-align: center;
+    }
+  }
+}
+
 /*
 app-flight-detail {
   &.action ::ng-deep .flight-container {

@@ -1,8 +1,8 @@
-<p-card class="ui-g-12 ui-md-6" title="Andata" *ngIf="goingFlight">
+<p-card class="ui-g-12 ui-md-6 going-flight" title="Andata" *ngIf="goingFlight">
   <app-flight-detail [flight]="goingFlight" (progressChange)="setGoingProgress($event)"></app-flight-detail>
 </p-card>
 
-<p-card class="ui-g-12 ui-md-6" title="Ritorno" *ngIf="backFlight">
+<p-card class="ui-g-12 ui-md-6 back-flight" title="Ritorno" *ngIf="backFlight">
   <app-flight-detail [flight]="backFlight" (progressChange)="setBackProgress($event)"></app-flight-detail>
 </p-card>
 
