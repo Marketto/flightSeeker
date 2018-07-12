@@ -57,7 +57,10 @@
       </div>
     </div>
   </p-card>
+</div>
 
+<router-outlet class="ui-g ui-fluid"></router-outlet>
+  <!--
   <p-card class="ui-g-12 ui-md-6" title="Andata" *ngIf="(goingFlights || []).length">
     <app-flight-detail [flight]="goingFlight" *ngFor="let goingFlight of goingFlights" (click)="selectedGoingFlight = goingFlight" [ngClass]="{'action' : goingFlight !== selectedGoingFlight, 'active' : goingFlight === selectedGoingFlight && goingFlights.length>1}"></app-flight-detail>
   </p-card>
@@ -65,4 +68,4 @@
   <p-card class="ui-g-12 ui-md-6" title="Ritorno" *ngIf="(returnFlights||[]).length">
     <app-flight-detail [flight]="returnFlight" *ngFor="let returnFlight of returnFlights"></app-flight-detail>
   </p-card>
-</div>
+-->

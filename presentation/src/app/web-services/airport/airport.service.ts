@@ -24,7 +24,7 @@ export class AirportService {
     private genericWebService: GenericWebServiceService
   ) {}
 
-  public search(criteria?: AirportQuery) {
+  public search(criteria?: AirportQuery): Observable<Airport[]> {
     return Observable.create(observer => {
       this.genericWebService.webService(
         this.httpClient.get(serviceURI, {
@@ -38,7 +38,7 @@ export class AirportService {
     });
   }
 
-  public read(iata: string) {
+  public read(iata: string): Observable<Airport> {
     return Observable.create(observer => {
       return this.genericWebService.webService(
         this.httpClient.get(`${serviceURI}/${iata}`, httpOptions)

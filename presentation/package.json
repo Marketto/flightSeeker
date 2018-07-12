@@ -25,6 +25,7 @@
     "core-js": "^2.5.4",
     "famfamfam-flags": "^1.0.0",
     "moment-timezone": "^0.5.21",
+    "ngx-openlayers": "^0.8.22",
     "primeicons": "^1.0.0-beta.9",
     "primeng": "^6.0.0",
     "rxjs": "^6.0.0",

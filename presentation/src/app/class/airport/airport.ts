@@ -1,3 +1,4 @@
+import { Position } from './position/position';
 export class Airport {
   public _id: string;
   public name: string;
@@ -5,13 +6,11 @@ export class Airport {
   public country: string;
   public iata: string;
   public icao: string;
-  public latitude: number;
-  public longitude: number;
-  public altitude: number;
   public timeZone: string;
   public countryCode: string;
   public cityIata: string;
   public terminal: string;
+  public position: Position;
 
   constructor(obj?: any) {
     if (obj) {
@@ -21,13 +20,11 @@ export class Airport {
       this.country = obj.country;
       this.iata = obj.iata || obj.locationCode;
       this.icao = obj.icao;
-      this.latitude = obj.latitude;
-      this.longitude = obj.longitude;
-      this.altitude = obj.altitude;
       this.timeZone = obj.timeZone || obj.tz;
       this.countryCode = obj.countryCode;
       this.cityIata = obj.cityIata;
       this.terminal = obj.terminal;
+      this.position = obj.position ? new Position(obj.position) : undefined;
     }
   }
 }

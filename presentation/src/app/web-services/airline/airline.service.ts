@@ -1,4 +1,4 @@
-import { Observable } from 'rxjs';
+import { Observable, Observer } from 'rxjs';
 import { AirlineQuery } from './../../class/airline/airline-query';
 import { GenericWebServiceService } from './../generic-web-service.service';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
@@ -23,7 +23,7 @@ export class AirlineService {
     private genericWebService: GenericWebServiceService
   ) { }
 
-  public search(criteria?: AirlineQuery) {
+  public search(criteria?: AirlineQuery): Observable<Airline[]> {
     let serviceURI;
 
     if (criteria.fromAirportIata && criteria.toAirportIata) {
@@ -47,7 +47,7 @@ export class AirlineService {
     });
   }
 
-  public read(iata: string) {
+  public read(iata: string): Observable<Airline> {
     const serviceURI = `${servicesUrl}/airline/${iata}`;
 
     return Observable.create(observer => {

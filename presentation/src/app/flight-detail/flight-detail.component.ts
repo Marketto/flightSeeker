@@ -1,8 +1,8 @@
 import * as moment from 'moment-timezone';
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { Flight } from '../../class/flight/flight';
+import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { Flight } from '../class/flight/flight';
 import { Moment } from 'moment-timezone';
-import { NowService } from '../../services/now.service';
+import { NowService } from '../services/now.service';
 import { Duration } from 'moment-timezone';
 import { Subscription } from 'rxjs';
 
@@ -28,6 +28,7 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
   public timeToDepartureLeft: Duration;
   public timeToArrivalLeft: Duration;
   public progress: number;
+  @Output() progressChange = new EventEmitter();
 
   private calculateDurations() {
     const departureDT = moment.tz(this.flight.departureDateTime, this.flight.departureTimeZone);
@@ -40,6 +41,7 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
     this.progress = departureDT > this.now ? null : (
       this.now >= arrivalDT ? 100 : Math.round((flightTotalDuration - this.timeToArrivalLeft) * 100 / flightTotalDuration)
     );
+    this.progressChange.emit(this.progress);
   }
 
   constructor(

@@ -25,7 +25,12 @@ export class FlightService {
     private genericWebService: GenericWebServiceService
   ) { }
 
-  public search(departureAirportIata: string, arrivalAirportIata: string, departureDate: Date, criteria: FlightQuery = new FlightQuery()) {
+  public search(
+    departureAirportIata: string,
+    arrivalAirportIata: string,
+    departureDate: Date,
+    criteria: FlightQuery = new FlightQuery()
+  ): Observable<Flight[]> {
 
     const serviceURI = `${servicesUrl}/airport/${departureAirportIata}/to/${arrivalAirportIata}/`
       + (criteria.airlineIata ? `airline/${criteria.airlineIata}/` : '')
@@ -39,6 +44,22 @@ export class FlightService {
         })
       ).subscribe((data: any[]) => {
         observer.next((data || []).map(e => new Flight(e)));
+        observer.complete();
+      });
+    });
+  }
+
+  public read(
+    uuid: string
+  ): Observable<Flight> {
+
+    const serviceURI = `${servicesUrl}/flight/${uuid}`;
+
+    return Observable.create(observer => {
+      this.genericWebService.webService(
+        this.httpClient.get(serviceURI, httpOptions)
+      ).subscribe((data: any[]) => {
+        observer.next((data || []).map(e => new Flight(e))[0]);
         observer.complete();
       });
     });

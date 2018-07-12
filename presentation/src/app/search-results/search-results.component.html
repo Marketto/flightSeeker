@@ -1,0 +1,3 @@
+<p-card class="ui-g-12 ui-md-8 ui-md-offset-2" title="Risultati" *ngIf="(flights || []).length">
+  <app-flight-detail [flight]="flight" *ngFor="let flight of flights" [routerLink]="['/', flight.flightLegDetails[0].uuid]" class="action"></app-flight-detail>
+</p-card>

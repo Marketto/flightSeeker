@@ -1,3 +1,4 @@
+import { Airport } from './../airport/airport';
 import * as moment from 'moment-timezone';
 import { FlightDetail } from './flight-detail';
 import { Duration, Moment } from 'moment-timezone';
@@ -18,6 +19,8 @@ export class Flight {
   public departureTimeZone: string;
   public arrivalTimeZone: string;
   public flightLegDetails: FlightDetail[];
+  public departureAirport: Airport;
+  public arrivalAirport: Airport;
 
   public get airlineIata() {
     if (this.flightLegDetails && this.flightLegDetails[0] && this.flightLegDetails[0].marketingAirline) {
@@ -40,6 +43,8 @@ export class Flight {
       this.arrivalName = obj.arrivalName;
       this.flightType = obj.flightType;
       this.flightLegDetails = (obj.flightLegDetails || []).map(fd => new FlightDetail(fd));
+      this.departureAirport = obj.departureAirport ? new Airport(obj.departureAirport) : undefined;
+      this.arrivalAirport = obj.arrivalAirport ? new Airport(obj.arrivalAirport) : undefined;
     }
   }
 }

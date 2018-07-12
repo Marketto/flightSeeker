@@ -2,25 +2,32 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 
-import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
-import { FlightSearchComponent } from './flight-search/flight-search.component';
+import { FormsModule } from '@angular/forms';
+import { HttpClientModule } from '@angular/common/http';
+import { MomentModule } from 'angular2-moment';
+import { TranslateModule } from '@ngx-translate/core';
+import { AngularOpenlayersModule } from 'ngx-openlayers';
 
 import { CardModule } from 'primeng/card';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { CalendarModule } from 'primeng/calendar';
 import { ProgressBarModule } from 'primeng/progressbar';
-import { FormsModule } from '@angular/forms';
-import { HttpClientModule } from '@angular/common/http';
-import { MomentModule } from 'angular2-moment';
-import { TranslateModule } from '@ngx-translate/core';
-import { FlightDetailComponent } from './flight-search/flight-detail/flight-detail.component';
+
+import { AppRoutingModule } from './app-routing.module';
+import { AppComponent } from './app.component';
+
+import { FlightSearchComponent } from './flight-search/flight-search.component';
+import { FlightDetailComponent } from './flight-detail/flight-detail.component';
+import { SearchResultsComponent } from './search-results/search-results.component';
+import { JourneyDetailComponent } from './journey-detail/journey-detail.component';
 
 @NgModule({
   declarations: [
     AppComponent,
     FlightSearchComponent,
-    FlightDetailComponent
+    FlightDetailComponent,
+    SearchResultsComponent,
+    JourneyDetailComponent
   ],
   imports: [
     BrowserModule,
@@ -33,7 +40,8 @@ import { FlightDetailComponent } from './flight-search/flight-detail/flight-deta
     FormsModule,
     HttpClientModule,
     MomentModule,
-    TranslateModule.forRoot()
+    TranslateModule.forRoot(),
+    AngularOpenlayersModule
   ],
   providers: [],
   bootstrap: [AppComponent]

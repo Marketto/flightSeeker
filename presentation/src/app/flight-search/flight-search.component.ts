@@ -6,8 +6,6 @@ import { AirportService } from './../web-services/airport/airport.service';
 import { Component, OnInit } from '@angular/core';
 import { AirportQuery } from '../class/airport/airport-query';
 import { Airline } from '../class/airline/airline';
-import { FlightService } from '../web-services/flight/flight.service';
-import { FlightQuery } from '../class/flight/flight-query';
 import * as moment from 'moment-timezone';
 import { isString } from 'util';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -24,13 +22,10 @@ export class FlightSearchComponent implements OnInit {
   private $airline: Airline;
   private $departureDate: Date;
   private $departureTime: Date;
-  private $selectedGoingFlight: Flight;
 
   public departureAirports: Airport[];
   public arrivalAirports: Airport[];
   public airlines: Airline[];
-  public goingFlights: Flight[];
-  public returnFlights: Flight[];
 
 
   public get departureAirport() {
@@ -38,7 +33,7 @@ export class FlightSearchComponent implements OnInit {
   }
   public set departureAirport(airport: Airport) {
     this.$departureAirport = airport;
-    this.searchGoingFlight();
+    // this.searchGoingFlight();
   }
 
   public get arrivalAirport() {
@@ -46,7 +41,8 @@ export class FlightSearchComponent implements OnInit {
   }
   public set arrivalAirport(airport: Airport) {
     this.$arrivalAirport = airport;
-    this.searchGoingFlight();
+    // this.searchGoingFlight();
+    this.updateQueryParams();
   }
 
   public get airline() {
@@ -54,7 +50,8 @@ export class FlightSearchComponent implements OnInit {
   }
   public set airline(airline: Airline) {
     this.$airline = airline;
-    this.searchGoingFlight();
+    // this.searchGoingFlight();
+    this.updateQueryParams();
   }
 
   public get departureDate() {
@@ -62,7 +59,8 @@ export class FlightSearchComponent implements OnInit {
   }
   public set departureDate(date: Date) {
     this.$departureDate = date;
-    this.searchGoingFlight();
+    // this.searchGoingFlight();
+    this.updateQueryParams();
   }
 
   public get departureTime() {
@@ -70,20 +68,11 @@ export class FlightSearchComponent implements OnInit {
   }
   public set departureTime(date: Date) {
     this.$departureTime = date;
-    this.searchGoingFlight();
+    // this.searchGoingFlight();
+    this.updateQueryParams();
   }
 
-  public get selectedGoingFlight() {
-    return this.$selectedGoingFlight;
-  }
-  public set selectedGoingFlight(flight: Flight) {
-    if (this.$selectedGoingFlight !== flight) {
-      this.searchReturnFlight(flight);
-    }
-    this.$selectedGoingFlight = flight;
-  }
-
-  searchDepartureAirport(airportCriteria: string) {
+  public searchDepartureAirport(airportCriteria: string) {
     this.airportService.search(new AirportQuery({
       'startsWith': airportCriteria
     })).subscribe((data: Airport[] = []) => {
@@ -99,13 +88,13 @@ export class FlightSearchComponent implements OnInit {
     });
   }
 
-  setDepartureAirport(airportIata: string) {
-    this.airportService.read(airportIata).subscribe((data: Airport) => {
-      this.departureAirport = data;
+  private setDepartureAirport(airportIata: string) {
+    this.airportService.read(airportIata).subscribe((airport: Airport) => {
+      this.$departureAirport = airport;
     });
   }
 
-  searchArrivalAirport(airportCriteria: string) {
+  public searchArrivalAirport(airportCriteria: string) {
     this.airportService.search(new AirportQuery({
       'startsWith': airportCriteria
     })).subscribe((data: Airport[] = []) => {
@@ -121,13 +110,13 @@ export class FlightSearchComponent implements OnInit {
     });
   }
 
-  setArrivalAirport(airportIata: string) {
-    this.airportService.read(airportIata).subscribe((data: Airport) => {
-      this.arrivalAirport = data;
+  private setArrivalAirport(airportIata: string) {
+    this.airportService.read(airportIata).subscribe((airport: Airport) => {
+      this.$arrivalAirport = airport;
     });
   }
 
-  searchAirline(airlineCriteria) {
+  public searchAirline(airlineCriteria) {
     this.airlineService.search(new AirlineQuery({
       'startsWith': airlineCriteria,
       'fromAirportIata': (this.departureAirport || new Airport()).iata,
@@ -143,16 +132,20 @@ export class FlightSearchComponent implements OnInit {
     });
   }
 
-  setAirline(airlineIata: string) {
-    this.airlineService.read(airlineIata).subscribe((data: Airline) => {
-      this.airline = data;
+  private setAirline(airlineIata: string) {
+    this.airlineService.read(airlineIata).subscribe((airline: Airline) => {
+      this.$airline = airline;
     });
   }
 
-  private searchGoingFlight() {
-    this.goingFlights = null;
-    this.returnFlights = null;
+  public autoSelectFromList(value: string|any, list: any[]) {
+    if ((isString(value) || !value) && list) {
+      return list[0];
+    }
+    return value;
+  }
 
+  private updateQueryParams() {
     this.router.navigate([], {
       queryParams: {
         from: this.departureAirport && this.departureAirport.iata,
@@ -162,43 +155,11 @@ export class FlightSearchComponent implements OnInit {
         time: this.departureTime && moment(this.departureTime).format('HH:mm')
       }
     });
-
-    if (this.departureAirport && this.arrivalAirport && this.departureDate) {
-      this.flightService.search(this.departureAirport.iata, this.arrivalAirport.iata, this.departureDate, new FlightQuery({
-        'airlineIata': this.airline ? this.airline.iata : undefined,
-        'at': this.departureTime ? moment(this.departureTime) : undefined
-      })).subscribe((data: Flight[]) => {
-        this.goingFlights = data;
-        if (this.goingFlights.length === 1) {
-          this.selectedGoingFlight = this.goingFlights[0];
-        }
-      });
-    }
-  }
-
-  private searchReturnFlight(flight: Flight) {
-    const returnDepartureDateTime = moment(flight.arrivalDateTime);
-    returnDepartureDateTime.add(40, 'm');
-    this.flightService.search(flight.arrivalCode, flight.departureCode, returnDepartureDateTime.toDate(), new FlightQuery({
-      'after' : returnDepartureDateTime,
-      'limit' : 1,
-      'airlineIata': flight.airlineIata
-    })).subscribe((data: Flight[]) => {
-      this.returnFlights = data;
-    });
-  }
-
-  autoSelectFromList(value: string|any, list: any[]) {
-    if ((isString(value) || !value) && list) {
-      return list[0];
-    }
-    return value;
   }
 
   constructor(
     private airportService: AirportService,
     private airlineService: AirlineService,
-    private flightService: FlightService,
     private router: Router,
     private activeRoute: ActivatedRoute
   ) {}
@@ -208,8 +169,21 @@ export class FlightSearchComponent implements OnInit {
     const AIRLINE_VALIDATOR = /^[A-Z\d\*]{2}$/i;
     const DATE_VALIDATOR = /^\d{4}(?:\-\d{2}){2}$/;
     const TIME_VALIDATOR = /^\d{2}:\d{2}$/;
+    const FLIGHT_UUID_VALIDATOR = /^([A-Z\d\*]{3})([A-Z\d\*]{3})(\d{8})([A-Z\d\*]{2})(\d{4})$/;
 
-    this.activeRoute.queryParams.subscribe(params => {
+    const params = this.activeRoute.snapshot.queryParams;
+    const childParams = this.activeRoute.snapshot.firstChild.params;
+
+    if (FLIGHT_UUID_VALIDATOR.test(childParams.flightId)) {
+      const parsedUuid = FLIGHT_UUID_VALIDATOR.exec(childParams.flightId);
+
+      this.setDepartureAirport(parsedUuid[1].toUpperCase());
+      this.setArrivalAirport(parsedUuid[2].toUpperCase());
+      this.setAirline(parsedUuid[4].toUpperCase());
+      this.$departureDate = new moment(parsedUuid[3], 'YYYYMMDD').toDate();
+
+    } else {
+
       if (AIRPORT_VALIDATOR.test(params.from)) {
         this.setDepartureAirport(params.from.toUpperCase());
       }
@@ -220,12 +194,13 @@ export class FlightSearchComponent implements OnInit {
         this.setAirline(params.by.toUpperCase());
       }
       if (DATE_VALIDATOR.test(params.date) && moment(params.date, 'YYYY-MM-DD').isValid()) {
-        this.departureDate = new moment(params.date, 'YYYY-MM-DD').toDate();
+        this.$departureDate = new moment(params.date, 'YYYY-MM-DD').toDate();
       }
       if (TIME_VALIDATOR.test(params.time) && moment(params.time, 'HH:mm').isValid()) {
-        this.departureTime = new moment(params.time, 'HH:mm').toDate();
+        this.$departureTime = new moment(params.time, 'HH:mm').toDate();
       }
-    });
+
+    }
   }
 
 }
