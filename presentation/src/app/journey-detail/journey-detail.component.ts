@@ -44,15 +44,15 @@ export class JourneyDetailComponent implements OnInit {
     const departureLatitude = flight.departureAirport.position.latitude;
     const arrivalLatitude = flight.arrivalAirport.position.latitude;
 
-    if (!progress) {
-      this.estimatedPosition.latitude = departureLatitude;
-      this.estimatedPosition.longitude = departureLongitude;
-    } else if (progress < 100) {
+    if (progress && progress < 100) {
       this.estimatedPosition.latitude = departureLatitude + (arrivalLatitude - departureLatitude) * progress / 100;
       this.estimatedPosition.longitude = departureLongitude + (arrivalLongitude - departureLongitude) * progress / 100;
-    } else if (!ignoreComplete){
+    } else if (!progress && ignoreComplete) {
       this.estimatedPosition.latitude = departureLatitude;
       this.estimatedPosition.longitude = departureLongitude;
+    } else if (progress === 100 && !ignoreComplete) {
+      this.estimatedPosition.latitude = arrivalLatitude;
+      this.estimatedPosition.longitude = arrivalLongitude;
     }
   }
 

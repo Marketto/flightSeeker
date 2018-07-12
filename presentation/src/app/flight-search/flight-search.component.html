@@ -1,7 +1,7 @@
 <div class="ui-g ui-fluid">
   <p-card title="Ricerca voli"class="ui-g-12 ui-md-12">
     <div class="ui-g ui-fluid">
-      <div class="ui-g-12 ui-md-6">
+      <div class="ui-g-12 ui-md-5">
         <h3>Partenza</h3>
         <p-autoComplete [(ngModel)]="departureAirport" [suggestions]="departureAirports" (completeMethod)="searchDepartureAirport($event.query)" [forceSelection]="true" field="name" (keydown.enter)="departureAirport = autoSelectFromList(departureAirport, departureAirports)">
           <ng-template let-airport pTemplate="departureAirport">
@@ -15,8 +15,10 @@
           </ng-template>
         </p-autoComplete>
       </div>
-
-      <div class="ui-g-12 ui-md-6">
+      <div class="ui-g-12 ui-md-2 switch-airports">
+        <p-button icon="pi pi-refresh" (click)="switchAirports()"></p-button>
+      </div>
+      <div class="ui-g-12 ui-md-5">
         <h3>Arrivo</h3>
         <p-autoComplete [(ngModel)]="arrivalAirport" [suggestions]="arrivalAirports" (completeMethod)="searchArrivalAirport($event.query)" forceSelection="true" field="name" (keydown.enter)="arrivalAirport = autoSelectFromList(arrivalAirport, arrivalAirports)">
           <ng-template let-airport pTemplate="arrivalAirport">

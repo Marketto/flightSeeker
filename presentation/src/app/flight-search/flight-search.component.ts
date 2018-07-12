@@ -145,8 +145,14 @@ export class FlightSearchComponent implements OnInit {
     return value;
   }
 
+  public switchAirports() {
+    const airport = this.departureAirport;
+    this.departureAirport = this.arrivalAirport;
+    this.arrivalAirport = airport;
+  }
+
   private updateQueryParams() {
-    this.router.navigate([], {
+    this.router.navigate(['/'], {
       queryParams: {
         from: this.departureAirport && this.departureAirport.iata,
         to: this.arrivalAirport && this.arrivalAirport.iata,

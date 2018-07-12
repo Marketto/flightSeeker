@@ -12,6 +12,7 @@ import { CardModule } from 'primeng/card';
 import { AutoCompleteModule } from 'primeng/autocomplete';
 import { CalendarModule } from 'primeng/calendar';
 import { ProgressBarModule } from 'primeng/progressbar';
+import { ButtonModule } from 'primeng/button';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -37,6 +38,7 @@ import { JourneyDetailComponent } from './journey-detail/journey-detail.componen
     AutoCompleteModule,
     CalendarModule,
     ProgressBarModule,
+    ButtonModule,
     FormsModule,
     HttpClientModule,
     MomentModule,
