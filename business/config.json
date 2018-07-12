@@ -2,8 +2,8 @@
     "aviationEdgeUri"   : "https://aviation-edge.com/api/public/",
     "flightLookupUri"   : "https://flightlookup.azure-api.net/v1/xml/",
     "cache"             : {
-        "staticResourceTimeout"     : 300000,
-        "dynamicResourceTimeout"    : 900
+        "staticResourceTimeout"     : 900000,
+        "dynamicResourceTimeout"    : 30000
     },
     "mongodb"           : "mongodb://localhost:27017/flightSeeker"
 }

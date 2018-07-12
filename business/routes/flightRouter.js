@@ -107,7 +107,7 @@ function reqFlight(req, res, next) {
             });
             res.flightData = Promise.all(flightDetails.map(async function (flight) {
                 try {
-                    return await Object.assign(
+                    const enrichedFlight = await Object.assign(
                         flight,
                         await enrichFlight(flight),
                         {
@@ -115,6 +115,11 @@ function reqFlight(req, res, next) {
                                 return await Object.assign(fd, await enrichFlight(fd))
                             }))
                         });
+
+                    return Object.assign({
+                        departureAirport: enrichedFlight.flightLegDetails[0].departureAirport,
+                        arrivalAirport: enrichedFlight.flightLegDetails[enrichedFlight.flightLegDetails.length - 1].arrivalAirport
+                    }, enrichedFlight);
                 } catch (err) {
                     console.error(err);
                     res.sendStatus(500);
