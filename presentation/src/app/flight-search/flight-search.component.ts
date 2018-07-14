@@ -74,10 +74,9 @@ export class FlightSearchComponent implements OnInit {
 
   public searchDepartureAirport(airportCriteria: string) {
     this.airportService.search(new AirportQuery({
-      'startsWith': airportCriteria
-    })).subscribe((data: Airport[] = []) => {
-      const departureAirports = data.filter(airport => airport.iata !== (this.arrivalAirport || new Airport()).iata);
-
+      'startsWith': airportCriteria,
+      'notInCity': this.arrivalAirport ? this.arrivalAirport.cityIata : undefined
+    })).subscribe((departureAirports: Airport[] = []) => {
       const matchingDepartureAirport = departureAirports.find(airport => {
         return airport.name.toLowerCase() === airportCriteria.toLowerCase() || airport.iata === airportCriteria;
       });
@@ -96,10 +95,9 @@ export class FlightSearchComponent implements OnInit {
 
   public searchArrivalAirport(airportCriteria: string) {
     this.airportService.search(new AirportQuery({
-      'startsWith': airportCriteria
-    })).subscribe((data: Airport[] = []) => {
-      const arrivalAirports = data.filter(airport => airport.iata !== (this.departureAirport || new Airport()).iata);
-
+      'startsWith': airportCriteria,
+      'notInCity': this.departureAirport ? this.departureAirport.cityIata : undefined
+    })).subscribe((arrivalAirports: Airport[] = []) => {
       const matchingArrivalAirport = arrivalAirports.find(airport => {
         return airport.name.toLowerCase() === airportCriteria.toLowerCase() || airport.iata === airportCriteria;
       });
