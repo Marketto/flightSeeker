@@ -10,7 +10,7 @@
   </aol-layer-tile>
   <aol-layer-vector>
     <aol-source-vector>
-      <aol-feature>
+      <aol-feature *ngIf="flight">
         <aol-geometry-linestring>
           <aol-collection-coordinates [coordinates]="[
             flight.departureAirport.position.lonLat,
@@ -26,7 +26,7 @@
   </aol-layer-vector>
   <aol-layer-vector>
     <aol-source-vector>
-      <aol-feature>
+      <aol-feature *ngIf="currentPosition">
         <aol-geometry-point>
           <aol-coordinate [x]="currentPosition.longitude" [y]="currentPosition.latitude" [srid]="'EPSG:4326'"></aol-coordinate>
         </aol-geometry-point>

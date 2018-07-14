@@ -13,31 +13,31 @@ import { Subscription } from 'rxjs';
 })
 export class FlightMapComponent implements OnInit, OnDestroy {
   private $flight: Flight;
-  private now: Moment = new moment();
   private nowMidTimetSubscription: Subscription;
   public currentPosition: Position;
 
   @Input() public set flight(flight: Flight) {
     this.$flight = flight;
 
-    this.estimatePosition();
+    this.subscribeNowMidTime();
+    this.estimatePosition(new moment());
   }
   public get flight() {
     return this.$flight;
   }
 
 
-  private estimatePosition() {
+  private estimatePosition(now: Moment) {
     if (this.flight) {
       const departureDT: Moment = this.flight.departureDateTime;
       const arrivalDT: Moment = this.flight.arrivalDateTime;
 
-      if (departureDT > this.now) {
-        return new Position(this.flight.departureAirport.position);
-      } else if (arrivalDT < this.now) {
-        return new Position(this.flight.arrivalAirport.position);
+      if (departureDT > now) {
+        this.currentPosition = this.flight.departureAirport.position;
+      } else if (arrivalDT < now) {
+        this.currentPosition = this.flight.arrivalAirport.position;
       } else {
-        const flightProgress: number = this.now.diff(departureDT, 'seconds') / this.flight.totalTripTime.asSeconds();
+        const flightProgress: number = now.diff(departureDT, 'seconds') / this.flight.totalTripTime.asSeconds();
 
         const departureLongitude: number = this.flight.departureAirport.position.longitude;
         const departureLatitude: number = this.flight.departureAirport.position.latitude;
@@ -49,6 +49,8 @@ export class FlightMapComponent implements OnInit, OnDestroy {
           'longitude': departureLongitude + (arrivalLongitude - departureLongitude) * flightProgress
         });
       }
+    } else {
+      console.warn('No flight');
     }
   }
 
@@ -57,15 +59,24 @@ export class FlightMapComponent implements OnInit, OnDestroy {
     private nowService: NowService
   ) { }
 
-  ngOnInit() {
-    this.nowMidTimetSubscription = this.nowService.midTime.subscribe(now => {
-      this.now = now;
+  private subscribeNowMidTime() {
+    if (!this.nowMidTimetSubscription || (this.nowMidTimetSubscription && this.nowMidTimetSubscription.closed)) {
+      this.nowMidTimetSubscription = this.nowService.midTime.subscribe(now => {
+        this.estimatePosition(now);
+        if (this.flight && this.currentPosition === this.flight.arrivalAirport.position && !this.nowMidTimetSubscription.closed) {
+          this.nowMidTimetSubscription.unsubscribe();
+        }
+      });
+    }
+  }
 
-      this.estimatePosition();
-    });
+  ngOnInit() {
+    this.subscribeNowMidTime();
   }
   ngOnDestroy() {
-    this.nowMidTimetSubscription.unsubscribe();
+    if (!this.nowMidTimetSubscription.closed) {
+      this.nowMidTimetSubscription.unsubscribe();
+    }
   }
 
 }

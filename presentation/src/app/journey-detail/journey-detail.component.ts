@@ -13,10 +13,10 @@ import { FlightQuery } from '../class/flight/flight-query';
 export class JourneyDetailComponent implements OnInit {
   private $goingFlight: Flight;
   public backFlight: Flight;
-  public currentFlight: Flight = null;
+  public currentFlight: Flight;
 
   public setBackProgress(backProgress: number) {
-    if (backProgress !== null) {
+    if (backProgress || backProgress === 0) {
       this.currentFlight = this.backFlight;
     }
   }
@@ -49,9 +49,7 @@ export class JourneyDetailComponent implements OnInit {
     })).subscribe((flights: Flight[]) => {
       this.backFlight = flights[0];
 
-      if (this.backFlight.departureDateTime > new moment()) {
-        this.currentFlight = this.backFlight;
-      }
+      this.currentFlight = this.currentFlight || this.backFlight;
     });
   }
 

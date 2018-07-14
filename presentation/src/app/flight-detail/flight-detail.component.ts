@@ -14,8 +14,11 @@ import { Subscription } from 'rxjs';
 export class FlightDetailComponent implements OnInit, OnDestroy {
   private $flight:Flight;
 
-  @Input() public set flight(flight: Flight) {
+  @Input()
+  public set flight(flight: Flight) {
     this.$flight = flight;
+
+    this.subscribeNowMidTime();
 
     this.calculateDurations();
   }
@@ -50,17 +53,25 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
 
   }
 
-  ngOnInit() {
-    this.nowMidTimetSubscription = this.nowService.midTime.subscribe(now => {
-      this.now = now;
+  private subscribeNowMidTime() {
+    if (!this.nowMidTimetSubscription || (this.nowMidTimetSubscription && this.nowMidTimetSubscription.closed)) {
+      this.nowMidTimetSubscription = this.nowService.midTime.subscribe(now => {
+        this.now = now;
 
-      this.calculateDurations();
-      if (this.progress === 100) {
-        this.nowMidTimetSubscription.unsubscribe();
-      }
-    });
+        this.calculateDurations();
+        if (this.progress === 100 && !this.nowMidTimetSubscription.closed) {
+          this.nowMidTimetSubscription.unsubscribe();
+        }
+      });
+    }
+  }
+
+  ngOnInit() {
+    this.subscribeNowMidTime();
   }
   ngOnDestroy() {
-    this.nowMidTimetSubscription.unsubscribe();
+    if (!this.nowMidTimetSubscription.closed) {
+      this.nowMidTimetSubscription.unsubscribe();
+    }
   }
 }
