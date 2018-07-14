@@ -18,20 +18,28 @@ function reqAirport(req, res, next) {
       'iata' : req.params.iataAirport,
     } : (
       req.query.startsWith ? {
-        '$or' : [
+        '$and' : [
           {
-            'name' : startsWithRegExp
-          },
-          {
-            'city' : startsWithRegExp
-          },
-          {
-            'cityNames' : {
-              '$elemMatch': startsWithRegExp
+            '$or' : [
+              {
+                'name' : startsWithRegExp
+              },
+              {
+                'city' : startsWithRegExp
+              },
+              {
+                'cityNames' : {
+                  '$elemMatch': startsWithRegExp
+                }
+              },
+              {
+                'iata': startsWithRegExp
+              }
+            ]
+          },{
+            'cityIata': {
+              '$ne': req.query.notInCity
             }
-          },
-          {
-            'iata': startsWithRegExp
           }
         ]
       } : {}
