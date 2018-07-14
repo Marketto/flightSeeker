@@ -21,6 +21,7 @@ import { FlightSearchComponent } from './flight-search/flight-search.component';
 import { FlightDetailComponent } from './flight-detail/flight-detail.component';
 import { SearchResultsComponent } from './search-results/search-results.component';
 import { JourneyDetailComponent } from './journey-detail/journey-detail.component';
+import { FlightMapComponent } from './flight-map/flight-map.component';
 
 @NgModule({
   declarations: [
@@ -28,7 +29,8 @@ import { JourneyDetailComponent } from './journey-detail/journey-detail.componen
     FlightSearchComponent,
     FlightDetailComponent,
     SearchResultsComponent,
-    JourneyDetailComponent
+    JourneyDetailComponent,
+    FlightMapComponent
   ],
   imports: [
     BrowserModule,

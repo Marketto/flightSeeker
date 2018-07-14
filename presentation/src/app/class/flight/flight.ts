@@ -8,11 +8,9 @@ export class Flight {
   public totalMiles: number;
   public totalTripTime: Duration;
   public departureDateTime: Moment;
-  // public departureTimeOffset: "+03:00",
   public departureCode: string;
   public departureName: string;
   public arrivalDateTime: Moment;
-  // "arrivalTimeOffset": "+02:00",
   public arrivalCode: string;
   public arrivalName: string;
   public flightType: string;

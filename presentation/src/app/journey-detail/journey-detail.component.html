@@ -1,5 +1,5 @@
 <p-card class="ui-g-12 ui-md-6 going-flight" title="Andata" *ngIf="goingFlight">
-  <app-flight-detail [flight]="goingFlight" (progressChange)="setGoingProgress($event)"></app-flight-detail>
+  <app-flight-detail [flight]="goingFlight"></app-flight-detail>
 </p-card>
 
 <p-card class="ui-g-12 ui-md-6 back-flight" title="Ritorno" *ngIf="backFlight">
@@ -7,46 +7,5 @@
 </p-card>
 
 <p-card class="ui-g-12 ui-md-12 flight-map" title="Mappa" *ngIf="goingFlight && backFlight">
-  <aol-map>
-    <aol-interaction-default></aol-interaction-default>
-    <aol-view [zoom]="2">
-      <aol-coordinate [x]="5" [y]="45" [srid]="'EPSG:4326'"></aol-coordinate>
-    </aol-view>
-    <aol-layer-tile>
-      <aol-source-osm></aol-source-osm>
-    </aol-layer-tile>
-    <aol-layer-vector >
-      <aol-source-vector>
-        <aol-feature>
-          <aol-geometry-linestring>
-            <aol-collection-coordinates [coordinates]="[
-            goingFlight.departureAirport.position.lonLat,
-            goingFlight.arrivalAirport.position.lonLat
-          ]" [srid]="'EPSG:4326'">
-            </aol-collection-coordinates>
-          </aol-geometry-linestring>
-          <aol-style>
-            <aol-style-stroke [color]="'#bf8efc'" [width]="3"></aol-style-stroke>
-          </aol-style>
-        </aol-feature>
-      </aol-source-vector>
-    </aol-layer-vector>
-    <aol-layer-vector>
-      <aol-source-vector>
-        <aol-feature>
-          <aol-geometry-point>
-            <aol-coordinate  [x]="estimatedPosition.longitude" [y]="estimatedPosition.latitude" [srid]="'EPSG:4326'"></aol-coordinate>
-          </aol-geometry-point>
-          <aol-style>
-            <aol-style-icon
-              [src]="'../../assets/img/airplane.png'"
-              [anchor]="[0.5, -3]"
-              [anchorXUnits]="'fraction'" [anchorYUnits]="'pixel'"
-              [anchorOrigin]="'bottom-left'">
-            </aol-style-icon>
-          </aol-style>
-        </aol-feature>
-      </aol-source-vector>
-    </aol-layer-vector>
-  </aol-map>
+  <app-flight-map [flight]="currentFlight"></app-flight-map>
 </p-card>

@@ -30,16 +30,17 @@
   .ui-card-title {
     text-align: center;
   }
-
-  h3 {
-    &.text-start {
-      text-align: start;
-    }
-    &.text-end {
-      text-align: end;
-    }
-    &.text-center {
-      text-align: center;
+  @media screen and (min-width: 40.063em) {
+    h3 {
+      &.text-start {
+        text-align: start;
+      }
+      &.text-end {
+        text-align: end;
+      }
+      &.text-center {
+        text-align: center;
+      }
     }
   }
 }

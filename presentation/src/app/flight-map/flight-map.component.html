@@ -1,0 +1,41 @@
+<aol-map>
+  <aol-interaction-default></aol-interaction-default>
+  <aol-view [zoom]="4">
+    <aol-coordinate [y]="(flight.departureAirport.position.latitude + flight.arrivalAirport.position.latitude)/2"
+      [x]="(flight.departureAirport.position.longitude + flight.arrivalAirport.position.longitude)/2" [srid]="'EPSG:4326'">
+    </aol-coordinate>
+  </aol-view>
+  <aol-layer-tile>
+    <aol-source-osm></aol-source-osm>
+  </aol-layer-tile>
+  <aol-layer-vector>
+    <aol-source-vector>
+      <aol-feature>
+        <aol-geometry-linestring>
+          <aol-collection-coordinates [coordinates]="[
+            flight.departureAirport.position.lonLat,
+            flight.arrivalAirport.position.lonLat
+          ]" [srid]="'EPSG:4326'">
+          </aol-collection-coordinates>
+        </aol-geometry-linestring>
+        <aol-style>
+          <aol-style-stroke [color]="'#bf8efc'" [width]="3"></aol-style-stroke>
+        </aol-style>
+      </aol-feature>
+    </aol-source-vector>
+  </aol-layer-vector>
+  <aol-layer-vector>
+    <aol-source-vector>
+      <aol-feature>
+        <aol-geometry-point>
+          <aol-coordinate [x]="currentPosition.longitude" [y]="currentPosition.latitude" [srid]="'EPSG:4326'"></aol-coordinate>
+        </aol-geometry-point>
+        <aol-style>
+          <aol-style-icon [src]="'../../assets/img/airplane.png'" [anchor]="[0.5, -3]" [anchorXUnits]="'fraction'" [anchorYUnits]="'pixel'"
+            [anchorOrigin]="'bottom-left'">
+          </aol-style-icon>
+        </aol-style>
+      </aol-feature>
+    </aol-source-vector>
+  </aol-layer-vector>
+</aol-map>

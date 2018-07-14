@@ -31,8 +31,8 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
   @Output() progressChange = new EventEmitter();
 
   private calculateDurations() {
-    const departureDT = moment.tz(this.flight.departureDateTime, this.flight.departureTimeZone);
-    const arrivalDT = moment.tz(this.flight.arrivalDateTime, this.flight.arrivalTimeZone);
+    const departureDT = this.flight.departureDateTime;
+    const arrivalDT = this.flight.arrivalDateTime;
     const flightTotalDuration = this.flight.totalTripTime.asMinutes();
 
     this.timeToDepartureLeft = departureDT.diff(this.now, 'minutes');
@@ -55,6 +55,9 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
       this.now = now;
 
       this.calculateDurations();
+      if (this.progress === 100) {
+        this.nowMidTimetSubscription.unsubscribe();
+      }
     });
   }
   ngOnDestroy() {
