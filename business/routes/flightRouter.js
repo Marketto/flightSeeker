@@ -159,7 +159,7 @@ function resFlight(req, res) {
 }
 
 function flightUUIDParse(req, res, next) {
-    const parsedUUID = (/^([a-z]{3})([a-z]{3})(\d{8})([a-z]{2})(\d{4})$/i).exec(req.params.flightUUID)
+    const parsedUUID = (/^([a-z]{3})([a-z]{3})(\d{8})([a-z]{2})(\d+)$/i).exec(req.params.flightUUID)
     Object.assign(req.params, {
         iataDeparture   : parsedUUID[1],
         iataArrival     : parsedUUID[2],
@@ -205,6 +205,6 @@ function nextDay(req, res, next) {
 
 /* GET users listing. */
 router.get('/:date(\\d{4}-?\\d{2}-?\\d{2})', reqFlight, flightByTime, nextDay, flightLimit, resFlight);
-router.get('/:date(\\d{4}-?\\d{2}-?\\d{2})/:flightNumber(\\d{4})', reqFlight, flightByNumber, flightLimit, resFlight);
-router.get('/:flightUUID([A-Za-z]{6}\\d{8}[A-Za-z]{2}\\d{4})', flightUUIDParse, reqFlight, flightByNumber, flightLimit, resFlight);
+router.get('/:date(\\d{4}-?\\d{2}-?\\d{2})/:flightNumber(\\d+)', reqFlight, flightByNumber, flightLimit, resFlight);
+router.get('/:flightUUID([A-Za-z]{6}\\d{8}[A-Za-z]{2}\\d+)', flightUUIDParse, reqFlight, flightByNumber, flightLimit, resFlight);
 module.exports = router;
