@@ -173,7 +173,7 @@ export class FlightSearchComponent implements OnInit {
     const AIRLINE_VALIDATOR = /^[A-Z\d\*]{2}$/i;
     const DATE_VALIDATOR = /^\d{4}(?:\-\d{2}){2}$/;
     const TIME_VALIDATOR = /^\d{2}:\d{2}$/;
-    const FLIGHT_UUID_VALIDATOR = /^([A-Z\d\*]{3})([A-Z\d\*]{3})(\d{8})([A-Z\d\*]{2})(\d{4})$/;
+    const FLIGHT_UUID_VALIDATOR = /^([A-Z\d\*]{3})([A-Z\d\*]{3})(\d{8})([A-Z\d\*]{2})(\d+)$/;
 
     const params = this.activeRoute.snapshot.queryParams;
     const childParams = this.activeRoute.snapshot.firstChild.params;

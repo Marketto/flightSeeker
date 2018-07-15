@@ -59,7 +59,7 @@ export class JourneyDetailComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    const FLIGHT_UUID_VALIDATOR = /^[A-Z\d\*]{6}\d{8}[A-Z\d\*]{2}\d{4}$/;
+    const FLIGHT_UUID_VALIDATOR = /^[A-Z\d\*]{6}\d{8}[A-Z\d\*]{2}\d+$/;
 
     const params = this.activeRoute.snapshot.params;
 
