@@ -10,12 +10,9 @@
   </aol-layer-tile>
   <aol-layer-vector>
     <aol-source-vector>
-      <aol-feature *ngIf="flight">
+      <aol-feature *ngIf="route">
         <aol-geometry-linestring>
-          <aol-collection-coordinates [coordinates]="[
-            flight.departureAirport.position.lonLat,
-            flight.arrivalAirport.position.lonLat
-          ]" [srid]="'EPSG:4326'">
+          <aol-collection-coordinates [coordinates]="route.geometry.coordinates" [srid]="'EPSG:4326'">
           </aol-collection-coordinates>
         </aol-geometry-linestring>
         <aol-style>

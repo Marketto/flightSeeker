@@ -1,3 +1,5 @@
+import { isObject, isArray } from 'util';
+import { Point } from './../../common/point';
 export class Position {
   public latitude:  number;
   public longitude: number;
@@ -11,11 +13,20 @@ export class Position {
     return [this.latitude, this.longitude];
   }
 
+  public get xy(): Point {
+    return new Point(this.longitude, this.latitude);
+  }
+
   constructor(obj?: any) {
     if (obj) {
-      this.latitude = obj.latitude;
-      this.longitude = obj.longitude;
-      this.altitude = obj.altitude;
+      if (isArray(obj) && obj.length === 2) {
+        this.latitude = obj[1];
+        this.longitude = obj[0];
+      } else if (isObject(obj)) {
+        this.latitude = obj.latitude;
+        this.longitude = obj.longitude;
+        this.altitude = obj.altitude;
+      }
     }
   }
 }
