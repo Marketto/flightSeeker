@@ -16,7 +16,7 @@
         </p-autoComplete>
       </div>
       <div class="ui-g-12 ui-md-2 switch-airports">
-        <p-button icon="pi pi-refresh" (click)="switchAirports()"></p-button>
+        <p-button icon="pi pi-refresh" (click)="switchAirports()" [disabled]="!departureAirport && !arrivalAirport"></p-button>
       </div>
       <div class="ui-g-12 ui-md-5">
         <h3 class="text-end">Arrivo</h3>
