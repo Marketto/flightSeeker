@@ -3,6 +3,10 @@ const router = express.Router({mergeParams: true});
 const mongo = require('../services/mongo');
 const flightRouter = require('./flightRouter');
 const escapeStringRegexp = require('escape-string-regexp');
+const {
+  AIRLINE_ROUTE_MATCHER, 
+  AIRLINE_REGEXP
+} = require('./routingConst');
 
 function reqAirline(req, res, next) {
   console.log('[reqAirline]');
@@ -10,7 +14,7 @@ function reqAirline(req, res, next) {
 
     const airlineQuery = (req.params.iataAirline || res.routesData) ? {
       'iata': req.params.iataAirline || {
-        '$in': res.routesData.map(route => route.iata)
+        '$in': res.routesData.map(route => route.iataAirline).filter((airline, index, airlines)=>airlines.indexOf(airline)===index)
       },
     } : null;
 
@@ -33,7 +37,7 @@ function reqAirline(req, res, next) {
 
     const queryConditions = [
       {
-        'iata' : /^[A-Z\d]{2}$/
+        'iata' : AIRLINE_REGEXP
       },
       airlineQuery, 
       startsWithQuery
@@ -43,7 +47,6 @@ function reqAirline(req, res, next) {
       '$and': queryConditions
     } : queryConditions[0];
 
-    //console.log(query);
     db.collection("airlines").find(query).toArray().then(result => {
       res.airlineData = result || [];
       next();
@@ -68,7 +71,6 @@ function resAirline(req, res) {
 
 /* GET users listing. */
 router.get('/', reqAirline, resAirline);
-router.get('/:iataAirline([A-Z0-9]{2})', reqAirline, resAirline);
-router.use('/:iataAirline([A-Z0-9]{2})/flight', flightRouter);
+router.get(`/:iataAirline(${AIRLINE_ROUTE_MATCHER})`, reqAirline, resAirline);
 
 module.exports = router;

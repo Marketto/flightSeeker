@@ -1,9 +1,17 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const { URL, URLSearchParams } = require('url');
+const { URLSearchParams } = require('url');
 const flightLookup = require('../services/flight-lookup');
 const mongo = require('../services/mongo');
 const moment = require('moment-timezone');
+
+const {
+    DATE_ROUTE_MATCHER,
+    FLIGHT_NUM_ROUTE_MATCHER,
+    FLIGHT_UUID_ROUTE_MATCHER,
+    FLIGHT_UUID_REGEXP,
+    TIME_REGEXP
+} = require('./routingConst');
 
 function fixXmlObject(obj){
     const fixedObj = {};
@@ -159,21 +167,21 @@ function resFlight(req, res) {
 }
 
 function flightUUIDParse(req, res, next) {
-    const parsedUUID = (/^([a-z]{3})([a-z]{3})(\d{8})([a-z]{2})(\d+)$/i).exec(req.params.flightUUID)
+    const parsedUUID = FLIGHT_UUID_REGEXP.exec(req.params.flightUUID)
     Object.assign(req.params, {
         iataDeparture   : parsedUUID[1],
         iataArrival     : parsedUUID[2],
-        iataAirline     : parsedUUID[4],
         date            : parsedUUID[3],
+        iataAirline     : parsedUUID[4],
         flightNumber    : parsedUUID[5]
     });
     next();
 }
 
 function flightByTime(req, res, next){
-    if ((/^\d{2}:\d{2}$/).test(req.query.at)) {
+    if (TIME_REGEXP.test(req.query.at)) {
         res.flightData = [res.flightData.find(route => Math.abs(moment(route.departureDateTime).diff(`${req.params.date}T${req.query.at}:00`, 'hour'))<2)].filter(e => !!e);
-    } else if ((/^\d{2}:\d{2}$/).test(req.query.after)) {
+    } else if (TIME_REGEXP.test(req.query.after)) {
         res.flightData = res.flightData.filter(route => moment(route.departureDateTime).diff(`${req.params.date}T${req.query.after}`, 'minute')>=0).filter(e => !!e);
     }
     next();
@@ -188,7 +196,7 @@ function flightLimit(req, res, next) {
 }
 
 function nextDay(req, res, next) {
-    if (!(res.flightData || []).length && (/^\d{2}:\d{2}$/).test(req.query.after)) {
+    if (!(res.flightData || []).length && TIME_REGEXP.test(req.query.after)) {
         //Params
         const nextDayUrlSearch = new URLSearchParams();
         if(req.query.limit){
@@ -204,7 +212,7 @@ function nextDay(req, res, next) {
 }
 
 /* GET users listing. */
-router.get('/:date(\\d{4}-?\\d{2}-?\\d{2})', reqFlight, flightByTime, nextDay, flightLimit, resFlight);
-router.get('/:date(\\d{4}-?\\d{2}-?\\d{2})/:flightNumber(\\d+)', reqFlight, flightByNumber, flightLimit, resFlight);
-router.get('/:flightUUID([A-Za-z]{6}\\d{8}[A-Za-z]{2}\\d+)', flightUUIDParse, reqFlight, flightByNumber, flightLimit, resFlight);
+router.get(`/:date(${DATE_ROUTE_MATCHER})`, reqFlight, flightByTime, nextDay, flightLimit, resFlight);
+router.get(`/:date(${DATE_ROUTE_MATCHER})/:flightNumber(${FLIGHT_NUM_ROUTE_MATCHER})`, reqFlight, flightByNumber, flightLimit, resFlight);
+router.get(`/:flightUUID(${FLIGHT_UUID_ROUTE_MATCHER})`, flightUUIDParse, reqFlight, flightByNumber, flightLimit, resFlight);
 module.exports = router;

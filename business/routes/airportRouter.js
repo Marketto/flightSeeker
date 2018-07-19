@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router({mergeParams: true});
 
 const mongo = require('../services/mongo');
-const routeRouter = require('./routeRouter');
-const airlineRouter = require('./airlineRouter');
-const flightRouter = require('./flightRouter');
 const escapeStringRegexp = require('escape-string-regexp');
+
+const {
+  AIRPORT_ROUTE_MATCHER
+} = require('./routingConst');
 
 function reqAirport(req, res, next) {
   console.log('[reqAirport]');
@@ -14,12 +15,17 @@ function reqAirport(req, res, next) {
     const startsWithRegExp = startsWith ? {
         '$regex': new RegExp(`^${escapeStringRegexp(startsWith)}`, 'i')
       } : null;
+
+    const reachableAirports = res.routesData && [[]].concat(res.routesData.map(r=>r.iataAirports))
+      .reduce((a,b)=>a.concat(b))
+      .filter((iata, idx, airports) => iata !== req.params.iataDeparture && airports.indexOf(iata)===idx).sort();
+
     const query = req.params.iataAirport ? {
       'iata' : req.params.iataAirport,
     } : (
-      req.query.startsWith ? {
+      {
         '$and' : [
-          {
+          req.query.startsWith && {
             '$or' : [
               {
                 'name' : startsWithRegExp
@@ -36,13 +42,17 @@ function reqAirport(req, res, next) {
                 'iata': startsWithRegExp
               }
             ]
-          },{
+          }, req.query.notInCity  && {
             'cityIata': {
               '$ne': req.query.notInCity
             }
+          }, reachableAirports && {
+            'iata' : {
+              $in: reachableAirports
+            }
           }
-        ]
-      } : {}
+        ].filter(c=>!!c)
+      }
     );
     
     db.collection("airports").find(query).toArray().then(result => {
@@ -68,9 +78,6 @@ function resAirport(req, res) {
 }
 
 router.get('/', reqAirport, resAirport);
-router.get('/:iataAirport([A-Z\\d]{3})', reqAirport, resAirport);
-router.use('/:iataDeparture([A-Z\\d]{3})/airline', reqAirport, airlineRouter);
-router.use('/:iataDeparture([A-Z\\d]{3})/to/:iataArrival([A-Z\\d]{3})/flight', flightRouter);
-router.use('/:iataDeparture([A-Z\\d]{3})/to/:iataArrival([A-Z\\d]{3})/airline', routeRouter);
+router.get(`/:iataAirport(${AIRPORT_ROUTE_MATCHER})`, reqAirport, resAirport);
 
 module.exports = router;
