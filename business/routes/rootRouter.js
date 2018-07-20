@@ -28,8 +28,9 @@ router.use(`/${DEPARTURE_PATH}/airline`, routeRouter, airlineRouter);
 router.use(`/${FROM_TO_PATH}/flight`, routeRouter, flightRouter);
 router.use(`/${FROM_TO_PATH}/${AIRLINE_PATH}/flight`, routeRouter, flightRouter);
 router.use(`/${FROM_TO_PATH}/airline`, routeRouter, airlineRouter);
+router.use(`/${DEPARTURE_PATH}/to`, routeRouter, airportRouter);
+router.use(`/${AIRLINE_PATH}/airport`, routeRouter, airportRouter);
 router.use('/airline', airlineRouter);
-router.use(`/${AIRLINE_PATH}/to`, airportRouter);
 router.use('/flight', flightRouter);
 
 module.exports = router;
