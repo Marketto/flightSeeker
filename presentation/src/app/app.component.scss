@@ -14,3 +14,9 @@
     background-color: rgba(255, 255, 255, 0.6);
   }
 }
+
+:host-context {
+  max-width: 60em;
+  display: block;
+  margin: auto;
+}
