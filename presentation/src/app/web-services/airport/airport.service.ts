@@ -1,5 +1,5 @@
 import { Airport } from './../../class/airport/airport';
-import { GenericWebServiceService } from './../generic-web-service.service';
+import { GenericWebServiceService, API_RESOURCE } from './../generic-web-service.service';
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
@@ -10,9 +10,8 @@ const httpOptions = {
     'Content-Type': 'application/json'
   })
 };
-const servicesUrl = 'http://localhost:3000';
 
-const resourceURI = `${servicesUrl}/airport`;
+const resourceURI = `${API_RESOURCE}/airport`;
 
 @Injectable({
   providedIn: 'root'
@@ -37,7 +36,7 @@ export class AirportService {
 
     return Observable.create(observer => {
       this.genericWebService.webService(
-        this.httpClient.get(servicesUrl + serviceURI, {
+        this.httpClient.get(API_RESOURCE + serviceURI, {
           ...httpOptions,
           params: criteria ? criteria.toHttpParams() : undefined
         })

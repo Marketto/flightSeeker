@@ -1,6 +1,6 @@
 import * as moment from 'moment-timezone';
 import { FlightQuery } from './../../class/flight/flight-query';
-import { GenericWebServiceService } from './../generic-web-service.service';
+import { GenericWebServiceService, API_RESOURCE } from './../generic-web-service.service';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
@@ -12,7 +12,6 @@ const httpOptions = {
     'Content-Type': 'application/json'
   })
 };
-const servicesUrl = 'http://localhost:3000';
 
 
 @Injectable({
@@ -32,7 +31,7 @@ export class FlightService {
     criteria: FlightQuery = new FlightQuery()
   ): Observable<Flight[]> {
 
-    const serviceURI = `${servicesUrl}/airport/${departureAirportIata}/to/${arrivalAirportIata}/`
+    const serviceURI = `${API_RESOURCE}/airport/${departureAirportIata}/to/${arrivalAirportIata}/`
       + (criteria.airlineIata ? `airline/${criteria.airlineIata}/` : '')
       + `flight/${moment(departureDate).format('YYYY-MM-DD')}`;
 
@@ -53,7 +52,7 @@ export class FlightService {
     uuid: string
   ): Observable<Flight> {
 
-    const serviceURI = `${servicesUrl}/flight/${uuid}`;
+    const serviceURI = `${API_RESOURCE}/flight/${uuid}`;
 
     return Observable.create(observer => {
       this.genericWebService.webService(

@@ -16,3 +16,5 @@ export class GenericWebServiceService {
   }
   constructor() { }
 }
+
+export const API_RESOURCE: String = '/api';

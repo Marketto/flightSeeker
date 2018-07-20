@@ -1,6 +1,6 @@
-import { Observable, Observer } from 'rxjs';
+import { Observable } from 'rxjs';
 import { AirlineQuery } from './../../class/airline/airline-query';
-import { GenericWebServiceService } from './../generic-web-service.service';
+import { GenericWebServiceService, API_RESOURCE } from './../generic-web-service.service';
 import { HttpHeaders, HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Airline } from '../../class/airline/airline';
@@ -10,7 +10,6 @@ const httpOptions = {
     'Content-Type': 'application/json'
   })
 };
-const servicesUrl = 'http://localhost:3000';
 
 
 @Injectable({
@@ -27,11 +26,11 @@ export class AirlineService {
     let serviceURI;
 
     if (criteria.fromAirportIata && criteria.toAirportIata) {
-      serviceURI = `${servicesUrl}/airport/${criteria.fromAirportIata}/to/${criteria.toAirportIata}/airline`;
+      serviceURI = `${API_RESOURCE}/airport/${criteria.fromAirportIata}/to/${criteria.toAirportIata}/airline`;
     } else if (criteria.fromAirportIata || criteria.toAirportIata) {
-      serviceURI = `${servicesUrl}/airport/${criteria.fromAirportIata || criteria.toAirportIata}/airline`;
+      serviceURI = `${API_RESOURCE}/airport/${criteria.fromAirportIata || criteria.toAirportIata}/airline`;
     } else {
-      serviceURI = `${servicesUrl}/airline`;
+      serviceURI = `${API_RESOURCE}/airline`;
     }
 
     return Observable.create(observer => {
@@ -48,7 +47,7 @@ export class AirlineService {
   }
 
   public read(iata: string): Observable<Airline> {
-    const serviceURI = `${servicesUrl}/airline/${iata}`;
+    const serviceURI = `${API_RESOURCE}/airline/${iata}`;
 
     return Observable.create(observer => {
       this.genericWebService.webService(
