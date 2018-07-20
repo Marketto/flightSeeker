@@ -12,7 +12,7 @@ const httpOptions = {
 };
 const servicesUrl = 'http://localhost:3000';
 
-const serviceURI = `${servicesUrl}/airport`;
+const resourceURI = `${servicesUrl}/airport`;
 
 @Injectable({
   providedIn: 'root'
@@ -24,10 +24,20 @@ export class AirportService {
     private genericWebService: GenericWebServiceService
   ) {}
 
-  public search(criteria?: AirportQuery): Observable<Airport[]> {
+  public search(criteria: AirportQuery = new AirportQuery()): Observable<Airport[]> {
+
+    const airportURI: string = criteria.linkedAirportIata && `airport/${criteria.linkedAirportIata}`;
+    let serviceURI = airportURI ? `/${airportURI}` : '';
+
+    if (criteria.byAirlineIata) {
+      serviceURI += `/airline/${criteria.byAirlineIata}`;
+    }
+
+    serviceURI += airportURI ? '/to' : '/airport';
+
     return Observable.create(observer => {
       this.genericWebService.webService(
-        this.httpClient.get(serviceURI, {
+        this.httpClient.get(servicesUrl + serviceURI, {
           ...httpOptions,
           params: criteria ? criteria.toHttpParams() : undefined
         })
@@ -39,9 +49,11 @@ export class AirportService {
   }
 
   public read(iata: string): Observable<Airport> {
+    const serviceURI = `${resourceURI}/${iata}`;
+
     return Observable.create(observer => {
       return this.genericWebService.webService(
-        this.httpClient.get(`${serviceURI}/${iata}`, httpOptions)
+        this.httpClient.get(serviceURI, httpOptions)
       ).subscribe((data: any[]) => {
         observer.next((data || [])[0]);
         observer.complete();

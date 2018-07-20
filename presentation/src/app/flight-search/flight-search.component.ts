@@ -75,7 +75,8 @@ export class FlightSearchComponent implements OnInit {
   public searchDepartureAirport(airportCriteria: string) {
     this.airportService.search(new AirportQuery({
       'startsWith': airportCriteria,
-      'notInCity': this.arrivalAirport ? this.arrivalAirport.cityIata : undefined
+      'linkedAirportIata': this.arrivalAirport ? this.arrivalAirport.iata : null,
+      'byAirlineIata': this.airline ? this.airline.iata : null
     })).subscribe((departureAirports: Airport[] = []) => {
       const matchingDepartureAirport = departureAirports.find(airport => {
         return airport.name.toLowerCase() === airportCriteria.toLowerCase() || airport.iata === airportCriteria;
@@ -96,7 +97,8 @@ export class FlightSearchComponent implements OnInit {
   public searchArrivalAirport(airportCriteria: string) {
     this.airportService.search(new AirportQuery({
       'startsWith': airportCriteria,
-      'notInCity': this.departureAirport ? this.departureAirport.cityIata : undefined
+      'linkedAirportIata': this.departureAirport ? this.departureAirport.iata : null,
+      'byAirlineIata': this.airline ? this.airline.iata : null
     })).subscribe((arrivalAirports: Airport[] = []) => {
       const matchingArrivalAirport = arrivalAirports.find(airport => {
         return airport.name.toLowerCase() === airportCriteria.toLowerCase() || airport.iata === airportCriteria;
@@ -117,8 +119,8 @@ export class FlightSearchComponent implements OnInit {
   public searchAirline(airlineCriteria) {
     this.airlineService.search(new AirlineQuery({
       'startsWith': airlineCriteria,
-      'fromAirportIata': (this.departureAirport || new Airport()).iata,
-      'toAirportIata': (this.arrivalAirport || new Airport()).iata
+      'fromAirportIata': this.departureAirport ? this.departureAirport.iata : null,
+      'toAirportIata': this.arrivalAirport ? this.arrivalAirport.iata : null
     })).subscribe((data: Airline[] = []) => {
       const matchingAirline = data.find(airline => {
         return airline.name.toLowerCase() === airlineCriteria.toLowerCase() || airline.iata === airlineCriteria;
