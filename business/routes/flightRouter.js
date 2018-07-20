@@ -54,19 +54,26 @@ function reqFlight(req, res, next) {
         ]).then(responses => {
             const db = responses[1];
 
+            const airportsDetail = {};
+
             async function enrichFlight(flight = {}) {
                 return await new Promise((resolve, reject)=>{
                     const departureIataCode = flight.departureCode || (flight.departureAirport || {}).locationCode;
                     const arrivalIataCode = flight.arrivalCode || (flight.arrivalAirport || {}).locationCode;
+                    
                     Promise.all([
-                        db.collection("airports").findOne({
+                        airportsDetail[departureIataCode] || db.collection("airports").findOne({
                             'iata': departureIataCode
                         }),
-                        db.collection("airports").findOne({
+                        airportsDetail[arrivalIataCode] || db.collection("airports").findOne({
                             'iata': arrivalIataCode
                         })
                     ]).then(result => {
                         try {
+                            result.forEach(airport => {
+                                airportsDetail[airport.iata] = airportsDetail[airport.iata] || Object.assign({}, airport);
+                            });
+
                             const departureAirport = Object.assign(result[0]||{}, {
                                 '_id':undefined,
                                 'cityNames': undefined,
@@ -113,6 +120,7 @@ function reqFlight(req, res, next) {
             const flightDetails = ([].concat((responses[0] || {}).FlightDetails)).filter(e=>!!e).map(fixXmlObject).filter(f => {
                 return req.query.stopOver || !req.params.iataAirline || (![].concat(f.flightLegDetails).filter(fld=>!!fld).some(fld => fld.operatingAirline));
             });
+
             res.flightData = Promise.all(flightDetails.map(async function (flight) {
                 try {
                     const enrichedFlight = await Object.assign(

@@ -1,9 +1,6 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-//const aviationEdge = require('../services/aviation-edge');
 const mongo = require('../services/mongo');
-//const airlineRouter = require('./airlineRouter');
-//const flightRouter = require('./flightRouter');
 
 function reqRoutes(req, res, next) {
     console.log('[reqRoutes]');
@@ -53,35 +50,8 @@ function reqRoutes(req, res, next) {
         console.error(err);
         res.sendStatus(500);
     });
-
-    /*aviationEdge.service({
-        'resource': 'routes',
-        'params': {
-            'departureIata': req.params.iataDeparture,
-            'arrivalIata': req.params.iataArrival
-        }
-    }).then((data = []) => {
-        res.routesData = (data||[]).filter((route, idx, routes)=>{
-            return idx === routes.findIndex(r2 => r2.airlineIata === route.airlineIata && r2.airlineIcao === route.airlineIcao)
-        }).map(route=>{
-            return {
-                icao: route.airlineIcao,
-                iata: route.airlineIata
-            };
-        });
-        
-        console.log(`Routes for ${req.params.iataDeparture} to ${req.params.iataArrival}`);
-
-        next();
-    }, err => {
-        console.error(err);
-        res.sendStatus(500);
-    });*/
 }
 
-router.use('/', reqRoutes); //, airlineRouter);
-/*
-router.get('/:iataAirline([A-Z0-9]{2})', reqRoutes, airlineRouter);
-router.use('/:iataAirline([A-Z0-9]{2})/flight', flightRouter);
-*/
+router.use('/', reqRoutes);
+
 module.exports = router;

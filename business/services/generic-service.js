@@ -2,14 +2,10 @@ const cachios = require('cachios');
 const xml2json = require('xml2json');
 const config = require('../config.json');
 
-const longTermCacheAge = config.cache.staticResourceTimeout;
-const standardCacheAge = config.cache.dynamicResourceTimeout;
-
-
 module.exports = (serviceUrl) => async (cfg = {}) => {
     
     const response = await cachios.get(serviceUrl.href, {
-            'ttl' : cfg.static ? longTermCacheAge : standardCacheAge,
+            'ttl': config.cache.timeout,
             'responseType' : (cfg.type === 'csv' && 'text') || cfg.type || 'json'
         });
 

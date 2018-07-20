@@ -1,6 +1,5 @@
 const express = require('express');
 const router = express.Router({mergeParams: true});
-
 const mongo = require('../services/mongo');
 const escapeStringRegexp = require('escape-string-regexp');
 
