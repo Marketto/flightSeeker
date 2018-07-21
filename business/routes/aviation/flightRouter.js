@@ -1,8 +1,8 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 const { URLSearchParams } = require('url');
-const flightLookup = require('../services/flight-lookup');
-const mongo = require('../services/mongo');
+const flightLookup = require('../../services/flight-lookup');
+const mongo = require('../../services/mongo');
 const moment = require('moment-timezone');
 
 const {

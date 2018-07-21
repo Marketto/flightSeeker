@@ -23,7 +23,7 @@ app.use(compression({
     level : 9
   }));
 
-app.use('/api/', rootRouter);
+app.use('/', rootRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

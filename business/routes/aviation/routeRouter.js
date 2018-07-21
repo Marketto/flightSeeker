@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const mongo = require('../services/mongo');
+const mongo = require('../../services/mongo');
 
 function reqRoutes(req, res, next) {
     console.log('[reqRoutes]');
