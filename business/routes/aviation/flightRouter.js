@@ -61,13 +61,18 @@ function reqFlight(req, res, next) {
                     const departureIataCode = flight.departureCode || (flight.departureAirport || {}).locationCode;
                     const arrivalIataCode = flight.arrivalCode || (flight.arrivalAirport || {}).locationCode;
                     
+                    const airportQueryProjection = {
+                        _id : 0,
+                        cityNames: 0
+                    };
+
                     Promise.all([
                         airportsDetail[departureIataCode] || db.collection("airports").findOne({
                             'iata': departureIataCode
-                        }),
+                        }, airportQueryProjection),
                         airportsDetail[arrivalIataCode] || db.collection("airports").findOne({
                             'iata': arrivalIataCode
-                        })
+                        }, airportQueryProjection)
                     ]).then(result => {
                         try {
                             result.forEach(airport => {
@@ -75,13 +80,9 @@ function reqFlight(req, res, next) {
                             });
 
                             const departureAirport = Object.assign(result[0]||{}, {
-                                '_id':undefined,
-                                'cityNames': undefined,
                                 'terminal': (flight.departureAirport || {}).terminal
                             });
                             const arrivalAirport = Object.assign(result[1] || {}, {
-                                '_id': undefined,
-                                'cityNames': undefined,
                                 'terminal': (flight.arrivalAirport || {}).terminal
                             });
 
