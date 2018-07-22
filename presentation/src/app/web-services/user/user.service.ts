@@ -1,6 +1,7 @@
 import { GenericWebServiceService } from '../generic-web-service.service';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
+import { User } from '../../classes/user/user';
 
 @Injectable({
   providedIn: 'root'
@@ -11,11 +12,11 @@ export class UserService {
     private genericWebService: GenericWebServiceService
   ) { }
 
-  public read(): Observable<any> {
+  public read(): Observable<User> {
 
     const serviceURI = `user`;
 
-    return this.genericWebService.webService<any>(
+    return this.genericWebService.webService<User>(
       serviceURI,
       undefined
     );

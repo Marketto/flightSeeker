@@ -2,6 +2,7 @@ import { UserService } from './../../web-services/user/user.service';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../services/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
+import { User } from '../../classes/user/user';
 
 @Component({
   selector: 'app-menu-bar',
@@ -20,6 +21,7 @@ export class MenuBarComponent implements OnInit {
       ]
     },
     {
+      id: 'USER',
       label: 'User',
       icon: 'pi pi-user',
       items: [
@@ -52,8 +54,8 @@ export class MenuBarComponent implements OnInit {
     private userService: UserService
   ) {
     if (this.authService.isAuthenticated) {
-      this.userService.read().subscribe(data=>{
-        console.log(data);
+      this.userService.read().subscribe((user: User) => {
+        this.$items.find(m => m.id === 'USER').label = user.given_name;
       });
     }
   }
