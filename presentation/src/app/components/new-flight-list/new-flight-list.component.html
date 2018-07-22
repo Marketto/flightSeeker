@@ -1,0 +1,10 @@
+<p-card class="ui-g-12" [ngSwitch]="loading">
+  <div class="ui-g ui-fluid" *ngSwitchDefault>
+    <div class="ui-g-12">
+      <input type="text" pInputText placeholder="Nome lista" [(ngModel)]="flightList.name" required>
+
+      <p-button (onClick)="newFlightList()" icon="pi pi-check"></p-button>
+    </div>
+  </div>
+  <p-progressSpinner *ngSwitchCase="true"></p-progressSpinner>
+</p-card>

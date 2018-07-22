@@ -25,11 +25,9 @@ export class AirlineService {
       serviceURI = `aviation/airline`;
     }
 
-    return this.genericWebService.webService<Airline[]>(
+    return this.genericWebService.search<Airline>(
         serviceURI,
-        {
-          params: criteria.toHttpParams()
-        },
+        criteria.toHttpParams(),
         (data: any[] = []): Airline[] => data.map(e => new Airline(e))
     );
   }
@@ -37,9 +35,8 @@ export class AirlineService {
   public read(iata: string): Observable<Airline> {
     const serviceURI = `aviation/airline/${iata}`;
 
-    return this.genericWebService.webService<Airline>(
+    return this.genericWebService.read<Airline>(
       serviceURI,
-      undefined,
       (data: any[] = []): Airline => data.map(e => new Airline(e))[0]
     );
   }

@@ -26,11 +26,9 @@ export class FlightService {
       + (criteria.airlineIata ? `airline/${criteria.airlineIata}/` : '')
       + `flight/${moment(departureDate).format('YYYY-MM-DD')}`;
 
-    return this.genericWebService.webService<Flight[]>(
+    return this.genericWebService.search<Flight>(
       serviceURI,
-      {
-        params: criteria.toHttpParams()
-      },
+      criteria.toHttpParams(),
       (data: any[] = []): Flight[] => data.map(e => new Flight(e))
     );
   }
@@ -41,9 +39,8 @@ export class FlightService {
 
     const serviceURI = `aviation/flight/${uuid}`;
 
-    return this.genericWebService.webService<Flight>(
+    return this.genericWebService.read<Flight>(
       serviceURI,
-      undefined,
       (data: any[] = []): Flight => data.map(e => new Flight(e))[0]
     );
   }

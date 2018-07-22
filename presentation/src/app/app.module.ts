@@ -15,6 +15,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ButtonModule } from 'primeng/button';
 import { MenubarModule } from 'primeng/menubar';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { DialogModule } from 'primeng/dialog';
 
 
 import { AppRoutingModule } from './app-routing.module';
@@ -28,6 +29,7 @@ import { FlightMapComponent } from './components/flight-map/flight-map.component
 import { MenuBarComponent } from './components/menu-bar/menu-bar.component';
 import { AuthorizingComponent } from './views/authorizing/authorizing.component';
 import { HomeComponent } from './views/home/home.component';
+import { NewFlightListComponent } from './components/new-flight-list/new-flight-list.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +41,8 @@ import { HomeComponent } from './views/home/home.component';
     FlightMapComponent,
     MenuBarComponent,
     AuthorizingComponent,
-    HomeComponent
+    HomeComponent,
+    NewFlightListComponent
   ],
   imports: [
     BrowserModule,
@@ -52,6 +55,7 @@ import { HomeComponent } from './views/home/home.component';
     ButtonModule,
     MenubarModule,
     ProgressSpinnerModule,
+    DialogModule,
     FormsModule,
     HttpClientModule,
     MomentModule,

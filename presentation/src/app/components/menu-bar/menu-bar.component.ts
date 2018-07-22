@@ -1,8 +1,9 @@
-import { UserService } from './../../web-services/user/user.service';
+import { FlightList } from '../../classes/flight-list/flight-list';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../services/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
 import { User } from '../../classes/user/user';
+import { FlightListService } from '../../web-services/flight-list/flight-list.service';
 
 @Component({
   selector: 'app-menu-bar',
@@ -10,15 +11,19 @@ import { User } from '../../classes/user/user';
   styleUrls: ['./menu-bar.component.scss']
 })
 export class MenuBarComponent implements OnInit {
+  public newFlightListDialog: Boolean = false;
+  private flightListMenu: MenuItem[] = [
+    {
+      label: 'Nuova',
+      icon: 'pi pi-plus',
+      command: () => this.newFlightListDialog = true
+    }
+  ];
   private $items: MenuItem[] = [
     {
+      id: 'FLIGHT_LISTS',
       label: 'Liste',
-      items: [
-        {
-          label: 'Nuova',
-          icon: 'pi pi-plus',
-        }
-      ]
+      items: this.flightListMenu
     },
     {
       id: 'USER',
@@ -49,13 +54,30 @@ export class MenuBarComponent implements OnInit {
     this.authService.login();
   }
 
+  public addNewFlightList(flightList: FlightList): void {
+    this.flightListMenu.push(this.flightListToMenuItem(flightList));
+    this.newFlightListDialog = false;
+  }
+
+  private flightListToMenuItem(flightList: FlightList): { label: string, routerLink: string[]} {
+    return {
+      'label': flightList.name,
+      'routerLink': ['/list', flightList.slug]
+    };
+  }
+
   constructor(
     private authService: AuthService,
-    private userService: UserService
+    private flightListService: FlightListService
   ) {
-    if (this.authService.isAuthenticated) {
-      this.userService.read().subscribe((user: User) => {
-        this.$items.find(m => m.id === 'USER').label = user.given_name;
+    const user: User = this.authService.user;
+    if (user) {
+      this.$items.find(m => m.id === 'USER').label = this.authService.user.given_name;
+      this.flightListService.readAll().subscribe((list: FlightList[]) => {
+        this.flightListMenu.splice(1);
+        list.forEach((flightList: FlightList) => {
+          this.flightListMenu.push(this.flightListToMenuItem(flightList));
+        });
       });
     }
   }

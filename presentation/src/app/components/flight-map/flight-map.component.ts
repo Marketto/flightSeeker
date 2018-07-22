@@ -44,13 +44,12 @@ export class FlightMapComponent implements OnInit, OnDestroy {
         this.currentPosition = this.flight.arrivalAirport.position;
       } else if (this.route) {
         const flightProgress: number = now.diff(departureDT, 'seconds') / this.flight.totalTripTime.asSeconds();
-        const flightProgressFloor = Math.floor(flightProgress * this.route.geometry.coordinates.length);
-        const flightProgressCeil = Math.ceil(flightProgress * this.route.geometry.coordinates.length);
+        const coordinates = this.route.geometry.coordinates;
+        const flightProgressFloor = Math.max(0, Math.floor(flightProgress * coordinates.length));
+        const flightProgressCeil = Math.min(coordinates.length - 1, Math.ceil(flightProgress * coordinates.length));
 
-        const startLongitude: number = this.route.geometry.coordinates[flightProgressFloor][0];
-        const startLatitude: number = this.route.geometry.coordinates[flightProgressFloor][1];
-        const endLongitude: number = this.route.geometry.coordinates[flightProgressCeil][0];
-        const endLatitude: number = this.route.geometry.coordinates[flightProgressCeil][1];
+        const [startLongitude, startLatitude]: number[] = coordinates[flightProgressFloor];
+        const [endLongitude, endLatitude]: number[] = coordinates[flightProgressCeil];
 
         this.currentPosition = new Position({
           'latitude': startLatitude + (endLatitude - startLatitude) * flightProgress,

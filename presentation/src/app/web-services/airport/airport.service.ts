@@ -28,11 +28,9 @@ export class AirportService {
 
     serviceURI += airportURI ? '/to' : 'airport';
 
-    return this.genericWebService.webService<Airport[]>(
+    return this.genericWebService.search<Airport>(
       `${aviationURI}/${serviceURI}`,
-      {
-        params: criteria.toHttpParams()
-      },
+      criteria.toHttpParams(),
       (data: any[] = []): Airport[] => data.map(e => new Airport(e))
     );
   }
@@ -40,9 +38,8 @@ export class AirportService {
   public read(iata: string): Observable<Airport> {
     const serviceURI = `${resourceURI}/${iata}`;
 
-    return this.genericWebService.webService<Airport>(
+    return this.genericWebService.read<Airport>(
       serviceURI,
-      undefined,
       (data: any[] = []): Airport => data.map(e => new Airport(e))[0]
     );
   }

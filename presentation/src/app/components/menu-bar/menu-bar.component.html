@@ -1,6 +1,10 @@
 <div class="menu-bar ui-card ui-widget ui-widget-content ui-corner-all">
   <h1 class="title">Flight Seeker</h1>
   <p-menubar [model]="items">
-<button pButton label="Login" icon="pi pi-user" (click)="login()" *ngIf="!authenticated"></button>
+    <button pButton label="Login" icon="pi pi-user" (click)="login()" *ngIf="!authenticated"></button>
   </p-menubar>
 </div>
+
+<p-dialog header="Nuova lista voli" [(visible)]="newFlightListDialog" [dismissableMask]="true" [modal]="true">
+  <app-new-flight-list (newFlight)="addNewFlightList($event)"></app-new-flight-list>
+</p-dialog>

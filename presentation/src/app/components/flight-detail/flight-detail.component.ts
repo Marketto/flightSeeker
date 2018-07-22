@@ -12,7 +12,7 @@ import { Subscription } from 'rxjs';
   styleUrls: ['./flight-detail.component.scss']
 })
 export class FlightDetailComponent implements OnInit, OnDestroy {
-  private $flight:Flight;
+  private $flight: Flight;
 
   @Input()
   public set flight(flight: Flight) {
@@ -31,7 +31,7 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
   public timeToDepartureLeft: Duration;
   public timeToArrivalLeft: Duration;
   public progress: number;
-  @Output() progressChange = new EventEmitter();
+  @Output() progressChange = new EventEmitter<number>();
 
   private calculateDurations() {
     const departureDT = this.flight.departureDateTime;

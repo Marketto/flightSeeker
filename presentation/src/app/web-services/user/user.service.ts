@@ -16,9 +16,9 @@ export class UserService {
 
     const serviceURI = `user`;
 
-    return this.genericWebService.webService<User>(
+    return this.genericWebService.read<User>(
       serviceURI,
-      undefined
+      (data) => new User(data)
     );
   }
 }

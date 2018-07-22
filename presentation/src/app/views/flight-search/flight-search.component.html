@@ -2,7 +2,7 @@
   <p-card title="Ricerca voli"class="ui-g-12 ui-md-12 flight-search">
     <div class="ui-g ui-fluid">
       <div class="ui-g-12 ui-md-5">
-        <h3 class="text-start">Partenza</h3>
+        <h3 class="text-start">Aeroporto di partenza</h3>
         <p-autoComplete [(ngModel)]="departureAirport" [suggestions]="departureAirports" (completeMethod)="searchDepartureAirport($event.query)" [forceSelection]="true" field="name" (keydown.enter)="departureAirport = autoSelectFromList(departureAirport, departureAirports)">
           <ng-template let-airport pTemplate="departureAirport">
             <div class="hint-list">
@@ -19,7 +19,7 @@
         <p-button icon="pi pi-refresh" (click)="switchAirports()" [disabled]="!departureAirport && !arrivalAirport"></p-button>
       </div>
       <div class="ui-g-12 ui-md-5">
-        <h3 class="text-end">Arrivo</h3>
+        <h3 class="text-end">Aeroporto d'arrivo</h3>
         <p-autoComplete [(ngModel)]="arrivalAirport" [suggestions]="arrivalAirports" (completeMethod)="searchArrivalAirport($event.query)" forceSelection="true" field="name" (keydown.enter)="arrivalAirport = autoSelectFromList(arrivalAirport, arrivalAirports)">
           <ng-template let-airport pTemplate="arrivalAirport">
             <div class="hint-list">

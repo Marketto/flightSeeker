@@ -5,6 +5,7 @@ import * as auth0 from 'auth0-js';
 import { HttpParams } from '@angular/common/http';
 import * as moment from 'moment';
 import { Moment } from 'moment';
+import { User } from '../../classes/user/user';
 
 
 const redirectBaseUri = `${window.location.origin}/auth`;
@@ -16,6 +17,9 @@ const LOGOUT_ROUTE = '/';
   providedIn: 'root'
 })
 export class AuthService {
+
+  private $authToken: string;
+  private $user: User;
 
   private webAuth = new auth0.WebAuth({
     responseType: 'token id_token',
@@ -60,8 +64,8 @@ export class AuthService {
             this.setSession(authResult);
           }
           observer.next(params[SOURCE_ROUTE_PARAM]);
-          observer.complete();
         }
+        observer.complete();
       });
     });
   }
@@ -73,13 +77,23 @@ export class AuthService {
     localStorage.setItem('access_token', authResult.accessToken);
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', expiresAt);
+    localStorage.setItem('user', JSON.stringify(authResult.idTokenPayload));
+  }
+
+  public get user(): User {
+    if (this.isAuthenticated) {
+      this.$user = this.$user || new User(JSON.parse(localStorage.getItem('user')));
+      return this.$user;
+    }
+    return null;
   }
 
   public get authToken(): String {
-    const token = localStorage.getItem('id_token');
-    if (this.isAuthenticated && token) {
-      return token;
+    if (this.isAuthenticated) {
+      this.$authToken = this.$authToken || localStorage.getItem('id_token');
+      return this.$authToken;
     }
+    return null;
   }
 
   public logout(): void {
@@ -87,6 +101,7 @@ export class AuthService {
     localStorage.removeItem('access_token');
     localStorage.removeItem('id_token');
     localStorage.removeItem('expires_at');
+    localStorage.removeItem('user');
     // Go back to the home route
     this.router.navigate([LOGOUT_ROUTE]);
   }

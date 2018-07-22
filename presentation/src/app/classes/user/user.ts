@@ -1,6 +1,5 @@
 import { Moment } from 'moment-timezone';
 import * as moment from 'moment-timezone';
-import { URL } from 'url';
 
 export type Gender = 'male'|'female'|null;
 
@@ -16,7 +15,7 @@ export class User {
   public name: string;
   public nickname: string;
   public nonce: string;
-  public picture: URL;
+  public picture: string;
   public sub: string;
   public updated_at: Moment;
 
@@ -33,7 +32,7 @@ export class User {
       this.name = obj.name;
       this.nickname = obj.nickname;
       this.nonce = obj.nonce;
-      this.picture = obj.picture ? new URL(obj.picture) : undefined;
+      this.picture = obj.picture;
       this.sub = obj.sub;
       this.updated_at = obj.updated_at ? new moment(obj.updated_at) : undefined;
     }
