@@ -13,15 +13,21 @@ import { AutoCompleteModule } from 'primeng/autocomplete';
 import { CalendarModule } from 'primeng/calendar';
 import { ProgressBarModule } from 'primeng/progressbar';
 import { ButtonModule } from 'primeng/button';
+import { MenubarModule } from 'primeng/menubar';
+import { ProgressSpinnerModule } from 'primeng/progressspinner';
+
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 
-import { FlightSearchComponent } from './flight-search/flight-search.component';
-import { FlightDetailComponent } from './flight-detail/flight-detail.component';
-import { SearchResultsComponent } from './search-results/search-results.component';
-import { JourneyDetailComponent } from './journey-detail/journey-detail.component';
-import { FlightMapComponent } from './flight-map/flight-map.component';
+import { FlightSearchComponent } from './views/flight-search/flight-search.component';
+import { FlightDetailComponent } from './components/flight-detail/flight-detail.component';
+import { SearchResultsComponent } from './views/search-results/search-results.component';
+import { JourneyDetailComponent } from './views/journey-detail/journey-detail.component';
+import { FlightMapComponent } from './components/flight-map/flight-map.component';
+import { MenuBarComponent } from './components/menu-bar/menu-bar.component';
+import { AuthorizingComponent } from './views/authorizing/authorizing.component';
+import { HomeComponent } from './views/home/home.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +36,10 @@ import { FlightMapComponent } from './flight-map/flight-map.component';
     FlightDetailComponent,
     SearchResultsComponent,
     JourneyDetailComponent,
-    FlightMapComponent
+    FlightMapComponent,
+    MenuBarComponent,
+    AuthorizingComponent,
+    HomeComponent
   ],
   imports: [
     BrowserModule,
@@ -41,6 +50,8 @@ import { FlightMapComponent } from './flight-map/flight-map.component';
     CalendarModule,
     ProgressBarModule,
     ButtonModule,
+    MenubarModule,
+    ProgressSpinnerModule,
     FormsModule,
     HttpClientModule,
     MomentModule,

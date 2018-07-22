@@ -1,15 +1,8 @@
 import { Observable } from 'rxjs';
-import { AirlineQuery } from './../../class/airline/airline-query';
-import { GenericWebServiceService, API_RESOURCE } from './../generic-web-service.service';
-import { HttpHeaders, HttpClient } from '@angular/common/http';
+import { AirlineQuery } from '../../classes/airline/airline-query';
+import { GenericWebServiceService } from '../generic-web-service.service';
 import { Injectable } from '@angular/core';
-import { Airline } from '../../class/airline/airline';
-
-const httpOptions = {
-  headers: new HttpHeaders({
-    'Content-Type': 'application/json'
-  })
-};
+import { Airline } from '../../classes/airline/airline';
 
 
 @Injectable({
@@ -18,44 +11,36 @@ const httpOptions = {
 export class AirlineService {
 
   constructor(
-    private httpClient: HttpClient,
     private genericWebService: GenericWebServiceService
   ) { }
 
-  public search(criteria?: AirlineQuery): Observable<Airline[]> {
+  public search(criteria: AirlineQuery = new AirlineQuery()): Observable<Airline[]> {
     let serviceURI;
 
     if (criteria.fromAirportIata && criteria.toAirportIata) {
-      serviceURI = `${API_RESOURCE}/airport/${criteria.fromAirportIata}/to/${criteria.toAirportIata}/airline`;
+      serviceURI = `aviation/airport/${criteria.fromAirportIata}/to/${criteria.toAirportIata}/airline`;
     } else if (criteria.fromAirportIata || criteria.toAirportIata) {
-      serviceURI = `${API_RESOURCE}/airport/${criteria.fromAirportIata || criteria.toAirportIata}/airline`;
+      serviceURI = `aviation/airport/${criteria.fromAirportIata || criteria.toAirportIata}/airline`;
     } else {
-      serviceURI = `${API_RESOURCE}/airline`;
+      serviceURI = `aviation/airline`;
     }
 
-    return Observable.create(observer => {
-      this.genericWebService.webService(
-        this.httpClient.get(serviceURI, {
-          ...httpOptions,
-          params: criteria ? criteria.toHttpParams() : undefined
-        })
-      ).subscribe((data: any[]) => {
-        observer.next((data || []).map(e => new Airline(e)));
-        observer.complete();
-      });
-    });
+    return this.genericWebService.webService<Airline[]>(
+        serviceURI,
+        {
+          params: criteria.toHttpParams()
+        },
+        (data: any[] = []): Airline[] => data.map(e => new Airline(e))
+    );
   }
 
   public read(iata: string): Observable<Airline> {
-    const serviceURI = `${API_RESOURCE}/airline/${iata}`;
+    const serviceURI = `aviation/airline/${iata}`;
 
-    return Observable.create(observer => {
-      this.genericWebService.webService(
-        this.httpClient.get(serviceURI)
-      ).subscribe((data: any[]) => {
-        observer.next((data || [])[0]);
-        observer.complete();
-      });
-    });
+    return this.genericWebService.webService<Airline>(
+      serviceURI,
+      undefined,
+      (data: any[] = []): Airline => data.map(e => new Airline(e))[0]
+    );
   }
 }

@@ -1,17 +1,12 @@
-import { Airport } from './../../class/airport/airport';
-import { GenericWebServiceService, API_RESOURCE } from './../generic-web-service.service';
+import { Airport } from '../../classes/airport/airport';
+import { GenericWebServiceService } from '../generic-web-service.service';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { AirportQuery } from '../../class/airport/airport-query';
+import { AirportQuery } from '../../classes/airport/airport-query';
 
-const httpOptions = {
-  headers: new HttpHeaders({
-    'Content-Type': 'application/json'
-  })
-};
 
-const resourceURI = `${API_RESOURCE}/airport`;
+const aviationURI = `aviation`;
+const resourceURI = `${aviationURI}/airport`;
 
 @Injectable({
   providedIn: 'root'
@@ -19,45 +14,37 @@ const resourceURI = `${API_RESOURCE}/airport`;
 export class AirportService {
 
   constructor(
-    private httpClient: HttpClient,
     private genericWebService: GenericWebServiceService
   ) {}
 
   public search(criteria: AirportQuery = new AirportQuery()): Observable<Airport[]> {
 
-    const airportURI: string = criteria.linkedAirportIata && `airport/${criteria.linkedAirportIata}`;
-    let serviceURI = airportURI ? `/${airportURI}` : '';
+    const airportURI: String = criteria.linkedAirportIata ? `airport/${criteria.linkedAirportIata}` : null;
+    let serviceURI = airportURI ? `${airportURI}` : '';
 
     if (criteria.byAirlineIata) {
-      serviceURI += `/airline/${criteria.byAirlineIata}`;
+      serviceURI += `${serviceURI ? '/' : ''}airline/${criteria.byAirlineIata}`;
     }
 
-    serviceURI += airportURI ? '/to' : '/airport';
+    serviceURI += airportURI ? '/to' : 'airport';
 
-    return Observable.create(observer => {
-      this.genericWebService.webService(
-        this.httpClient.get(API_RESOURCE + serviceURI, {
-          ...httpOptions,
-          params: criteria ? criteria.toHttpParams() : undefined
-        })
-      ).subscribe((data: any[]) => {
-        observer.next((data || []).map(e => new Airport(e)));
-        observer.complete();
-      });
-    });
+    return this.genericWebService.webService<Airport[]>(
+      `${aviationURI}/${serviceURI}`,
+      {
+        params: criteria.toHttpParams()
+      },
+      (data: any[] = []): Airport[] => data.map(e => new Airport(e))
+    );
   }
 
   public read(iata: string): Observable<Airport> {
     const serviceURI = `${resourceURI}/${iata}`;
 
-    return Observable.create(observer => {
-      return this.genericWebService.webService(
-        this.httpClient.get(serviceURI, httpOptions)
-      ).subscribe((data: any[]) => {
-        observer.next((data || [])[0]);
-        observer.complete();
-      });
-    });
+    return this.genericWebService.webService<Airport>(
+      serviceURI,
+      undefined,
+      (data: any[] = []): Airport => data.map(e => new Airport(e))[0]
+    );
   }
 
 }
