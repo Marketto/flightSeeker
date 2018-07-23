@@ -1,4 +1,8 @@
 {
-    "aviationEdgeKey": "your-aviation-edge-key",
-    "flightLookupKey": "your-flight-lookup-key"
+    "flightLookupKey": "your-flight-lookup-key",
+    "auth0": {
+        "jwksUri": "your-auth0-jwks-uri",
+        "audience": "your-auth0-audience",
+        "issuer": "your-auth0-issuer"
+    }
 }
