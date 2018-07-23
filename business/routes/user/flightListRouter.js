@@ -32,7 +32,7 @@ function getAllFlightLists(req, res, next) {
 }
 
 function resAllFlightLists(req, res) {
-    res.send(req.flightLists);
+    res.send(req.allflightLists);
 }
 
 function newFlightList(req, res, next) {
