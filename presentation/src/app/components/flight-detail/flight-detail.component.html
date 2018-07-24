@@ -1,16 +1,16 @@
 <div class="ui-helper-clearfix ui-g ui-fluid flight-container">
   <div class="ui-g-5 ui-md-5 departure">
-    <p>{{flight.departureAirport.name}}</p>
-    <p>{{flight.departureAirport.city}} ({{flight.departureAirport.country}})</p>
-    <p>{{flight.departureDateTime | amCalendar}}</p>
+    <p>{{flight.departure.airport.name}}</p>
+    <p>{{flight.departure.airport.city}} ({{flight.departure.airport.country}})</p>
+    <p>{{flight.departure.dateTime | amCalendar}}</p>
   </div>
   <div class="ui-g-2 ui-md-2 meals">
-    <img [src]="'../../assets/img/meal_' + detail.meals + '.png'" *ngFor="let detail of flight.flightLegDetails"/>
+    <img [src]="'../../assets/img/meal_' + flight.meals + '.png'"/>
   </div>
   <div class="ui-g-5 ui-md-5 arrival">
-    <p>{{flight.arrivalAirport.name}}</p>
-    <p>{{flight.arrivalAirport.city}} ({{flight.arrivalAirport.country}})</p>
-    <p>{{flight.arrivalDateTime | amCalendar}}</p>
+    <p>{{flight.arrival.airport.name}}</p>
+    <p>{{flight.arrival.airport.city}} ({{flight.arrival.airport.country}})</p>
+    <p>{{flight.arrival.dateTime | amCalendar}}</p>
   </div>
   <div class="ui-g-12 ui-md-12">
     <p-progressBar [value]="progress" [showValue]="false"></p-progressBar>

@@ -34,9 +34,9 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
   @Output() progressChange = new EventEmitter<number>();
 
   private calculateDurations() {
-    const departureDT = this.flight.departureDateTime;
-    const arrivalDT = this.flight.arrivalDateTime;
-    const flightTotalDuration = this.flight.totalTripTime.asMinutes();
+    const departureDT = this.flight.departure.dateTime;
+    const arrivalDT = this.flight.arrival.dateTime;
+    const flightTotalDuration = this.flight.duration.asMinutes();
 
     this.timeToDepartureLeft = departureDT.diff(this.now, 'minutes');
     this.timeToArrivalLeft = arrivalDT.diff(this.now, 'minutes');

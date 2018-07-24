@@ -1,8 +1,8 @@
 <aol-map>
   <aol-interaction-default></aol-interaction-default>
   <aol-view [zoom]="4">
-    <aol-coordinate [y]="(flight.departureAirport.position.latitude + flight.arrivalAirport.position.latitude)/2"
-      [x]="(flight.departureAirport.position.longitude + flight.arrivalAirport.position.longitude)/2" [srid]="'EPSG:4326'">
+    <aol-coordinate [y]="(flight.departure.airport.position.latitude + flight.arrival.airport.position.latitude)/2"
+      [x]="(flight.departure.airport.position.longitude + flight.arrival.airport.position.longitude)/2" [srid]="'EPSG:4326'">
     </aol-coordinate>
   </aol-view>
   <aol-layer-tile>

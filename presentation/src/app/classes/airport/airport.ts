@@ -9,7 +9,6 @@ export class Airport {
   public timeZone: string;
   public countryCode: string;
   public cityIata: string;
-  public terminal: string;
   public position: Position;
 
   constructor(obj?: any) {
@@ -23,7 +22,6 @@ export class Airport {
       this.timeZone = obj.timeZone || obj.tz;
       this.countryCode = obj.countryCode;
       this.cityIata = obj.cityIata;
-      this.terminal = obj.terminal;
       this.position = obj.position ? new Position(obj.position) : undefined;
     }
   }

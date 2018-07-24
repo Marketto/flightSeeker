@@ -24,7 +24,7 @@ export class FlightMapComponent implements OnInit, OnDestroy {
 
     this.subscribeNowMidTime();
 
-    this.route = this.geoService.geoArc(flight.departureAirport.position, flight.arrivalAirport.position, flight.totalTripTime.asMinutes());
+    this.route = this.geoService.geoArc(flight.departure.airport.position, flight.arrival.airport.position, flight.duration.asMinutes());
 
     this.estimatePosition(new moment());
   }
@@ -35,15 +35,15 @@ export class FlightMapComponent implements OnInit, OnDestroy {
 
   private estimatePosition(now: Moment) {
     if (this.flight) {
-      const departureDT: Moment = this.flight.departureDateTime;
-      const arrivalDT: Moment = this.flight.arrivalDateTime;
+      const departureDT: Moment = this.flight.departure.dateTime;
+      const arrivalDT: Moment = this.flight.arrival.dateTime;
 
       if (departureDT > now) {
-        this.currentPosition = this.flight.departureAirport.position;
+        this.currentPosition = this.flight.departure.airport.position;
       } else if (arrivalDT < now) {
-        this.currentPosition = this.flight.arrivalAirport.position;
+        this.currentPosition = this.flight.arrival.airport.position;
       } else if (this.route) {
-        const flightProgress: number = now.diff(departureDT, 'seconds') / this.flight.totalTripTime.asSeconds();
+        const flightProgress: number = now.diff(departureDT, 'seconds') / this.flight.duration.asSeconds();
         const coordinates = this.route.geometry.coordinates;
         const flightProgressFloor = Math.max(0, Math.floor(flightProgress * coordinates.length));
         const flightProgressCeil = Math.min(coordinates.length - 1, Math.ceil(flightProgress * coordinates.length));
@@ -71,7 +71,7 @@ export class FlightMapComponent implements OnInit, OnDestroy {
     if (!this.nowMidTimetSubscription || (this.nowMidTimetSubscription && this.nowMidTimetSubscription.closed)) {
       this.nowMidTimetSubscription = this.nowService.midTime.subscribe(now => {
         this.estimatePosition(now);
-        if (this.flight && this.currentPosition === this.flight.arrivalAirport.position && !this.nowMidTimetSubscription.closed) {
+        if (this.flight && this.currentPosition === this.flight.arrival.airport.position && !this.nowMidTimetSubscription.closed) {
           this.nowMidTimetSubscription.unsubscribe();
         }
       });
