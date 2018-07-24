@@ -22,7 +22,10 @@ Object.assign(ROUTING_CONST, {
     DATE_REGEXP           : new RegExp(`^${ROUTING_CONST.DATE_ROUTE_MATCHER}$`),
     TIME_REGEXP           : new RegExp(`^${ROUTING_CONST.TIME_ROUTE_MATCHER}$`),
     FLIGHT_NUM_REGEXP     : new RegExp(`^${ROUTING_CONST.FLIGHT_NUM_ROUTE_MATCHER}$`),
-    FLIGHT_UUID_REGEXP    : new RegExp(`^${UUID_CFG.map(m => `(${m})`).join('')}$`)
+    FLIGHT_UUID_REGEXP    : new RegExp(`^${UUID_CFG.map(m => `(${m})`).join('')}$`),
+
+    POSITIVE_BOOL_REGEXP  : /^(?:true|1|y)$/i,
+    NEGATIVE_BOOL_REGEXP  : /^(?:false|0|n)$/i
 });
 
 
