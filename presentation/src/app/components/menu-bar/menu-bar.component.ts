@@ -21,6 +21,11 @@ export class MenuBarComponent implements OnInit {
   ];
   private $items: MenuItem[] = [
     {
+      label: 'Cerca'
+      icon: 'pi pi-search',
+      routerLink: ['/']
+    },
+    {
       id: 'FLIGHT_LISTS',
       label: 'Liste',
       items: this.flightListMenu
@@ -70,8 +75,7 @@ export class MenuBarComponent implements OnInit {
     private authService: AuthService,
     private flightListService: FlightListService
   ) {
-    const user: User = this.authService.user;
-    if (user) {
+    if (this.authService.isAuthenticated) {
       this.$items.find(m => m.id === 'USER').label = this.authService.user.given_name;
       this.flightListService.readAll().subscribe((list: FlightList[]) => {
         this.flightListMenu.splice(1);

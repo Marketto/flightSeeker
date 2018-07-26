@@ -4,8 +4,11 @@
     <p>{{flight.departure.airport.city}} ({{flight.departure.airport.country}})</p>
     <p>{{flight.departure.dateTime | amCalendar}}</p>
   </div>
-  <div class="ui-g-2 ui-md-2 meals">
-    <img [src]="'../../assets/img/meal_' + flight.meals + '.png'"/>
+  <div class="ui-g-2 ui-md-2 mid-section" [ngClass]="{'meals': !authenticated}">
+    <p-button icon="pi pi-plus" *ngIf="authenticated" (click)="flMenu.toggle($event)"></p-button>
+    <p-menu #flMenu popup="popup" [model]="flightListItems"></p-menu>
+
+    <img [src]="'../../assets/img/meal_' + flight.meals + '.png'" />
   </div>
   <div class="ui-g-5 ui-md-5 arrival">
     <p>{{flight.arrival.airport.name}}</p>

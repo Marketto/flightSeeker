@@ -1,3 +1,5 @@
+import { FlightListService } from './../../web-services/flight-list/flight-list.service';
+import { AuthService } from './../../services/auth/auth.service';
 import * as moment from 'moment-timezone';
 import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Flight } from '../../classes/flight/flight';
@@ -5,6 +7,7 @@ import { Moment } from 'moment-timezone';
 import { NowService } from '../../services/now/now.service';
 import { Duration } from 'moment-timezone';
 import { Subscription } from 'rxjs';
+import { MenuItem } from '../../../../node_modules/primeng/api';
 
 @Component({
   selector: 'app-flight-detail',
@@ -31,6 +34,7 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
   public timeToDepartureLeft: Duration;
   public timeToArrivalLeft: Duration;
   public progress: number;
+  public flightListItems: MenuItem[] = [];
   @Output() progressChange = new EventEmitter<number>();
 
   private calculateDurations() {
@@ -47,8 +51,14 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
     this.progressChange.emit(this.progress);
   }
 
+  public get authenticated() {
+    return this.authService.isAuthenticated;
+  }
+
   constructor(
-    private nowService: NowService
+    private nowService: NowService,
+    private authService: AuthService,
+    private flightListService: FlightListService
   ) {
 
   }
@@ -66,8 +76,28 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
     }
   }
 
+  private retrieveUserFlightLists() {
+    if (this.authService.isAuthenticated) {
+      this.flightListService.readAll().subscribe(flightList => {
+        this.flightListItems = flightList.map(fli => {
+          return {
+            'label': fli.name,
+            'command': () => {
+              const addFlightSubscription = this.flightListService.get(fli.slug).addFlight(this.flight.uuid).subscribe(() => {
+                if (addFlightSubscription) {
+                  addFlightSubscription.unsubscribe();
+                }
+              });
+            }
+          };
+        });
+      });
+    }
+  }
+
   ngOnInit() {
     this.subscribeNowMidTime();
+    this.retrieveUserFlightLists();
   }
   ngOnDestroy() {
     if (!this.nowMidTimetSubscription.closed) {

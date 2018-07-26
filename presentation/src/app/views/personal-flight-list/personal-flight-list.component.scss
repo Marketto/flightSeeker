@@ -1,0 +1,13 @@
+::ng-deep .ui-card {
+  .ui-card-title {
+    text-align: center;
+  }
+  .ui-card-content{
+    display: flex;
+    justify-content: center;
+
+    p-message {
+      margin: 1.2em 0 0.8em 0;
+    }
+  }
+}

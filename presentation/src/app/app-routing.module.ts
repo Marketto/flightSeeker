@@ -5,6 +5,7 @@ import { Routes, RouterModule } from '@angular/router';
 import { FlightSearchComponent } from './views/flight-search/flight-search.component';
 import { SearchResultsComponent } from './views/search-results/search-results.component';
 import { HomeComponent } from './views/home/home.component';
+import { PersonalFlightListComponent } from './views/personal-flight-list/personal-flight-list.component';
 
 const routes: Routes = [
   {
@@ -28,6 +29,10 @@ const routes: Routes = [
             component: JourneyDetailComponent
           }
         ]
+      },
+      {
+        path : 'list/:flightListSlug',
+        component : PersonalFlightListComponent
       }
     ]
   }

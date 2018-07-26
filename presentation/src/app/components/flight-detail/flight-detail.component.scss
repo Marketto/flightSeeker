@@ -22,6 +22,12 @@
     align-items: flex-end;
     padding-left: 0;
   }
+  .mid-section {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+  }
 
   .meals {
     display: flex;
@@ -54,3 +60,16 @@
     */
   }
 }
+/*
+::ng-deep.ui-card-header{
+  margin: 1em 1em -1em 1em;
+  p-header {
+    display: flex;
+    justify-content: center;
+
+    .ui-card-title {
+      margin: 0;
+    }
+  }
+}
+*/

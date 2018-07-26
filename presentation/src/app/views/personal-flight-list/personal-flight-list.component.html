@@ -1,0 +1,5 @@
+<p-card class="ui-g-12" [title]="flightList.name" *ngIf="flightList" [ngSwitch]="!flightList.flights.length">
+  <!-- TODO: add owner and shared info-->
+  <app-flight-detail [flight]="flight" *ngFor="let flight of flightList.flights"></app-flight-detail>
+  <p-message *ngSwitchCase="true" severity="info" text="Nessun volo in questa lista"></p-message>
+</p-card>

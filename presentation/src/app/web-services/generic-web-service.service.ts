@@ -18,8 +18,8 @@ type HttpMethod = 'GET' | 'POST' | 'PUT' | 'DELETE';
 export class GenericWebServiceService {
 
   private mergeBodies<ResourceType>(body: ResourceType) {
-    return (responseData: any = {}) => {
-      return Object.assign(body, responseData) as ResourceType;
+    return (responseData: any = null) => {
+      return responseData ? Object.assign(body, responseData) as ResourceType : null;
     };
   }
 
@@ -64,6 +64,21 @@ export class GenericWebServiceService {
         body: body
       },
       transformResponse || (body ? this.mergeBodies<ResourceType>(body) : undefined)
+    );
+  }
+
+  public insert<ResourceType>(
+    endPoint: string,
+    body: ResourceType = null,
+    transformResponse?: Function
+  ): Observable<ResourceType> {
+    return this.webService(
+      endPoint,
+      {
+        method: 'PUT',
+        body: body
+      },
+      transformResponse || this.mergeBodies(body)
     );
   }
 
