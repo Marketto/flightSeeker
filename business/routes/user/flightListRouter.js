@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router({mergeParams: true});
-const mongo = require('../../services/mongo');
+const mongo = require('../../connectors/mongo');
 const slug = require('slug');
 
 function logErr(err) {
@@ -69,45 +69,8 @@ function resFlightList(req, res) {
     res.send(req.flightList);
 }
 
-function getFlightListBySlug(req, res, next) {
-    console.log("[getFlightListBySlug]");
-    const slug = req.params.listSlug;
-    mongo().then(db => {
-        db.collection('flightLists').findOne({
-            '$and': [{
-                    '$or': [{
-                            'owenr': req.user._id
-                        },
-                        {
-                            'shared': req.user._id
-                        }
-                    ]
-                },
-                {
-                    'slug': slug
-                }
-            ]
-        }, {
-            _id: 0
-        }).then((flightList) => {
-            if (flightList) {
-                req.flightList = [flightList];
-                next();
-            } else {
-                res.sendStatus(404);
-            }
-        }, logErr);
-    }, logErr);
-}
-
 router.get('/', getAllFlightLists, resAllFlightLists);
 //TODO: Add validation against jsonSchema
 router.post('/', newFlightList, resFlightList);
-
-router.get('/:listSlug', getFlightListBySlug, resFlightList);
-router.put('/:listSlug', (req, res) => {
-    //TODO
-    res.sendStatus(501);
-});
 
 module.exports = router;

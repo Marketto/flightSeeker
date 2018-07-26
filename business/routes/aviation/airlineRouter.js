@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router({mergeParams: true});
-const mongo = require('../../services/mongo');
+const mongo = require('../../connectors/mongo');
 const escapeStringRegexp = require('escape-string-regexp');
 const {
   AIRLINE_ROUTE_MATCHER, 
   AIRLINE_REGEXP
-} = require('./routingConst');
+} = require('../routingConst');
 
 function reqAirline(req, res, next) {
   console.log('[reqAirline]');

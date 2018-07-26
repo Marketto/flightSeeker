@@ -9,7 +9,7 @@ const routeRouter = require('./routeRouter');
 const {
   AIRPORT_ROUTE_MATCHER,
   AIRLINE_ROUTE_MATCHER
-} = require('./routingConst');
+} = require('../routingConst');
 
 
 const DEPARTURE_PATH = `airport/:iataDeparture(${AIRPORT_ROUTE_MATCHER})`;

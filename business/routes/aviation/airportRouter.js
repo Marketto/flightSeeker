@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router({mergeParams: true});
-const mongo = require('../../services/mongo');
+const mongo = require('../../connectors/mongo');
 const escapeStringRegexp = require('escape-string-regexp');
 
 const {
   AIRPORT_ROUTE_MATCHER
-} = require('./routingConst');
+} = require('../routingConst');
 
 function reqAirport(req, res, next) {
   console.log('[reqAirport]');

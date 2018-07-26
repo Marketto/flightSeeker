@@ -1,18 +1,22 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
 const { URLSearchParams } = require('url');
-const flightLookup = require('../../services/flight-lookup');
-const mongo = require('../../services/mongo');
+const flightLookup = require('../../connectors/flight-lookup');
+const mongo = require('../../connectors/mongo');
 const moment = require('moment-timezone');
+const {
+    flightAggregation,
+    enrichFlight
+} = require('../../services/flightQueryBuilder');
 
 const {
     DATE_ROUTE_MATCHER,
-    FLIGHT_NUM_ROUTE_MATCHER,
     FLIGHT_UUID_ROUTE_MATCHER,
     FLIGHT_UUID_REGEXP,
+    FLIGHT_NUM_ROUTE_MATCHER,
     TIME_REGEXP,
     NEGATIVE_BOOL_REGEXP
-} = require('./routingConst');
+} = require('../routingConst');
 
 function fixXmlObject(obj){
     const fixedObj = {};
@@ -102,16 +106,13 @@ function dbFlights(req, res, next) {
             } : {}, );
 
 
-            console.log('[findQuery]', findQuery);
-
-
             const flightsCollection = db.collection('flights');
             
             Promise.all([
                 req.dbDataChecked || flightsCollection.find(checkQuery).count(),
 
                 (aggregate ?
-                    flightsCollection.aggregate(aggregation(findQuery, queryLimit)).map(enrichFlight) :
+                    flightsCollection.aggregate(flightAggregation(findQuery, queryLimit)).map(enrichFlight):
                     flightsCollection.find(findQuery).limit(queryLimit)
                 ).sort({
                     "departure.dateTime": 1
@@ -127,113 +128,6 @@ function dbFlights(req, res, next) {
         }, logErr);
     } else {
         next();
-    }
-
-
-
-    function aggregation(findQuery, limit = 0) {
-        const aggCfg = [{
-                $match: findQuery
-            },
-            {
-                $lookup: {
-                    from: "airports",
-                    localField: 'departure.airportIata',
-                    foreignField: 'iata',
-                    as: 'departureAirport'
-                }
-            },
-            {
-                $unwind: "$departureAirport"
-            },
-
-            {
-                $lookup: {
-                    from: "airports",
-                    localField: 'arrival.airportIata',
-                    foreignField: 'iata',
-                    as: 'arrivalAirport'
-                }
-            },
-            {
-                $unwind: "$arrivalAirport"
-            },
-
-            {
-                $lookup: {
-                    from: "airlines",
-                    localField: 'airlineIata',
-                    foreignField: 'iata',
-                    as: 'airline'
-                }
-            },
-            {
-                $unwind: "$airline"
-            },
-
-            {
-                $project: {
-                    departure: {
-                        airport: {
-                            name: "$departureAirport.name",
-                            city: "$departureAirport.city",
-                            country: "$departureAirport.country",
-                            iata: "$departureAirport.iata",
-                            countryCode: "$departureAirport.countryCode",
-                            cityIata: "$departureAirport.cityIata",
-                            position: "$departureAirport.position",
-                            timeZone: "$departureAirport.timeZone"
-                        },
-                        terminal: "$departure.airportTerminal",
-                        dateTime: "$departure.dateTime"
-                    },
-                    arrival: {
-                        airport: {
-                            name: "$arrivalAirport.name",
-                            city: "$arrivalAirport.city",
-                            country: "$arrivalAirport.country",
-                            iata: "$arrivalAirport.iata",
-                            countryCode: "$arrivalAirport.countryCode",
-                            cityIata: "$arrivalAirport.cityIata",
-                            position: "$arrivalAirport.position",
-                            timeZone: "$arrivalAirport.timeZone"
-                        },
-                        terminal: "$arrival.airportTerminal",
-                        dateTime: "$arrival.dateTime"
-                    },
-                    airline: {
-                        iata: 1,
-                        name: 1,
-                        countryCode: 1,
-                        callSign: 1
-                    },
-                    meals: 1,
-                    number: 1,
-                    uuid: 1
-                }
-            }
-        ];
-        if (limit > 0){
-            aggCfg.push({
-                $limit: limit
-            });
-        }
-        return aggCfg;
-    }
-
-    function enrichFlight(flight){
-        const departureDtz = moment.tz(moment(flight.departure.dateTime).format("YYYY-MM-DDTHH:mm:ss"), flight.departure.airport.timeZone);
-        const arrivalDtz = moment.tz(moment(flight.arrival.dateTime).format("YYYY-MM-DDTHH:mm:ss"), flight.arrival.airport.timeZone);
-
-        return Object.assign(flight, {
-            departure: Object.assign(flight.departure, {
-                'dateTime': departureDtz.format()
-            }),
-            arrival : Object.assign(flight.arrival, {
-                'dateTime': arrivalDtz.format()
-            }),
-            'duration': moment.duration(arrivalDtz.diff(departureDtz))
-        });
     }
 }
 
@@ -350,5 +244,6 @@ function resFlights(req, res, next) {
 router.get(`/:date(${DATE_ROUTE_MATCHER})`, reqFlight, dbFlights, flFlights, dbFlights, resFlights);
 router.get(`/:date(${DATE_ROUTE_MATCHER})/:flightNumber(${FLIGHT_NUM_ROUTE_MATCHER})`, reqFlight, dbFlights, flFlights, dbFlights, resFlights);
 router.get(`/:flightUUID(${FLIGHT_UUID_ROUTE_MATCHER})`, flightUUIDParse, reqFlight, dbFlights, flFlights, dbFlights, resFlights);
+router.put(`/:flightUUID(${FLIGHT_UUID_ROUTE_MATCHER})`, flightUUIDParse, reqFlight, dbFlights, flFlights, dbFlights);
 
 module.exports = router;

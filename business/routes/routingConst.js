@@ -3,7 +3,8 @@ const ROUTING_CONST = {
     AIRPORT_ROUTE_MATCHER       : "[A-Z\\d]{3}",
     DATE_ROUTE_MATCHER          : "\\d{4}-?\\d{2}-?\\d{2}",
     TIME_ROUTE_MATCHER          : "\\d{2}:\\d{2}",
-    FLIGHT_NUM_ROUTE_MATCHER    : "\\d+"
+    FLIGHT_NUM_ROUTE_MATCHER    : "\\d+",
+    SLUG_MATCHER                : "[A-Za-z\\d]+[A-Za-z\\d\-]+[A-Za-z\\d]+"
 };
 
 const UUID_CFG = [
