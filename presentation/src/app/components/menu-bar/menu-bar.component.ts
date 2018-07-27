@@ -21,7 +21,7 @@ export class MenuBarComponent implements OnInit {
   ];
   private $items: MenuItem[] = [
     {
-      label: 'Cerca'
+      label: 'Cerca',
       icon: 'pi pi-search',
       routerLink: ['/']
     },

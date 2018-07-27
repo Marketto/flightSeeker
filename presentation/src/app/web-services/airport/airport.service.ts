@@ -31,7 +31,7 @@ export class AirportService {
     return this.genericWebService.search<Airport>(
       `${aviationURI}/${serviceURI}`,
       criteria.toHttpParams(),
-      (data: any[] = []): Airport[] => data.map(e => new Airport(e))
+      (data: any[]): Airport[] => (data || []).map(e => new Airport(e))
     );
   }
 

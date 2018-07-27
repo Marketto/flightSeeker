@@ -151,7 +151,8 @@ function flFlights(req, res, next) {
         ]).then(([journeys, db]) => {
             try {
                 const flights = [];
-                ([].concat(journeys.FlightDetails))
+                ([].concat((journeys||{}).FlightDetails))
+                    .filter(e=>!!e)
                     .forEach(journey => {
                         if (journey) {
                             ([].concat(fixXmlObject(journey).flightLegDetails)).forEach((flight = {}) => {
