@@ -2,6 +2,11 @@
   .flight-container {
     border: solid #8ec5fc 1px;
     margin: 1em 0;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    align-content: space-between;
 
     .mid-section {
       display: flex;
@@ -16,14 +21,17 @@
       align-items: center;
     }
 
-    .arrival-eta {
-      text-align: center;
-      font-size: 0.8em;
-      margin: -1.3em 0 0 0;
-      position: relative;
-      font-weight: bold;
-      color: #7c4a1e;
-      mix-blend-mode: difference;
+    .flight-progress {
+      display: inline-table;
+      .flight-eta {
+        text-align: center;
+        font-size: 0.8em;
+        margin: -1.3em 0 0 0;
+        position: relative;
+        font-weight: bold;
+        color: #7c4a1e;
+        mix-blend-mode: difference;
+      }
     }
 
     ::ng-deep{
