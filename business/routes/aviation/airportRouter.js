@@ -38,6 +38,9 @@ function reqAirport(req, res, next) {
                 }
               },
               {
+                'country': startsWithRegExp
+              },
+              {
                 'iata': startsWithRegExp
               }
             ]
