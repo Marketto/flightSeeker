@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { FlightList } from './../../classes/flight-list/flight-list';
 import { Component, OnInit } from '@angular/core';
 import { Flight } from '../../classes/flight/flight';
+import * as moment from 'moment';
 
 @Component({
   selector: 'app-personal-flight-list',
@@ -12,6 +13,18 @@ import { Flight } from '../../classes/flight/flight';
 export class PersonalFlightListComponent implements OnInit {
 
   public flightList: FlightList;
+
+  public get currentFlight(): Flight {
+    if (this.flightList) {
+      return (this.flightList.flights || []).find(flight => {
+        const now = moment();
+        return now.isBetween(
+          moment(flight.departure.dateTime).add(-2, 'hours'),
+          moment(flight.arrival.dateTime).add(2, 'hours')
+        );
+      });
+    }
+  }
 
   public pullFlight(flight: Flight) {
     this.flightList.flights.splice(

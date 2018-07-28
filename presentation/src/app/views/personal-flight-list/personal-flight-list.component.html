@@ -3,7 +3,11 @@
 
 </p-card>
 
-<p-card class="ui-g-12" title="Voli" *ngIf="flightList && flightList.flights">
+<p-card class="ui-g-12 ui-md-12 flight-map" title="Mappa" *ngIf="currentFlight">
+  <app-flight-map [flight]="currentFlight"></app-flight-map>
+</p-card>
+
+<p-card class="ui-g-12 flight-list" title="Voli" *ngIf="flightList && flightList.flights">
   <app-flight-detail class="ui-g-6 ui-m-12" [flight]="flight" *ngFor="let flight of flightList.flights" [removeFromFlightListButton]="true" (removeFromFlightList)="pullFlight($event)"></app-flight-detail>
   <p-message severity="info" text="Nessun volo in questa lista" *ngIf="!flightList.flights.length"></p-message>
 </p-card>

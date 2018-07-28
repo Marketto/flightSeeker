@@ -4,14 +4,18 @@
     .ui-card-title {
       text-align: center;
     }
-    .ui-card-content{
-      display: flex;
-      flex-direction: row;
-      flex-wrap: wrap;
+  }
+  .flight-list {
+    ::ng-deep .ui-card {
+      .ui-card-content{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
 
-      p-message {
-        margin: 1.2em auto 0.8em auto;
-        width: auto;
+        p-message {
+          margin: 1.2em auto 0.8em auto;
+          width: auto;
+        }
       }
     }
   }
