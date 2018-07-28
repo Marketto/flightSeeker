@@ -1,6 +1,6 @@
 import { Airport } from '../airport/airport';
 import * as moment from 'moment-timezone';
-import { Moment } from 'moment-timezone';
+import { Moment } from 'moment';
 
 export class FlightVector {
   public airport: Airport;

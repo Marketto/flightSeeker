@@ -1,7 +1,7 @@
-import { Airline } from './../airline/airline';
+import { Airline } from '../airline/airline';
 import { FlightVector } from './flight-vector';
 import * as moment from 'moment-timezone';
-import { Duration } from 'moment-timezone';
+import { Duration } from 'moment';
 
 export class Flight {
   public departure: FlightVector;

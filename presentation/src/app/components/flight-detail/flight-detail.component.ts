@@ -1,13 +1,12 @@
-import { FlightListService } from './../../web-services/flight-list/flight-list.service';
-import { AuthService } from './../../services/auth/auth.service';
+import { FlightListService } from '../../web-services/flight-list/flight-list.service';
+import { AuthService } from '../../services/auth/auth.service';
 import * as moment from 'moment-timezone';
 import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Flight } from '../../classes/flight/flight';
-import { Moment } from 'moment-timezone';
+import { Moment, Duration } from 'moment';
 import { NowService } from '../../services/now/now.service';
-import { Duration } from 'moment-timezone';
 import { Subscription } from 'rxjs';
-import { MenuItem } from '../../../../node_modules/primeng/api';
+import { MenuItem } from 'primeng/api';
 
 @Component({
   selector: 'app-flight-detail',

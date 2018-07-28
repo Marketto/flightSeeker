@@ -2,7 +2,6 @@ import { FlightList } from '../../classes/flight-list/flight-list';
 import { MenuItem } from 'primeng/api';
 import { AuthService } from '../../services/auth/auth.service';
 import { Component, OnInit } from '@angular/core';
-import { User } from '../../classes/user/user';
 import { FlightListService } from '../../web-services/flight-list/flight-list.service';
 
 @Component({
@@ -36,8 +35,13 @@ export class MenuBarComponent implements OnInit {
       icon: 'pi pi-user',
       items: [
         {
+          label: 'Add account',
+          icon: 'pi pi-plus',
+          command: () => this.authService.login()
+        },
+        {
           label: 'Logout',
-          icon: 'pi pi-power-off',
+          icon: 'pi pi-arrow-left',
           command: () => this.authService.logout()
         }
       ]

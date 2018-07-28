@@ -1,6 +1,9 @@
 <p-card class="ui-g-12" [title]="flightList.name" *ngIf="flightList">
   <!-- TODO: add owner and shared info-->
-
+<p>
+  <label>Ore totali di volo:</label>
+  {{totalDuration | amDuration: 'minutes'}}
+</p>
 </p-card>
 
 <p-card class="ui-g-12 ui-md-12 flight-map" title="Mappa" *ngIf="currentFlight">

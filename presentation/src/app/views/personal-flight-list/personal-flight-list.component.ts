@@ -1,9 +1,10 @@
-import { FlightListService } from './../../web-services/flight-list/flight-list.service';
+import { FlightListService } from '../../web-services/flight-list/flight-list.service';
 import { ActivatedRoute } from '@angular/router';
-import { FlightList } from './../../classes/flight-list/flight-list';
+import { FlightList } from '../../classes/flight-list/flight-list';
 import { Component, OnInit } from '@angular/core';
 import { Flight } from '../../classes/flight/flight';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
+import { Duration } from 'moment';
 
 @Component({
   selector: 'app-personal-flight-list',
@@ -14,9 +15,22 @@ export class PersonalFlightListComponent implements OnInit {
 
   public flightList: FlightList;
 
+  public get totalDuration(): Duration {
+    if (this.flightList) {
+      return moment.duration(
+        [0, 0].concat(
+          this.flightList.flights
+            .filter((flight: Flight) => flight.arrival.dateTime.isSameOrBefore())
+            .map(flight => flight.duration.asMinutes())
+        ).reduce((d1: number, d2: number) => d1 + d2),
+         'minutes'
+      );
+    }
+  }
+
   public get currentFlight(): Flight {
     if (this.flightList) {
-      return (this.flightList.flights || []).find((flight: FLight) => {
+      return (this.flightList.flights || []).find((flight: Flight) => {
         const now = moment();
         return now.isBetween(
           flight.departure.dateTime,

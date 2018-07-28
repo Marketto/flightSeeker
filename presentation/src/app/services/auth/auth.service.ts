@@ -3,9 +3,10 @@ import { Observable, Observer } from 'rxjs';
 import { Router, ActivatedRoute } from '@angular/router';
 import * as auth0 from 'auth0-js';
 import { HttpParams } from '@angular/common/http';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import { Moment } from 'moment';
 import { User } from '../../classes/user/user';
+import { AuthToken } from '../../classes/user/auth-token';
 
 
 const redirectBaseUri = `${window.location.origin}/auth`;
@@ -51,7 +52,7 @@ export class AuthService {
   }
 
 
-  public authenticate(): Observable<String> {
+  public authenticate(): Observable<{auth?: AuthToken, route?: string[]}> {
     return Observable.create((observer: Observer<any>) => {
       const params = this.activeRoute.snapshot.queryParams;
       this.webAuth.parseHash((err, authResult) => {
@@ -59,24 +60,22 @@ export class AuthService {
           console.warn(err);
           observer.error(err);
         } else {
-          if (authResult && authResult.accessToken && authResult.idToken) {
-            window.location.hash = '';
-            this.setSession(authResult);
-          }
-          observer.next(params[SOURCE_ROUTE_PARAM]);
+          window.location.hash = '';
+          observer.next({
+            'auth': authResult ? new AuthToken(authResult) : undefined,
+            'route': [params[SOURCE_ROUTE_PARAM]]
+          });
         }
         observer.complete();
       });
     });
   }
 
-
-  private setSession(authResult): void {
+  public setSession(authResult: AuthToken): void {
     // Set the time that the Access Token will expire at
-    const expiresAt = moment().add(authResult.expiresIn, 'seconds').toJSON();
     localStorage.setItem('access_token', authResult.accessToken);
     localStorage.setItem('id_token', authResult.idToken);
-    localStorage.setItem('expires_at', expiresAt);
+    localStorage.setItem('expires_at', authResult.expiresAt.toJSON());
     localStorage.setItem('user', JSON.stringify(authResult.idTokenPayload));
   }
 
