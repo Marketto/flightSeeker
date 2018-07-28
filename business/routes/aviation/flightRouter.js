@@ -84,8 +84,8 @@ function dbFlights(req, res, next) {
                 "departure.airportIata": from,
                 "arrival.airportIata": to,
                 "departure.dateTime": {
-                    "$gte": moment(dateTime).startOf("day").toDate(),
-                    "$lte": moment(dateTime).endOf("day").toDate()
+                    "$gte": moment(dateTime).utc().startOf("day").toDate(),
+                    "$lte": moment(dateTime).utc().endOf("day").toDate()
                 }
             };
 
@@ -96,15 +96,15 @@ function dbFlights(req, res, next) {
                     "$lte": moment(dateTime).endOf("hour").toDate(),
                     "$gte": moment(dateTime).startOf("hour").toDate()
                 } : {
-                    "$gte": (afterTime ? dateTime : moment(dateTime).startOf("day")).toDate(),
-                    "$lte": moment(dateTime).endOf("day").toDate()
+                    "$gte": (afterTime ? dateTime : moment(dateTime).utc().startOf("day")).toDate(),
+                    "$lte": moment(dateTime).utc().endOf("day").toDate()
                 }
             }, airline ? {
                 "airlineIata": airline
             } : {}, flightNumber ? {
                 "number": flightNumber
             } : {}, );
-
+            
 
             const flightsCollection = db.collection('flights');
             
@@ -141,7 +141,7 @@ function flFlights(req, res, next) {
 
         const from = req.params.iataDeparture;
         const to = req.params.iataArrival;
-        const date = new moment(req.params.date);
+        const date = moment(req.params.date);
 
         Promise.all([
             flightLookup.service({
