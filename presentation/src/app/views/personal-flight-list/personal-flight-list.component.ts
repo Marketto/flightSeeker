@@ -16,11 +16,11 @@ export class PersonalFlightListComponent implements OnInit {
 
   public get currentFlight(): Flight {
     if (this.flightList) {
-      return (this.flightList.flights || []).find(flight => {
+      return (this.flightList.flights || []).find((flight: FLight) => {
         const now = moment();
         return now.isBetween(
-          moment(flight.departure.dateTime).add(-2, 'hours'),
-          moment(flight.arrival.dateTime).add(2, 'hours')
+          flight.departure.dateTime,
+          flight.arrival.dateTime
         );
       });
     }
