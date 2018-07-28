@@ -10,7 +10,7 @@ export class FlightVector {
   constructor (obj?: any) {
     if (obj) {
       this.airport = new Airport(obj.airport);
-      this.dateTime = obj.dateTime ? moment(obj.dateTime) : null;
+      this.dateTime = obj.dateTime ? moment(obj.dateTime).tz(this.airport.timeZone) : null;
       this.terminal = obj.terminal;
     }
   }
