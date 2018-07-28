@@ -10,7 +10,7 @@ import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 export class NewFlightListComponent implements OnInit {
   public flightList: FlightList;
   public loading: Boolean;
-  @Output() newFlight = new EventEmitter<FlightList>();
+  @Output() public newFlight = new EventEmitter<FlightList>();
 
   public newFlightList() {
     this.loading = true;

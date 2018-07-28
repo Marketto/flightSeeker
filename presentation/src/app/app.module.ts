@@ -33,6 +33,7 @@ import { AuthorizingComponent } from './views/authorizing/authorizing.component'
 import { HomeComponent } from './views/home/home.component';
 import { NewFlightListComponent } from './components/new-flight-list/new-flight-list.component';
 import { PersonalFlightListComponent } from './views/personal-flight-list/personal-flight-list.component';
+import { FlightDetailVectorComponent } from './components/flight-detail/flight-detail-vector/flight-detail-vector.component';
 
 @NgModule({
   declarations: [
@@ -46,7 +47,8 @@ import { PersonalFlightListComponent } from './views/personal-flight-list/person
     AuthorizingComponent,
     HomeComponent,
     NewFlightListComponent,
-    PersonalFlightListComponent
+    PersonalFlightListComponent,
+    FlightDetailVectorComponent
   ],
   imports: [
     BrowserModule,

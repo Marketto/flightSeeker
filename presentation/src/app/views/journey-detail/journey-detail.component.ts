@@ -26,7 +26,7 @@ export class JourneyDetailComponent implements OnInit {
   }
   public set goingFlight(flight: Flight) {
     this.$goingFlight = flight;
-    if (flight.arrival.dateTime > new moment()) {
+    if (moment().isBefore(flight.arrival.dateTime)) {
       this.currentFlight = flight;
     }
     this.searchReturnFlight(flight);
@@ -39,13 +39,23 @@ export class JourneyDetailComponent implements OnInit {
   }
 
 
-  private searchReturnFlight(flight: Flight) {
-    const returnDepartureDateTime = moment(flight.arrival.dateTime).add(40, 'm');
-    this.flightService.search(flight.arrival.airport.iata, flight.departure.airport.iata, returnDepartureDateTime, new FlightQuery({
-      'after': returnDepartureDateTime,
-      'limit': 1,
-      'airlineIata': flight.airline.iata
-    })).subscribe((flights: Flight[]) => {
+  private searchReturnFlight(flight: Flight): void {
+    const returnDepartureDateTime = moment.duration(flight.duration).asHours() > 6 ?
+      moment(flight.arrival.dateTime).add(8, 'h').endOf('day').add(1, 'ms')
+     : moment(flight.arrival.dateTime).add(40, 'm');
+
+    console.log(returnDepartureDateTime);
+
+    this.flightService.search(
+      flight.arrival.airport.iata,
+      flight.departure.airport.iata,
+      returnDepartureDateTime.toDate(),
+      new FlightQuery({
+        'after': returnDepartureDateTime,
+        'limit': 1,
+        'airlineIata': flight.airline.iata
+      })
+    ).subscribe((flights: Flight[]) => {
       this.backFlight = flights[0];
 
       this.currentFlight = this.currentFlight || this.backFlight;

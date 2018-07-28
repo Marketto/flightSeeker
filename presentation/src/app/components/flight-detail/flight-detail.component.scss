@@ -1,75 +1,39 @@
-.flight-container {
-  border: solid #8ec5fc 1px;
-  margin: 1em 0;
+:host {
+  .flight-container {
+    border: solid #8ec5fc 1px;
+    margin: 1em 0;
 
-  .departure, .arrival {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    p {
-      margin: 0.5em 0;
+    .mid-section {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
     }
-  }
 
-  .departure {
-    text-align: start;
-    align-items: flex-start;
-    padding-right: 0;
-  }
+    .meals {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+    }
 
-  .arrival {
-    text-align: end;
-    align-items: flex-end;
-    padding-left: 0;
-  }
-  .mid-section {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    align-items: center;
-  }
+    .arrival-eta {
+      text-align: center;
+      font-size: 0.8em;
+      margin: -1.3em 0 0 0;
+      position: relative;
+      font-weight: bold;
+      color: #7c4a1e;
+      mix-blend-mode: difference;
+    }
 
-  .meals {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-  }
-
-  .arrival-eta {
-    text-align: center;
-    font-size: 0.8em;
-    margin: -1.3em 0 0 0;
-    position: relative;
-    font-weight: bold;
-    color: #7c4a1e;
-    mix-blend-mode: difference;
-  }
-
-
-  ::ng-deep{
-    @for $i from 0 through 100 {
-      [aria-valuenow='#{$i}'].ui-progressbar.ui-widget.ui-widget-content.ui-progressbar-determinate {
-        $hue-rotate: ($i * -1.7) + 110;
-        filter: hue-rotate(#{$hue-rotate}deg);
+    ::ng-deep{
+      @for $i from 0 through 100 {
+        [aria-valuenow='#{$i}'].ui-progressbar.ui-widget.ui-widget-content.ui-progressbar-determinate {
+          $hue-rotate: ($i * -1.7) + 110;
+          filter: hue-rotate(#{$hue-rotate}deg);
+        }
       }
     }
-    /*
-    [aria-valuenow='100'].ui-progressbar.ui-widget.ui-widget-content.ui-progressbar-determinate {
-      filter: hue-rotate(-60deg);
-    }
-    */
-  }
-}
-/*
-::ng-deep.ui-card-header{
-  margin: 1em 1em -1em 1em;
-  p-header {
-    display: flex;
-    justify-content: center;
 
-    .ui-card-title {
-      margin: 0;
-    }
   }
 }
-*/

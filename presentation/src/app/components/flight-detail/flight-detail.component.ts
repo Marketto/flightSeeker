@@ -17,6 +17,9 @@ import { MenuItem } from '../../../../node_modules/primeng/api';
 export class FlightDetailComponent implements OnInit, OnDestroy {
   private $flight: Flight;
 
+  @Input() public addToFlightListButton: boolean;
+  @Input() public removeFromFlightListButton: boolean;
+  @Output() public removeFromFlightList = new EventEmitter<Flight>();
   @Input()
   public set flight(flight: Flight) {
     this.$flight = flight;
@@ -34,7 +37,8 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
   public timeToDepartureLeft: Duration;
   public timeToArrivalLeft: Duration;
   public progress: number;
-  public flightListItems: MenuItem[] = [];
+  public addToFlightListItems: MenuItem[] = [];
+  public removeFromFlightListItems: MenuItem[] = [];
   @Output() progressChange = new EventEmitter<number>();
 
   private calculateDurations() {
@@ -79,13 +83,27 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
   private retrieveUserFlightLists() {
     if (this.authService.isAuthenticated) {
       this.flightListService.readAll().subscribe(flightList => {
-        this.flightListItems = flightList.map(fli => {
+        this.addToFlightListItems = flightList.map(fli => {
           return {
             'label': fli.name,
             'command': () => {
               const addFlightSubscription = this.flightListService.get(fli.slug).addFlight(this.flight.uuid).subscribe(() => {
                 if (addFlightSubscription) {
                   addFlightSubscription.unsubscribe();
+                }
+              });
+            }
+          };
+        });
+
+        this.removeFromFlightListItems = flightList.map(fli => {
+          return {
+            'label': fli.name,
+            'command': () => {
+              const removeFlightSubscription = this.flightListService.get(fli.slug).deleteFlight(this.flight.uuid).subscribe(() => {
+                if (removeFlightSubscription) {
+                  this.removeFromFlightList.emit(this.flight);
+                  removeFlightSubscription.unsubscribe();
                 }
               });
             }

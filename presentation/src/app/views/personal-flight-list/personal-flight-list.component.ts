@@ -2,6 +2,7 @@ import { FlightListService } from './../../web-services/flight-list/flight-list.
 import { ActivatedRoute } from '@angular/router';
 import { FlightList } from './../../classes/flight-list/flight-list';
 import { Component, OnInit } from '@angular/core';
+import { Flight } from '../../classes/flight/flight';
 
 @Component({
   selector: 'app-personal-flight-list',
@@ -11,6 +12,12 @@ import { Component, OnInit } from '@angular/core';
 export class PersonalFlightListComponent implements OnInit {
 
   public flightList: FlightList;
+
+  public pullFlight(flight: Flight) {
+    this.flightList.flights.splice(
+      this.flightList.flights.indexOf(flight)
+      , 1);
+  }
 
   constructor(
     private activeRoute: ActivatedRoute,

@@ -1,19 +1,20 @@
 <div class="ui-helper-clearfix ui-g ui-fluid flight-container">
   <div class="ui-g-5 ui-md-5 departure">
-    <p>{{flight.departure.airport.name}}</p>
-    <p>{{flight.departure.airport.city}} ({{flight.departure.airport.country}})</p>
-    <p>{{flight.departure.dateTime | amCalendar}}</p>
+    <app-flight-detail-vector [flightVector]="flight.departure"></app-flight-detail-vector>
   </div>
   <div class="ui-g-2 ui-md-2 mid-section" [ngClass]="{'meals': !authenticated}">
-    <p-button icon="pi pi-plus" *ngIf="authenticated" (click)="flMenu.toggle($event)"></p-button>
-    <p-menu #flMenu popup="popup" [model]="flightListItems"></p-menu>
-
+    <div *ngIf="authenticated && addToFlightListButton">
+      <p-button icon="pi pi-plus" (click)="addToFlightListItems.length > 1 ? addFlightListMenu.toggle($event) : addToFlightListItems[0].command()" [disabled]="!addToFlightListItems.length"></p-button>
+      <p-menu #addFlightListMenu popup="popup" [model]="addToFlightListItems"></p-menu>
+    </div>
+    <div *ngIf="authenticated && removeFromFlightListButton">
+      <p-button icon="pi pi-minus" (click)="removeFromFlightListItems.length > 1 ? removeFlightListMenu.toggle($event) : removeFromFlightListItems[0].command()" [disabled]="!removeFromFlightListItems.length"></p-button>
+      <p-menu #removeFlightListMenu popup="popup" [model]="removeFromFlightListItems"></p-menu>
+    </div>
     <img [src]="'../../assets/img/meal_' + flight.meals + '.png'" />
   </div>
   <div class="ui-g-5 ui-md-5 arrival">
-    <p>{{flight.arrival.airport.name}}</p>
-    <p>{{flight.arrival.airport.city}} ({{flight.arrival.airport.country}})</p>
-    <p>{{flight.arrival.dateTime | amCalendar}}</p>
+    <app-flight-detail-vector [flightVector]="flight.arrival"></app-flight-detail-vector>
   </div>
   <div class="ui-g-12 ui-md-12">
     <p-progressBar [value]="progress" [showValue]="false"></p-progressBar>

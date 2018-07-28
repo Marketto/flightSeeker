@@ -1,62 +1,48 @@
-.hint-list{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  .famfamfam-flags {
-    margin: auto 0;
-    display: block;
+:host {
+  .hint-list{
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    .famfamfam-flags {
+      margin: auto 0;
+      display: block;
+    }
+    .name {
+      margin: auto 1em;
+      text-align: justify;
+      width: 100%;
+    }
+    .iata {
+      width: 3em;
+      text-align: right;
+      margin: auto 0;
+      font-weight: bold;
+    }
   }
-  .name {
-    margin: auto 1em;
-    text-align: justify;
-    width: 100%;
-  }
-  .iata {
-    width: 3em;
-    text-align: right;
-    margin: auto 0;
-    font-weight: bold;
-  }
-}
 
-.switch-airports {
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  align-items: flex-end;
-}
-
-::ng-deep.flight-search {
-  .ui-card-title {
-    text-align: center;
+  .switch-airports {
+    margin: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-end;
   }
-  @media screen and (min-width: 40.063em) {
-    h3 {
-      &.text-start {
-        text-align: start;
-      }
-      &.text-end {
-        text-align: end;
-      }
-      &.text-center {
-        text-align: center;
+
+  ::ng-deep.flight-search {
+    .ui-card-title {
+      text-align: center;
+    }
+    @media screen and (min-width: 40.063em) {
+      h3 {
+        &.text-start {
+          text-align: start;
+        }
+        &.text-end {
+          text-align: end;
+        }
+        &.text-center {
+          text-align: center;
+        }
       }
     }
   }
 }
-
-/*
-app-flight-detail {
-  &.action ::ng-deep .flight-container {
-    cursor: pointer;
-    &:hover {
-      background-color: #dfefff;
-    }
-  }
-  &.active ::ng-deep .flight-container {
-    color: hsla(270, 50%, 60%, 1);
-    border-color: hsla(270, 50%, 60%, 1);
-    background-color: hsla(270, 100%, 94%, 1);
-  }
-}
-*/
