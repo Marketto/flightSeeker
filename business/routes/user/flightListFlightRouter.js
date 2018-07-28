@@ -15,8 +15,8 @@ function logErr(err) {
     res.sendStatus(500);
 }
 
-function insertSucceded(req, res) {
-    console.log("[insertSucceded]");
+function modifySucceded(req, res) {
+    console.log("[modifySucceded]");
     res.sendStatus(204);
 }
 
@@ -49,6 +49,25 @@ function insertUuidToFlightList(req, res, next) {
         db.collection('flightLists').updateOne(
             userSlugQuery(userId, flightListSlug), {
             $addToSet : {
+                'flights': flightUUID
+            }
+        }).then( () => {
+            next();
+        }, logErr);
+    }, logErr);
+}
+
+function deleteUuidToFlightList(req, res, next) {
+    console.log("[deleteUuidToFlightList]");
+    
+    const userId = req.user._id;
+    const flightListSlug = req.params.flightListSlug;
+    const flightUUID = req.params.flightUUID;
+
+    mongo().then(db => {
+        db.collection('flightLists').updateOne(
+            userSlugQuery(userId, flightListSlug), {
+            $pull : {
                 'flights': flightUUID
             }
         }).then( () => {
@@ -94,6 +113,12 @@ function getFlightListBySlug(req, res, next) {
 
 router.get('/', getFlightListBySlug, resFlightList);
 
+
+router.delete(
+    `/flight/:flightUUID(${FLIGHT_UUID_ROUTE_MATCHER})`,
+    deleteUuidToFlightList,
+    modifySucceded
+);
 router.use(
     `/flight`, 
     (req, res, next) => {
@@ -102,7 +127,7 @@ router.use(
     },
     flightRouter,
     insertUuidToFlightList,
-    insertSucceded
+    modifySucceded
 );
 
 module.exports = router;
