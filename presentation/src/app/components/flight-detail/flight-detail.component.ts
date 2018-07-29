@@ -45,11 +45,11 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
     const arrivalDT = this.flight.arrival.dateTime;
     const flightTotalDuration = this.flight.duration.asMinutes();
 
-    this.timeToDepartureLeft = departureDT.diff(this.now, 'minutes');
-    this.timeToArrivalLeft = arrivalDT.diff(this.now, 'minutes');
+    this.timeToDepartureLeft = moment.duration(departureDT.diff(this.now));
+    this.timeToArrivalLeft = moment.duration(arrivalDT.diff(this.now));
 
     this.progress = departureDT > this.now ? null : (
-      this.now >= arrivalDT ? 100 : Math.round((flightTotalDuration - this.timeToArrivalLeft) * 100 / flightTotalDuration)
+      this.now >= arrivalDT ? 100 : Math.round((flightTotalDuration - this.timeToArrivalLeft.asMinutes()) * 100 / flightTotalDuration)
     );
     this.progressChange.emit(this.progress);
   }

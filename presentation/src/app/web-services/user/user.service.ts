@@ -2,6 +2,7 @@ import { GenericWebServiceService } from '../generic-web-service.service';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { User } from '../../classes/user/user';
+import { AuthToken } from '../../classes/user/auth-token';
 
 @Injectable({
   providedIn: 'root'
@@ -20,5 +21,9 @@ export class UserService {
       serviceURI,
       (data) => new User(data)
     );
+  }
+
+  public addAccount(authToken: AuthToken) {
+    return;
   }
 }
