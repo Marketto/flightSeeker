@@ -18,13 +18,13 @@ const {
     NEGATIVE_BOOL_REGEXP
 } = require('../routingConst');
 
-function fixXmlObject(obj){
+function fixXmlObject(obj) {
     const fixedObj = {};
     Object.keys(obj).forEach(objKey => {
         const value = obj[objKey];
         let fixedKey = objKey.replace(/^FLS/, '');
         fixedKey = (/^[A-Z\d]+$/).test(objKey) ? fixedKey.toLowerCase() : (fixedKey[0].toLowerCase() + fixedKey.substr(1));
-        
+
         if (Array.isArray(value)) {
             fixedObj[fixedKey] = value.map(fixXmlObject);
         } else if (typeof value === 'object') {
@@ -54,7 +54,7 @@ function reqFlight(req, res, next) {
         req.query.at = TIME_REGEXP.test(req.query.at) ? req.query.at : null;
         req.query.after = TIME_REGEXP.test(req.query.after) ? req.query.after : null;
         req.query.aggregate = !(req.query.aggregate === false || NEGATIVE_BOOL_REGEXP.test(req.query.aggregate));
-        
+
         next();
     } else {
         res.sendStatus(400);
@@ -70,7 +70,7 @@ function dbFlights(req, res, next) {
             const from = req.params.iataDeparture;
             const to = req.params.iataArrival;
             const airline = req.params.iataAirline;
-            
+
             const flightNumber = req.params.flightNumber;
 
             const atTime = req.query.at;
@@ -104,15 +104,15 @@ function dbFlights(req, res, next) {
             } : {}, flightNumber ? {
                 "number": flightNumber
             } : {}, );
-            
+
 
             const flightsCollection = db.collection('flights');
-            
+
             Promise.all([
                 req.dbDataChecked || flightsCollection.find(checkQuery).count(),
 
                 (aggregate ?
-                    flightsCollection.aggregate(flightAggregation(findQuery, queryLimit)).map(enrichFlight):
+                    flightsCollection.aggregate(flightAggregation(findQuery, queryLimit)).map(enrichFlight) :
                     flightsCollection.find(findQuery).limit(queryLimit)
                 ).sort({
                     "departure.dateTime": 1
@@ -131,8 +131,8 @@ function dbFlights(req, res, next) {
     }
 }
 
-function nullIfEmptyString(str){
-    return (str||"").trim() || null;
+function nullIfEmptyString(str) {
+    return (str || "").trim() || null;
 }
 
 function flFlights(req, res, next) {
@@ -151,37 +151,46 @@ function flFlights(req, res, next) {
         ]).then(([journeys, db]) => {
             try {
                 const flights = [];
-                ([].concat((journeys||{}).FlightDetails))
-                    .filter(e=>!!e)
+                ([].concat((journeys || {}).FlightDetails))
+                .filter(e => !!e)
                     .forEach(journey => {
                         if (journey) {
                             ([].concat(fixXmlObject(journey).flightLegDetails)).forEach((flight = {}) => {
                                 if (flight && !flights.some(f => f.uuid === flight.uuid)) {
 
                                     const departureAirport = flight.departureAirport || {};
-                                    const departure = {
-                                        airportIata : departureAirport.locationCode,
-                                        airportTerminal : nullIfEmptyString(departureAirport.terminal),
+                                    const departureTerminal = nullIfEmptyString(departureAirport.terminal);
+                                    const departure = Object.assign({
+                                        airportIata: departureAirport.locationCode,
                                         dateTime: moment(flight.departureDateTime).toDate()
-                                    };
-                                    
-                                    const arrivalAirport = flight.arrivalAirport || {};
-                                    const arrival = {
-                                        airportIata : arrivalAirport.locationCode,
-                                        airportTerminal : nullIfEmptyString(arrivalAirport.terminal),
-                                        dateTime : moment(flight.arrivalDateTime).toDate()
-                                    };
-                                    
-                                    const airlineIata = (flight.marketingAirline||{}).code;
+                                    }, departureTerminal ? {
+                                        airportTerminal: departureTerminal
+                                    } : {});
 
-                                    flights.push({
+                                    const arrivalAirport = flight.arrivalAirport || {};
+                                    const arrivalTerminal = nullIfEmptyString(arrivalAirport.terminal);
+                                    const arrival = Object.assign({
+                                        airportIata: arrivalAirport.locationCode,
+                                        dateTime: moment(flight.arrivalDateTime).toDate()
+                                    }, arrivalTerminal ? {
+                                        airportTerminal: arrivalTerminal
+                                    } : {});
+
+                                    const airlineIata = (flight.marketingAirline || {}).code;
+
+                                    const meals = nullIfEmptyString(flight.meals);
+
+                                    const flightToInsert = Object.assign({
                                         departure,
                                         arrival,
                                         airlineIata,
                                         'number': parseInt(flight.flightNumber),
-                                        'meals': flight.meals,
                                         'uuid': flight.uuid
-                                    });
+                                    }, meals ? {
+                                        meals
+                                    } : {});
+
+                                    flights.push(flightToInsert);
                                 }
                             });
                         }
@@ -189,17 +198,17 @@ function flFlights(req, res, next) {
                 req.dataChecked = true;
                 if (flights.length) {
                     //store results into db
-                    db.collection('flights').insertMany(flights, {
-                        ordered: false
-                    }).then(() => {
+                    Promise.all(
+                        flights.map(flight => (new Promise(r => db.collection('flights').insertOne(flight).then(r, console.error))))
+                    ).then(() => {
                         console.log("[storedFlights]");
                         next();
-                    }, err => console.error(err));
+                    }, logErr);
                 } else {
                     req.remoteNoResults = true;
                     next();
                 }
-                
+
             } catch (err) {
                 logErr(err);
             }
@@ -215,7 +224,7 @@ function flightUUIDParse(req, res, next) {
     Object.assign(req.params, {
         iataDeparture: parsedUUID[1],
         iataArrival: parsedUUID[2],
-        date: moment(parsedUUID[3],['YYYYMMDD', 'YYYY-MM-DD']).format("YYYY-MM-DD"),
+        date: moment(parsedUUID[3], ['YYYYMMDD', 'YYYY-MM-DD']).format("YYYY-MM-DD"),
         iataAirline: parsedUUID[4],
         flightNumber: parsedUUID[5]
     });
@@ -223,7 +232,7 @@ function flightUUIDParse(req, res, next) {
 }
 
 function resFlights(req, res, next) {
-    if ((req.flights||[]).length > 0) {
+    if ((req.flights || []).length > 0) {
         res.status(200).send(req.flights);
     } else if (req.params.uuid) {
         res.sendStatus(404);

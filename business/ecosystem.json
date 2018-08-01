@@ -1,0 +1,13 @@
+{
+    "apps": [{
+        "name": "flightSeeker",
+        "script": "./bin/www",
+        "cwd": "./",
+        "exec_mode": "fork_mode"
+    }],
+    "deploy": {
+        "production": {
+            "post-deploy": "npm install"
+        }
+    }
+}

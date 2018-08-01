@@ -54,7 +54,8 @@ function flightAggregation(findQuery, limit = 0) {
                         timeZone: "$departureAirport.timeZone"
                     },
                     terminal: "$departure.airportTerminal",
-                    dateTime: "$departure.dateTime"
+                    dateTime: "$departure.dateTime",
+                    delay: "$departure.delay"
                 },
                 arrival: {
                     airport: {
@@ -68,7 +69,8 @@ function flightAggregation(findQuery, limit = 0) {
                         timeZone: "$arrivalAirport.timeZone"
                     },
                     terminal: "$arrival.airportTerminal",
-                    dateTime: "$arrival.dateTime"
+                    dateTime: "$arrival.dateTime",
+                    delay: "$arrival.delay"
                 },
                 airline: {
                     iata: 1,
