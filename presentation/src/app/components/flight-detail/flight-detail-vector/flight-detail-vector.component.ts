@@ -1,3 +1,4 @@
+import * as moment from 'moment-timezone';
 import { Component, OnInit, Input } from '@angular/core';
 import { FlightVector } from '../../../classes/flight/flight-vector';
 
@@ -10,9 +11,12 @@ export class FlightDetailVectorComponent implements OnInit {
 
   @Input() public flightVector: FlightVector;
 
-  constructor() { }
+  constructor() {
+  }
 
   ngOnInit() {
+    moment.relativeTimeThreshold('m', 60);
+    moment.relativeTimeThreshold('h', 24);
   }
 
 }

@@ -1,9 +1,12 @@
 <p>
-  {{flightVector.airport.name}}
+    {{flightVector.airport.name}}
 </p>
 <p>
-  {{flightVector.airport.city}} ({{flightVector.airport.country}})
+    {{flightVector.airport.city}} ({{flightVector.airport.country}})
 </p>
 <p>
-  {{flightVector.dateTime | amCalendar}}
+    {{flightVector.dateTime | amCalendar}}
 </p>
+<small *ngIf="flightVector.delay.asMinutes() > 5">
+  ( {{ flightVector.delay | amDuration : 'minutes' }} di ritardo)
+</small>

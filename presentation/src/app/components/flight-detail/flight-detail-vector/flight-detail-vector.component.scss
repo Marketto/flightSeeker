@@ -1,15 +1,21 @@
-:host{
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  p {
-    margin: 0.5em 0;
-  }
-  height: 100%;
+:host {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex-grow: 1;
+    height: 100%;
 }
+
 :host-context(.start, .departure) {
-  text-align: start;
+    text-align: start;
 }
+
 :host-context(.end, .arrival) {
-  text-align: end;
+    text-align: end;
+}
+
+::content {
+    small {
+        color: red;
+    }
 }
