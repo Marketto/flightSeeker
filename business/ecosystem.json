@@ -7,7 +7,8 @@
     }],
     "deploy": {
         "production": {
-            "post-deploy": "npm install"
+            "post-deploy": "npm install",
+            "host": ["127.0.0.1"]
         }
     }
 }
