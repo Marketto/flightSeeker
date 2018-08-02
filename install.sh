@@ -1,8 +1,8 @@
 #!/bin/bash
-cd "$PWD/database"
+cd "$PWD" && cd /database
 sh ./restore.sh
-cd "$PWD/business"
+cd "$PWD" && cd /business
 npm install --production
-cd "$PWD/presentation"
+cd "$PWD" && cd /presentation
 npm install --production
 npm build
