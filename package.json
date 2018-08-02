@@ -8,6 +8,6 @@
         "build-fe": "cd presentation && npm install && npm run-script build"
     },
     "dependencies": {
-        "pm2": "latest"
+        "pm2": "^3.0.3"
     }
 }
