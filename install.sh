@@ -1,2 +1,2 @@
 #!/bin/bash
-sh ./database/restore.sh && npm build ./presentation
+sh ./database/restore.sh && cd presentation && npm run-script build
