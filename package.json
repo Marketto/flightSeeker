@@ -6,5 +6,7 @@
         "start": "node ./business/bin/www",
         "install": "sh install.sh"
     },
-    "dependencies": {}
+    "dependencies": {
+        "pm2": "latest"
+    }
 }
