@@ -1,0 +1,10 @@
+{
+    "name": "flight-seeker",
+    "version": "1.2.2",
+    "private": true,
+    "scripts": {
+        "start": "node ./business/bin/www",
+        "install": "sh install.sh"
+    },
+    "dependencies": {}
+}
