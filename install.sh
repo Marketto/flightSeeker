@@ -1,7 +1,5 @@
 #!/bin/bash
 sh ./database/restore.sh
-cd /business
-npm install --production
-cd ../presentation
-npm install --production
-npm build
+npm install --production ./business
+npm install --production ./presentation
+npm build ./presentation

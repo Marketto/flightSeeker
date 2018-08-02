@@ -1,5 +1,5 @@
 {
-    "name": "flight-seeker",
+    "name": "flight-seeker-presentation",
     "version": "1.2.2",
     "scripts": {
         "ng": "ng",
