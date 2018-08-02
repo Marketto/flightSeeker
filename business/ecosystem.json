@@ -8,7 +8,8 @@
     "deploy": {
         "production": {
             "post-deploy": "npm install",
-            "host": ["127.0.0.1"]
+            "host": ["127.0.0.1"],
+            "repo": "https://github.com/Marketto/flightSeeker.git"
         }
     }
 }
