@@ -4,7 +4,8 @@
     "private": true,
     "scripts": {
         "start": "node ./business/bin/www",
-        "install": "sh install.sh"
+        "restore-db": "sh ./database/restore.sh",
+        "build-fe": "cd presentation && npm install && npm run-script build"
     },
     "dependencies": {
         "pm2": "latest"
