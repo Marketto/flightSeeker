@@ -3,7 +3,7 @@
     "version": "1.2.2",
     "private": true,
     "scripts": {
-        "start": "node ./business/bin/www",
+        "start": "NODE_ENV=production node ./business/bin/www",
         "restore-db": "sh ./database/restore.sh",
         "build-fe": "cd presentation && npm install && npm run-script build"
     },
