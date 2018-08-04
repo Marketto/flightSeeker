@@ -4,20 +4,24 @@
             "$jsonSchema": {
                 "properties": {
                     "airlines": {
+                        "additionalItems": false,
                         "items": [{
                             "bsonType": "string",
                             "maxLength": 2.0,
-                            "minLength": 2.0
+                            "minLength": 2.0,
+                            "pattern": "[A-Z\\d]{2}"
                         }],
                         "minItems": 1.0,
                         "bsonType": "array",
                         "uniqueItems": true
                     },
                     "airports": {
+                        "additionalItems": false,
                         "items": [{
                             "bsonType": "string",
                             "maxLength": 3.0,
-                            "minLength": 3.0
+                            "minLength": 3.0,
+                            "pattern": "[A-Z\\d]{3}"
                         }],
                         "maxItems": 2.0,
                         "minItems": 2.0,
@@ -29,7 +33,7 @@
                 "title": "routes"
             }
         },
-        "validationLevel": "strict",
+        "validationLevel": "moderate",
         "validationAction": "error"
     },
     "indexes": [{
