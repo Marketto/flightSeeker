@@ -5,7 +5,7 @@
     "scripts": {
         "start": "node ./business/bin/www",
         "restore-db": "sh ./database/restore.sh",
-        "build-fe": "cd presentation && npm install && npm run-script build"
+        "build-fe": "cd presentation && npm install --production && npm run-script build"
     },
     "dependencies": {
         "pm2": "^3.0.3"
