@@ -2,25 +2,7 @@
     "options": {
         "validator": {
             "$jsonSchema": {
-                "properties": {
-                    "airlines": {
-                        "items": [{
-                            "bsonType": "string"
-                        }],
-                        "minItems": 1.0,
-                        "bsonType": "array",
-                        "uniqueItems": true
-                    },
-                    "airports": {
-                        "items": [{
-                            "bsonType": "string"
-                        }],
-                        "bsonType": "array",
-                        "uniqueItems": true
-                    }
-                },
-                "required": ["airlines", "airports"],
-                "title": "routes"
+
             }
         },
         "validationLevel": "moderate",
