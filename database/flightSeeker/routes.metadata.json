@@ -5,9 +5,7 @@
                 "properties": {
                     "airlines": {
                         "items": [{
-                            "bsonType": "string",
-                            "maxLength": 2.0,
-                            "minLength": 2.0
+                            "bsonType": "string"
                         }],
                         "minItems": 1.0,
                         "bsonType": "array",
@@ -15,12 +13,8 @@
                     },
                     "airports": {
                         "items": [{
-                            "bsonType": "string",
-                            "maxLength": 3.0,
-                            "minLength": 3.0
+                            "bsonType": "string"
                         }],
-                        "maxItems": 2.0,
-                        "minItems": 2.0,
                         "bsonType": "array",
                         "uniqueItems": true
                     }
