@@ -1,4 +1,5 @@
 #!/bin/bash
+mkdir dump
 mongodump --db flightSeeker --collection users
 mongodump --db flightSeeker --collection flightLists
 cp -rf ./flightSeeker/*.* ./dump/flightSeeker
