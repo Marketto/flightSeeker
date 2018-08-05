@@ -1,22 +1,23 @@
-
 :host {
-  ::ng-deep .ui-card {
-    .ui-card-title {
-      text-align: center;
-    }
-  }
-  .flight-list {
-    ::ng-deep .ui-card {
-      .ui-card-content{
-        display: flex;
-        flex-direction: row;
-        flex-wrap: wrap;
-
-        p-message {
-          margin: 1.2em auto 0.8em auto;
-          width: auto;
+     ::ng-deep .ui-card {
+        .ui-card-title {
+            text-align: center;
         }
-      }
     }
-  }
+    .flight-list {
+         ::ng-deep .ui-card {
+            .ui-card-content {
+                display: flex;
+                flex-direction: row;
+                flex-wrap: wrap;
+                app-flight-detail {
+                    min-width: 26em;
+                }
+                p-message {
+                    margin: 1.2em auto 0.8em auto;
+                    width: auto;
+                }
+            }
+        }
+    }
 }
