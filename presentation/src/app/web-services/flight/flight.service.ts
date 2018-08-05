@@ -41,7 +41,7 @@ export class FlightService {
 
     return this.genericWebService.read<Flight>(
       serviceURI,
-      (data: any[] = []): Flight => data.map(e => new Flight(e))[0]
+      (data: any[]): Flight => (data || []).map(e => new Flight(e))[0]
     );
   }
 }
