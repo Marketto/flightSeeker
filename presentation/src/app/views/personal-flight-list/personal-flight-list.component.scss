@@ -10,8 +10,10 @@
                 display: flex;
                 flex-direction: row;
                 flex-wrap: wrap;
-                app-flight-detail {
-                    min-width: 26em;
+                @media screen and (max-width: 799px) {
+                    app-flight-detail {
+                        min-width: 100%;
+                    }
                 }
                 p-message {
                     margin: 1.2em auto 0.8em auto;
