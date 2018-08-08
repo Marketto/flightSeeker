@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { FlightQuery } from '../../classes/flight/flight-query';
 import { Flight } from '../../classes/flight/flight';
-import * as moment from 'moment-timezone';
+import { Moment } from 'moment';
 
 
 @Injectable({
@@ -18,18 +18,18 @@ export class FlightService {
   public search(
     departureAirportIata: string,
     arrivalAirportIata: string,
-    departureDate: Date,
+    departureDate: Moment,
     criteria: FlightQuery = new FlightQuery()
   ): Observable<Flight[]> {
 
     const serviceURI = `aviation/airport/${departureAirportIata}/to/${arrivalAirportIata}/`
       + (criteria.airlineIata ? `airline/${criteria.airlineIata}/` : '')
-      + `flight/${moment(departureDate).format('YYYY-MM-DD')}`;
+      + `flight/${departureDate.format('YYYY-MM-DD')}`;
 
     return this.genericWebService.search<Flight>(
       serviceURI,
       criteria.toHttpParams(),
-      (data: any[] = []): Flight[] => data.map(e => new Flight(e))
+      (data: any[]): Flight[] => (data || []).map(e => new Flight(e))
     );
   }
 

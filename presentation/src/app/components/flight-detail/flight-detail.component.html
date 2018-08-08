@@ -1,30 +1,33 @@
 <div class="ui-helper-clearfix ui-g ui-fluid flight-container">
-  <div class="ui-g-5 ui-md-5 departure">
-    <app-flight-detail-vector [flightVector]="flight.departure"></app-flight-detail-vector>
-  </div>
-  <div class="ui-g-2 ui-md-2 mid-section" [ngClass]="{'meals': !authenticated}">
-    <div *ngIf="authenticated && addToFlightListButton">
-      <p-button icon="pi pi-plus" (click)="addToFlightListItems.length > 1 ? addFlightListMenu.toggle($event) : addToFlightListItems[0].command()" [disabled]="!addToFlightListItems.length"></p-button>
-      <p-menu #addFlightListMenu popup="popup" [model]="addToFlightListItems"></p-menu>
+    <div class="ui-g-5 ui-md-5 departure">
+        <app-flight-detail-vector [flightVector]="flight.departure"></app-flight-detail-vector>
     </div>
-    <div *ngIf="authenticated && removeFromFlightListButton">
-      <p-button icon="pi pi-minus" (click)="removeFromFlightListItems.length > 1 ? removeFlightListMenu.toggle($event) : removeFromFlightListItems[0].command()" [disabled]="!removeFromFlightListItems.length"></p-button>
-      <p-menu #removeFlightListMenu popup="popup" [model]="removeFromFlightListItems"></p-menu>
+    <div class="ui-g-2 ui-md-2 mid-section" [ngClass]="{'meals': !authenticated}">
+        <div *ngIf="authenticated && addToFlightListButton">
+            <p-button icon="pi pi-plus" (click)="addToFlightListItems.length > 1 ? addFlightListMenu.toggle($event) : addToFlightListItems[0].command()" [disabled]="!addToFlightListItems.length"></p-button>
+            <p-menu #addFlightListMenu popup="popup" [model]="addToFlightListItems"></p-menu>
+        </div>
+        <div *ngIf="authenticated && removeFromFlightListButton">
+            <p-button icon="pi pi-minus" (click)="removeFromFlightListItems.length > 1 ? removeFlightListMenu.toggle($event) : removeFromFlightListItems[0].command()" [disabled]="!removeFromFlightListItems.length"></p-button>
+            <p-menu #removeFlightListMenu popup="popup" [model]="removeFromFlightListItems"></p-menu>
+        </div>
+        <img [src]="'../../assets/img/meal_' + flight.meals + '.png'" />
+        <span>
+          {{ flight.duration | amDuration : 'minutes' }}
+        </span>
     </div>
-    <img [src]="'../../assets/img/meal_' + flight.meals + '.png'" />
-  </div>
-  <div class="ui-g-5 ui-md-5 arrival">
-    <app-flight-detail-vector [flightVector]="flight.arrival"></app-flight-detail-vector>
-  </div>
-  <div class="ui-g-12 ui-md-12 flight-progress">
-    <p-progressBar [value]="progress" [showValue]="false"></p-progressBar>
-    <p class="flight-eta" [ngSwitch]="progress">
-      <span *ngSwitchCase="null">In partenza tra {{timeToDepartureLeft | amDuration : 'minutes'}}</span>
-      <span *ngSwitchCase="100">Atterrato {{timeToArrivalLeft | amDuration : 'minutes'}} fa</span>
-      <span *ngSwitchDefault [ngSwitch]="progress < 10">
+    <div class="ui-g-5 ui-md-5 arrival">
+        <app-flight-detail-vector [flightVector]="flight.arrival"></app-flight-detail-vector>
+    </div>
+    <div class="ui-g-12 ui-md-12 flight-progress">
+        <p-progressBar [value]="progress" [showValue]="false"></p-progressBar>
+        <p class="flight-eta" [ngSwitch]="progress">
+            <span *ngSwitchCase="null">In partenza tra {{timeToDepartureLeft | amDuration : 'minutes'}}</span>
+            <span *ngSwitchCase="100">Atterrato {{timeToArrivalLeft | amDuration : 'minutes'}} fa</span>
+            <span *ngSwitchDefault [ngSwitch]="progress < 10">
         <span *ngSwitchDefault>In arrivo tra {{timeToArrivalLeft | amDuration : 'minutes'}}</span>
-        <span *ngSwitchCase="true">Partito da {{timeToDepartureLeft | amDuration : 'minutes'}}</span>
-      </span>
-    </p>
-  </div>
+            <span *ngSwitchCase="true">Partito da {{timeToDepartureLeft | amDuration : 'minutes'}}</span>
+            </span>
+        </p>
+    </div>
 </div>

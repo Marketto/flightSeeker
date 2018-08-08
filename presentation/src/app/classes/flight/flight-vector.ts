@@ -14,7 +14,7 @@ export class FlightVector {
       this.airport = new Airport(obj.airport);
       this.dateTime = obj.dateTime ? moment(obj.dateTime).tz(this.airport.timeZone) : undefined;
       this.terminal = obj.terminal;
-      this.delay = moment.duration(obj.delay || "PT0S");
+      this.delay = moment.duration(obj.delay || 'PT0S');
 
       if (this.dateTime && this.delay) {
         this.dateTime.add(this.delay);

@@ -17,7 +17,9 @@ export class Flight {
       this.departure = new FlightVector(obj.departure);
       this.arrival = new FlightVector(obj.arrival);
       this.airline = new Airline(obj.airline);
-      this.duration = obj.duration ? moment.duration(obj.duration) : undefined;
+      this.duration = ( this.departure.dateTime && this.arrival.dateTime ) ?
+        moment.duration(this.arrival.dateTime.diff(this.departure.dateTime)) :
+        undefined;
       this.number = obj.number;
       this.meals = obj.meals;
       this.uuid = obj.uuid;

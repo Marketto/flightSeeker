@@ -29,7 +29,7 @@ export class SearchResultsComponent implements OnInit {
       this.flightService.search(
         this.departureAirportIata,
         this.arrivalAirportIata,
-        this.departureDate.toDate(),
+        this.departureDate,
         new FlightQuery({
           'airlineIata': this.airlineIata,
           'at': this.departureTime

@@ -4,6 +4,7 @@ import { Component, OnInit } from '@angular/core';
 import * as moment from 'moment-timezone';
 import { FlightService } from '../../web-services/flight/flight.service';
 import { FlightQuery } from '../../classes/flight/flight-query';
+import { Moment } from 'moment-timezone';
 
 @Component({
   selector: 'app-journey-detail',
@@ -40,16 +41,14 @@ export class JourneyDetailComponent implements OnInit {
 
 
   private searchReturnFlight(flight: Flight): void {
-    const returnDepartureDateTime = moment.duration(flight.duration).asHours() > 6 ?
+    const returnDepartureDateTime: Moment = flight.duration.asHours() > 6 ?
       moment(flight.arrival.dateTime).add(8, 'h').endOf('day').add(1, 'ms')
-     : moment(flight.arrival.dateTime).add(40, 'm');
-
-    console.log(returnDepartureDateTime);
+      : moment(flight.arrival.dateTime).add(40, 'm');
 
     this.flightService.search(
       flight.arrival.airport.iata,
       flight.departure.airport.iata,
-      returnDepartureDateTime.toDate(),
+      returnDepartureDateTime,
       new FlightQuery({
         'after': returnDepartureDateTime,
         'limit': 1,

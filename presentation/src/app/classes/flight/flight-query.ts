@@ -9,7 +9,12 @@ export class FlightQuery extends Search {
   public at: Moment;
   public limit: number;
 
-  constructor(obj?: FlightQuery|any) {
+  constructor(obj?: FlightQuery|{
+    airlineIata?: string,
+    after?: Moment,
+    at?: Moment,
+    limit?: number
+  }) {
     super();
     if (obj) {
       this.airlineIata = obj.airlineIata;
@@ -23,7 +28,7 @@ export class FlightQuery extends Search {
     let params = new HttpParams();
 
     if (this.after || this.at) {
-      params = params.set(this.after ? 'after' : 'at', (this.after || this.at).format('HH:mm'));
+      params = params.set(this.after ? 'after' : 'at', (this.after || this.at).utc().format('HH:mm'));
     }
     if (this.limit) {
       params = params.set('limit', this.limit.toString());
