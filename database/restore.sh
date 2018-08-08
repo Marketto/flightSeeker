@@ -11,7 +11,7 @@ mongodump --db flightSeeker --collection flightLists &>/dev/null
 mongodump --db flightSeeker --collection flights &>/dev/null
 
 echo "[3/7] Copying data and metadata from repo over dumped"
-cp -rf ./flightSeeker/*.* ./dump/flightSeeker
+cp -rf flightSeeker/*.* dump/flightSeeker
 
 echo "[4/7] Dropping existing database"
 mongo flightSeeker --eval "db.dropDatabase(); quit()" --quiet &>/dev/null
