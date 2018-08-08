@@ -2,8 +2,9 @@
 echo "[0/7] Starting DB restore/upgrade process"
 
 echo "[1/7] Setting paths for existing db dump";
-mkdir dump &>/dev/null
-mkdir dump/flightSeeker &>/dev/null
+mkdir dump  &>/dev/null 
+cd dump && mkdir flightSeeker &>/dev/null
+cd ..
 
 echo "[2/7] Performing dump/backup of existing user-related and 3rd party information";
 mongodump --db flightSeeker --collection users &>/dev/null
