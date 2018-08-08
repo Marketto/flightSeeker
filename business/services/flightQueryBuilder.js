@@ -92,7 +92,7 @@ function flightAggregation(findQuery, limit = 0) {
     return aggCfg;
 }
 
-
+/*
 function enrichFlight(flight) {
     const departureDtz = moment.tz(moment(flight.departure.dateTime).format("YYYY-MM-DDTHH:mm:ss"), flight.departure.airport.timeZone);
     const arrivalDtz = moment.tz(moment(flight.arrival.dateTime).format("YYYY-MM-DDTHH:mm:ss"), flight.arrival.airport.timeZone);
@@ -107,10 +107,10 @@ function enrichFlight(flight) {
         'duration': moment.duration(arrivalDtz.diff(departureDtz))
     });
 }
-
+*/
 
 
 module.exports = {
-    flightAggregation,
-    enrichFlight
+    flightAggregation
+    //,enrichFlight
 };

@@ -1,10 +1,10 @@
 const express = require('express');
-const router = express.Router({mergeParams: true});
+const router = express.Router({ mergeParams: true });
 const mongo = require('../../connectors/mongo');
 const flightRouter = require('../aviation/flightRouter');
 const {
-    flightAggregation,
-    enrichFlight
+    flightAggregation
+    //,enrichFlight
 } = require('../../services/flightQueryBuilder');
 const {
     FLIGHT_UUID_ROUTE_MATCHER
@@ -25,7 +25,7 @@ function resFlightList(req, res) {
     res.send(req.flightList);
 }
 
-function userSlugQuery(userId, flightListSlug){
+function userSlugQuery(userId, flightListSlug) {
     return {
         '$or': [{
                 'owner': userId
@@ -40,7 +40,7 @@ function userSlugQuery(userId, flightListSlug){
 
 function insertUuidToFlightList(req, res, next) {
     console.log("[insertUuidToFlightList]");
-    
+
     const userId = req.user._id;
     const flightListSlug = req.params.flightListSlug;
     const flightUUID = req.flights[0].uuid;
@@ -48,10 +48,10 @@ function insertUuidToFlightList(req, res, next) {
     mongo().then(db => {
         db.collection('flightLists').updateOne(
             userSlugQuery(userId, flightListSlug), {
-            $addToSet : {
-                'flights': flightUUID
-            }
-        }).then( () => {
+                $addToSet: {
+                    'flights': flightUUID
+                }
+            }).then(() => {
             next();
         }, logErr);
     }, logErr);
@@ -59,7 +59,7 @@ function insertUuidToFlightList(req, res, next) {
 
 function deleteUuidToFlightList(req, res, next) {
     console.log("[deleteUuidToFlightList]");
-    
+
     const userId = req.user._id;
     const flightListSlug = req.params.flightListSlug;
     const flightUUID = req.params.flightUUID;
@@ -67,10 +67,10 @@ function deleteUuidToFlightList(req, res, next) {
     mongo().then(db => {
         db.collection('flightLists').updateOne(
             userSlugQuery(userId, flightListSlug), {
-            $pull : {
-                'flights': flightUUID
-            }
-        }).then( () => {
+                $pull: {
+                    'flights': flightUUID
+                }
+            }).then(() => {
             next();
         }, logErr);
     }, logErr);
@@ -84,8 +84,7 @@ function getFlightListBySlug(req, res, next) {
 
     mongo().then(db => {
         db.collection('flightLists').findOne(
-            userSlugQuery(userId, flightListSlug),
-            {
+            userSlugQuery(userId, flightListSlug), {
                 _id: 0
             }
         ).then(flightList => {
@@ -93,17 +92,18 @@ function getFlightListBySlug(req, res, next) {
                 console.log('flightLists found');
                 const flightUUIDs = flightList.flights;
                 db.collection('flights').aggregate(flightAggregation({
-                    uuid: {
-                        $in: flightUUIDs
-                    }
-                })).sort({
-                    "departure.dateTime": 1
-                }).map(enrichFlight).toArray()
-                .then(flights => {
-                    console.log('flightLists flights found');
-                    req.flightList = Object.assign(flightList, {flights});
-                    next();
-                }, logErr);
+                        uuid: {
+                            $in: flightUUIDs
+                        }
+                    })).sort({
+                        "departure.dateTime": 1
+                    }) /*.map(enrichFlight)*/
+                    .toArray()
+                    .then(flights => {
+                        console.log('flightLists flights found');
+                        req.flightList = Object.assign(flightList, { flights });
+                        next();
+                    }, logErr);
             } else {
                 res.sendStatus(404);
             }
@@ -120,7 +120,7 @@ router.delete(
     modifySucceded
 );
 router.use(
-    `/flight`, 
+    `/flight`,
     (req, res, next) => {
         req.params.aggregate = false;
         next();
