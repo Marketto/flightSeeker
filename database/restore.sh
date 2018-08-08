@@ -2,20 +2,19 @@
 echo "[0/7] Starting DB restore/upgrade process"
 
 echo "[1/7] Setting paths for existing db dump";
-mkdir dump  &>/dev/null 
-cd dump && mkdir flightSeeker &>/dev/null
-cd ..
+mkdir dump
+mkdir dump/flightSeeker
 
 echo "[2/7] Performing dump/backup of existing user-related and 3rd party information";
-mongodump --db flightSeeker --collection users &>/dev/null
-mongodump --db flightSeeker --collection flightLists &>/dev/null
-mongodump --db flightSeeker --collection flights &>/dev/null
+mongodump --db flightSeeker --collection users
+mongodump --db flightSeeker --collection flightLists
+mongodump --db flightSeeker --collection flights
 
 echo "[3/7] Copying data and metadata from repo over dumped"
 cp -rf flightSeeker/*.* dump/flightSeeker
 
 echo "[4/7] Dropping existing database"
-mongo flightSeeker --eval "db.dropDatabase(); quit()" --quiet &>/dev/null
+mongo flightSeeker --eval "db.dropDatabase(); quit()" --quiet
 
 echo "[5/7] Restoring data & metadata from repo + dumped user/3rd party data"
 mongorestore --dir ./dump
