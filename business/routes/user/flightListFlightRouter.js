@@ -105,7 +105,17 @@ function getFlightListBySlug(req, res, next) {
                         next();
                     }, logErr);
             } else {
-                res.sendStatus(404);
+                db.collection('flightLists').findOne({
+                    'slug': flightListSlug
+                }).then(otherUserFlightList => {
+                    if (otherUserFlightList) {
+                        //FlightList Slug exists but user doesn't have rights to see
+                        res.sendStatus(401);
+                    } else {
+                        //FlightList Slug does not exist at all
+                        res.sendStatus(404);
+                    }
+                }, logErr)
             }
         }, logErr);
     }, logErr);
