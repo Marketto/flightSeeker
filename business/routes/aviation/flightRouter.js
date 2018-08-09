@@ -18,6 +18,8 @@ const {
     NEGATIVE_BOOL_REGEXP
 } = require('../routingConst');
 
+const FL_FLIGHT_PROMISE_QUEUE = {};
+
 function fixXmlObject(obj) {
     const fixedObj = {};
     Object.keys(obj).forEach(objKey => {
@@ -60,7 +62,6 @@ function reqFlight(req, res, next) {
         res.sendStatus(400);
     }
 }
-
 
 function dbFlights(req, res, next) {
     if (!req.dbDataChecked && !req.remoteNoResults) {
@@ -143,117 +144,127 @@ function flFlights(req, res, next) {
 
         const from = req.params.iataDeparture;
         const to = req.params.iataArrival;
-        const date = moment(req.params.date);
+        const date = moment(req.params.date).format('YYYYMMDD');
 
-        Promise.all([
-            flightLookup.service({
-                'resource': `TimeTable/${from}/${to}/${date.format('YYYYMMDD')}`
-            }),
-            mongo()
-        ]).then(([journeys, db]) => {
+        const flightSearchId = `${from}${to}${date}`;
 
-            const airports = {};
+        FL_FLIGHT_PROMISE_QUEUE[flightSearchId] = FL_FLIGHT_PROMISE_QUEUE[flightSearchId] || new Promise((flQueueResolve, flQueueReject) => {
+            Promise.all([
+                flightLookup.service({
+                    'resource': `TimeTable/${from}/${to}/${date}`
+                }),
+                mongo()
+            ]).then(([journeys, db]) => {
 
-            function getAirportTz(airportIata) {
-                return new Promise(function(resolveAirport, rejectAirport) {
-                    try {
-                        if (airports[airportIata]) {
-                            resolveAirport(airports[airportIata].timeZone);
-                        } else {
-                            db.collection('airports').findOne({
-                                'iata': airportIata
-                            }).then(airport => {
-                                airports[airportIata] = airport;
-                                resolveAirport(airport.timeZone);
-                            }, rejectAirport);
+                const airports = {};
+
+                function getAirportTz(airportIata) {
+                    return new Promise(function(resolveAirport, rejectAirport) {
+                        try {
+                            if (airports[airportIata]) {
+                                resolveAirport(airports[airportIata].timeZone);
+                            } else {
+                                db.collection('airports').findOne({
+                                    'iata': airportIata
+                                }).then(airport => {
+                                    airports[airportIata] = airport;
+                                    resolveAirport(airport.timeZone);
+                                }, rejectAirport);
+                            }
+                        } catch (errAirport) {
+                            rejectAirport(errAirport);
                         }
-                    } catch (errAirport) {
-                        rejectAirport(errAirport);
-                    }
-                });
-            }
+                    });
+                }
 
-            try {
+                try {
 
-                Promise.all(
-                    ([].concat((journeys || {}).FlightDetails))
-                    .map(journey => journey && fixXmlObject(journey).flightLegDetails)
-                    .reduce((a, b) => [].concat(a).concat(b))
-                    .filter((flight, flightIdx, flightList) => {
-                        return !!flight && !flightList.slice(0, flightIdx).some((f, fIdx) => f.uuid === flight.uuid);
-                    }).map(async flight => {
-                        const departureAirport = flight.departureAirport || {};
-                        const departureAirportIata = departureAirport.locationCode;
-                        const departureTerminal = nullIfEmptyString(departureAirport.terminal);
-                        const departureTimeZone = await getAirportTz(departureAirportIata);
-                        const departureDtz = moment.tz(flight.departureDateTime, departureTimeZone);
-                        const departure = Object.assign({
-                            airportIata: departureAirportIata,
-                            dateTime: moment(departureDtz).utc().toDate(),
-                            offset: departureDtz.utcOffset()
-                        }, departureTerminal ? {
-                            airportTerminal: departureTerminal
-                        } : {});
+                    Promise.all(
+                        ([].concat((journeys || {}).FlightDetails))
+                        .map(journey => journey && fixXmlObject(journey).flightLegDetails)
+                        .reduce((a, b) => [].concat(a).concat(b))
+                        .filter((flight, flightIdx, flightList) => {
+                            return !!flight && !flightList.slice(0, flightIdx).some((f, fIdx) => f.uuid === flight.uuid);
+                        }).map(async flight => {
+                            const departureAirport = flight.departureAirport || {};
+                            const departureAirportIata = departureAirport.locationCode;
+                            const departureTerminal = nullIfEmptyString(departureAirport.terminal);
+                            const departureTimeZone = await getAirportTz(departureAirportIata);
+                            const departureDtz = moment.tz(flight.departureDateTime, departureTimeZone);
+                            const departure = Object.assign({
+                                airportIata: departureAirportIata,
+                                dateTime: moment(departureDtz).utc().toDate(),
+                                offset: departureDtz.utcOffset()
+                            }, departureTerminal ? {
+                                airportTerminal: departureTerminal
+                            } : {});
 
-                        const arrivalAirport = flight.arrivalAirport || {};
-                        const arrivalTerminal = nullIfEmptyString(arrivalAirport.terminal);
-                        const arrivalAirportIata = arrivalAirport.locationCode;
-                        const arrivalTimeZone = await getAirportTz(arrivalAirportIata);
-                        const arrivalDtz = moment.tz(flight.arrivalDateTime, arrivalTimeZone);
-                        const arrival = Object.assign({
-                            airportIata: arrivalAirportIata,
-                            dateTime: moment(arrivalDtz).utc().toDate(),
-                            offset: arrivalDtz.utcOffset()
-                        }, arrivalTerminal ? {
-                            airportTerminal: arrivalTerminal
-                        } : {});
+                            const arrivalAirport = flight.arrivalAirport || {};
+                            const arrivalTerminal = nullIfEmptyString(arrivalAirport.terminal);
+                            const arrivalAirportIata = arrivalAirport.locationCode;
+                            const arrivalTimeZone = await getAirportTz(arrivalAirportIata);
+                            const arrivalDtz = moment.tz(flight.arrivalDateTime, arrivalTimeZone);
+                            const arrival = Object.assign({
+                                airportIata: arrivalAirportIata,
+                                dateTime: moment(arrivalDtz).utc().toDate(),
+                                offset: arrivalDtz.utcOffset()
+                            }, arrivalTerminal ? {
+                                airportTerminal: arrivalTerminal
+                            } : {});
 
-                        const airlineIata = (flight.marketingAirline || {}).code;
+                            const airlineIata = (flight.marketingAirline || {}).code;
 
-                        const meals = nullIfEmptyString(flight.meals);
+                            const meals = nullIfEmptyString(flight.meals);
 
-                        const flightToInsert = Object.assign({
-                            departure,
-                            arrival,
-                            airlineIata,
-                            'number': parseInt(flight.flightNumber),
-                            'uuid': flight.uuid
-                        }, meals ? {
-                            meals
-                        } : {});
+                            const flightToInsert = Object.assign({
+                                departure,
+                                arrival,
+                                airlineIata,
+                                'number': parseInt(flight.flightNumber),
+                                'uuid': flight.uuid
+                            }, meals ? {
+                                meals
+                            } : {});
 
-                        return flightToInsert;
-                    })
-                ).then(flightList => {
-                    const flights = flightList.reduce((a, b) => [].concat(a).concat(b)).filter(e => !!e);
-                    req.dataChecked = true;
-                    if (flights.length) {
-                        //store results into db
-                        Promise.all(flights.map(flight => {
-                            return new Promise((resolveInsert, rejectInsert) => {
-                                db.collection('flights').insertMany(flights).then(resolveInsert, err => {
-                                    //TODO: throw reject if error is not due to duplicate
-                                    console.log(err);
-                                    resolveInsert();
+                            return flightToInsert;
+                        })
+                    ).then(flightList => {
+                        const flights = flightList.reduce((a, b) => [].concat(a).concat(b)).filter(e => !!e);
+                        req.dataChecked = true;
+                        if (flights.length) {
+                            //store results into db
+                            Promise.all(flights.map(flight => {
+                                return new Promise((resolveInsert, rejectInsert) => {
+                                    db.collection('flights').insertMany(flights).then(resolveInsert, err => {
+                                        //TODO: throw reject if error is not due to duplicate
+                                        console.log(err);
+                                        resolveInsert();
+                                    });
                                 });
-                            });
-                        })).then(() => {
-                            console.log("[storedFlights]");
-                            next();
-                        }, logErr);
+                            })).then(() => {
+                                console.log("[storedFlights]");
+                                flQueueResolve();
+                            }, flQueueReject);
 
-                    } else {
-                        req.remoteNoResults = true;
-                        next();
-                    }
-                }, err =>  {
-                    logErr(err);
-                });
+                        } else {
+                            req.remoteNoResults = true;
+                            flQueueResolve();
+                        }
+                    }, flQueueReject);
 
-            } catch (err) {
-                logErr(err);
-            }
-        }, logErr);
+                } catch (err) {
+                    flQueueReject(err);
+                }
+            }, flQueueReject);
+        });
+
+        FL_FLIGHT_PROMISE_QUEUE[flightSearchId].then(() => {
+            next();
+            delete FL_FLIGHT_PROMISE_QUEUE[flightSearchId];
+        }, err => {
+            logErr(err);
+            delete FL_FLIGHT_PROMISE_QUEUE[flightSearchId];
+        });
     } else {
         next();
     }
