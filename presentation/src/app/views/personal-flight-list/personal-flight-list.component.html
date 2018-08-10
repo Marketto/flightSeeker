@@ -1,16 +1,29 @@
 <p-card class="ui-g-12" [title]="flightList.name" *ngIf="flightList">
-  <!-- TODO: add owner and shared info-->
-<p>
-  <label>Ore totali di volo:</label>
-  {{totalDuration | amDuration: 'minutes'}}
-</p>
+    <!-- TODO: add owner and shared info-->
+    <p>
+        <label>Ore totali di volo:</label> {{totalDuration | amDuration: 'minutes'}}
+    </p>
 </p-card>
 
 <p-card class="ui-g-12 ui-md-12 flight-map" title="Mappa" *ngIf="currentFlight">
-  <app-flight-map [flight]="currentFlight"></app-flight-map>
+    <app-flight-map [flight]="currentFlight"></app-flight-map>
 </p-card>
 
 <p-card class="ui-g-12 flight-list" title="Voli" *ngIf="flightList && flightList.flights">
-  <app-flight-detail class="ui-g-6 ui-m-12" [flight]="flight" *ngFor="let flight of flightList.flights" [removeFromFlightListButton]="true" (removeFromFlightList)="pullFlight($event)"></app-flight-detail>
-  <p-message severity="info" text="Nessun volo in questa lista" *ngIf="!flightList.flights.length"></p-message>
+    <app-flight-detail class="ui-g-6 ui-m-12" [flight]="flight" *ngFor="let flight of flightList.flights" [removeFromFlightListButton]="true" (removeFromFlightList)="pullFlight($event)"></app-flight-detail>
+    <p-message severity="info" text="Nessun volo in questa lista" *ngIf="!flightList.flights.length"></p-message>
+</p-card>
+
+<p-card class="ui-g-12 error-messages" title="Accesso negato" *ngIf="unauthorized" [ngSwitch]="authenticated">
+    <div *ngSwitchCase="true">
+        <h4>
+            Questa lista è privata, per poterla utilizzare richiedi l'accesso
+        </h4>
+        <button>
+      Invia richiesta
+    </button>
+    </div>
+    <h4 *ngSwitchDefault>
+        Devi effettuare il login per poter interagire con questa pagina
+    </h4>
 </p-card>

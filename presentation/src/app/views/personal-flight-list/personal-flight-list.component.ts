@@ -1,3 +1,4 @@
+import { AuthService } from './../../services/auth/auth.service';
 import { FlightListService } from '../../web-services/flight-list/flight-list.service';
 import { ActivatedRoute } from '@angular/router';
 import { FlightList } from '../../classes/flight-list/flight-list';
@@ -14,6 +15,7 @@ import { Duration } from 'moment';
 export class PersonalFlightListComponent implements OnInit {
 
   public flightList: FlightList;
+  public unauthorized: Boolean = false;
 
   public get totalDuration(): Duration {
     if (this.flightList) {
@@ -40,6 +42,10 @@ export class PersonalFlightListComponent implements OnInit {
     }
   }
 
+  public get authenticated() {
+    return this.authService.isAuthenticated;
+  }
+
   public pullFlight(flight: Flight) {
     this.flightList.flights.splice(
       this.flightList.flights.indexOf(flight)
@@ -48,7 +54,8 @@ export class PersonalFlightListComponent implements OnInit {
 
   constructor(
     private activeRoute: ActivatedRoute,
-    private flightListService: FlightListService
+    private flightListService: FlightListService,
+    private authService: AuthService
   ) { }
 
   ngOnInit() {
@@ -56,6 +63,10 @@ export class PersonalFlightListComponent implements OnInit {
     if (flightListSlug) {
       this.flightListService.get(flightListSlug).read().subscribe((flightList: FlightList) => {
         this.flightList = flightList;
+      }, ({status}) => {
+        if (status === 401) {
+          this.unauthorized = true;
+        }
       });
     }
   }

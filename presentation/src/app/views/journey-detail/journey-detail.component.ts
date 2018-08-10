@@ -42,7 +42,7 @@ export class JourneyDetailComponent implements OnInit {
 
   private searchReturnFlight(flight: Flight): void {
     const returnDepartureDateTime: Moment = flight.duration.asHours() > 6 ?
-      moment(flight.arrival.dateTime).add(8, 'h').endOf('day').add(1, 'ms')
+      moment(flight.arrival.dateTime).add(22, 'h')
       : moment(flight.arrival.dateTime).add(40, 'm');
 
     this.flightService.search(

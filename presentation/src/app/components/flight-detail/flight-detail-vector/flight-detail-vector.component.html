@@ -5,7 +5,7 @@
     {{flightVector.airport.city}} ({{flightVector.airport.country}})
 </p>
 <p>
-    {{flightVector.dateTime | amCalendar}}
+    {{flightVector.dateTime.toDate() | date : 'EEE d, HH:mm' : flightVector.offset}}
 </p>
 <small *ngIf="flightVector.delay.asMinutes() > 5">
   ( {{ flightVector.delay | amDuration : 'minutes' }} di ritardo)

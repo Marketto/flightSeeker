@@ -13,6 +13,7 @@ export class AppComponent {
   constructor(
     private translate: TranslateService
   ) {
-    moment.locale(this.translate.getBrowserLang());
+    const locale: string = this.translate.getBrowserLang()
+    moment.locale(locale);
   }
 }
