@@ -129,13 +129,13 @@ router.delete(
     deleteUuidToFlightList,
     modifySucceded
 );
-router.use(
-    `/flight`,
+router.put(
+    `/flight/:flightUUID(${FLIGHT_UUID_ROUTE_MATCHER})`,
     (req, res, next) => {
         req.params.aggregate = false;
         next();
     },
-    flightRouter,
+    ...flightRouter.retrieveFlightByUUID,
     insertUuidToFlightList,
     modifySucceded
 );

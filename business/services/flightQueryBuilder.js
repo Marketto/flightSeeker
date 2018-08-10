@@ -55,7 +55,8 @@ function flightAggregation(findQuery, limit = 0) {
                     },
                     terminal: "$departure.airportTerminal",
                     dateTime: "$departure.dateTime",
-                    delay: "$departure.delay"
+                    delay: "$departure.delay",
+                    offset: "$departure.offset"
                 },
                 arrival: {
                     airport: {
@@ -70,7 +71,8 @@ function flightAggregation(findQuery, limit = 0) {
                     },
                     terminal: "$arrival.airportTerminal",
                     dateTime: "$arrival.dateTime",
-                    delay: "$arrival.delay"
+                    delay: "$arrival.delay",
+                    offset: "$arrival.offset"
                 },
                 airline: {
                     iata: 1,

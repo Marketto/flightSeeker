@@ -306,6 +306,7 @@ function resFlights(req, res, next) {
 router.get(`/:date(${DATE_ROUTE_MATCHER})`, reqFlight, dbFlights, flFlights, dbFlights, resFlights);
 router.get(`/:date(${DATE_ROUTE_MATCHER})/:flightNumber(${FLIGHT_NUM_ROUTE_MATCHER})`, reqFlight, dbFlights, flFlights, dbFlights, resFlights);
 router.get(`/:flightUUID(${FLIGHT_UUID_ROUTE_MATCHER})`, flightUUIDParse, reqFlight, dbFlights, flFlights, dbFlights, resFlights);
-router.put(`/:flightUUID(${FLIGHT_UUID_ROUTE_MATCHER})`, flightUUIDParse, reqFlight, dbFlights, flFlights, dbFlights);
+//router.put(`/:flightUUID(${FLIGHT_UUID_ROUTE_MATCHER})`, flightUUIDParse, reqFlight, dbFlights, flFlights, dbFlights);
+router.retrieveFlightByUUID = [flightUUIDParse, reqFlight, dbFlights, flFlights, dbFlights];
 
 module.exports = router;
