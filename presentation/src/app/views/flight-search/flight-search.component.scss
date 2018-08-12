@@ -44,5 +44,20 @@
         }
       }
     }
+    @media screen and (max-width: 511px) and (min-width: 350px){
+      h3 {
+        &.resize-font {
+          font-size: 0.7em;
+          line-height: 3.6em;
+        }
+      }
+    }
+    @media screen and (max-width: 349px){
+      h3 {
+        &.text-start, &.text-end, &.text-center {
+          text-align: center;
+        }
+      }
+    }
   }
 }

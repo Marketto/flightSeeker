@@ -3,22 +3,52 @@
   padding: 0.5em 0.8em;
   display: flex;
   justify-content: space-between;
-  @media screen and (min-width: 480px){
-    align-items: baseline;
+  align-items: center;
+
+  @media screen and (max-width: 389px){
+    .title {
+      width: 100%;
+      text-align: center;
+      margin: 0 0 0.4em 0;
+    }
+    flex-direction: column;
   }
-  @media screen and (max-width: 479px){
-    align-items: center;
+
+  @media screen and (min-width: 390px){
+    .title {
+      margin: 0;
+      text-align: start;
+    }
   }
 
   .title {
-    margin: 0;
-    text-align: start;
-    min-width: 50%;
+    @media screen and (min-width: 440px){
+      min-width: 7em;
+      width: 50%;
+    }
+
+    @media screen and (max-width: 439px) and (min-width: 390px){
+      min-width: 3em;
+      width: 50%;
+    }
+
+  }
+
+  @media screen and (min-width: 640px){
+    ::ng-deep .ui-panelmenu {
+      flex-direction: row;
+    }
+  }
+  @media screen and (max-width: 639px){
+    ::ng-deep .ui-panelmenu {
+      flex-direction: column;
+    }
   }
 
   ::ng-deep .ui-panelmenu {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
+
     &>div {
       flex-grow: 1;
       flex-basis: 0;
