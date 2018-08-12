@@ -14,6 +14,7 @@ import { ProgressBarModule } from 'primeng/progressbar';
 import { ButtonModule } from 'primeng/button';
 import { MenubarModule } from 'primeng/menubar';
 import { MenuModule } from 'primeng/menu';
+import { PanelMenuModule } from 'primeng/panelmenu';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { DialogModule } from 'primeng/dialog';
 import { MessagesModule } from 'primeng/messages';
@@ -60,6 +61,7 @@ import { FlightDetailVectorComponent } from './components/flight-detail/flight-d
     ButtonModule,
     MenubarModule,
     MenuModule,
+    PanelMenuModule,
     ProgressSpinnerModule,
     DialogModule,
     MessagesModule,

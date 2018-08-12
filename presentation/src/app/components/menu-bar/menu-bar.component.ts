@@ -18,11 +18,12 @@ export class MenuBarComponent implements OnInit {
       command: () => this.newFlightListDialog = true
     }
   ];
-  private $items: MenuItem[] = [
+  private $loggedUserMenu: MenuItem[] = [
     {
       label: 'Cerca',
       icon: 'pi pi-search',
-      routerLink: ['/']
+      routerLink: ['/'],
+      styleClass: 'btn'
     },
     {
       id: 'FLIGHT_LISTS',
@@ -48,18 +49,26 @@ export class MenuBarComponent implements OnInit {
     }
   ];
 
-  public get items(): MenuItem[] {
-    if (this.authService.isAuthenticated) {
-      return this.$items;
+  private $anonMenu: MenuItem[] = [
+    {
+      label: 'Cerca',
+      icon: 'pi pi-search',
+      routerLink: ['/'],
+      styleClass: 'btn'
+    },
+    {
+      label: 'Login',
+      icon: 'pi pi-user',
+      command: () => this.authService.login(),
+      styleClass: 'btn'
     }
-    return null;
+  ];
+
+  public get userMenu(): MenuItem[] {
+    return this.authService.isAuthenticated ? this.$loggedUserMenu : this.$anonMenu;
   }
 
-  public get authenticated() {
-    return this.authService.isAuthenticated;
-  }
-
-  public login() {
+  private login() {
     this.authService.login();
   }
 
@@ -80,7 +89,7 @@ export class MenuBarComponent implements OnInit {
     private flightListService: FlightListService
   ) {
     if (this.authService.isAuthenticated) {
-      this.$items.find(m => m.id === 'USER').label = this.authService.user.given_name;
+      this.$loggedUserMenu.find(m => m.id === 'USER').label = this.authService.user.given_name;
       this.flightListService.readAll().subscribe((list: FlightList[]) => {
         this.flightListMenu.splice(1);
         list.forEach((flightList: FlightList) => {

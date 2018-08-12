@@ -3,22 +3,45 @@
   padding: 0.5em 0.8em;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  @media screen and (min-width: 480px){
+    align-items: baseline;
+  }
+  @media screen and (max-width: 479px){
+    align-items: center;
+  }
+
   .title {
     margin: 0;
     text-align: start;
+    min-width: 50%;
   }
 
-  ::ng-deep .ui-menubar {
+  ::ng-deep .ui-panelmenu {
     display: flex;
-    justify-content: flex-end;
-    align-items: center;
-    float: none;
-    width: 100%;
-    padding: 0;
+    flex-wrap: wrap;
+    &>div {
+      flex-grow: 1;
+      flex-basis: 0;
 
-    .ui-menubar-custom {
-      padding: 0;
+      .ui-panelmenu-header {
+        &.btn {
+          border-color: #156090;
+          &>a{
+            background: #186ba0;
+            color: #FFFFFF;
+          }
+        }
+
+        .ui-panelmenu-header-link {
+          display: flex;
+          align-items: center;
+
+          .ui-menuitem-text {
+            text-align: center;
+            flex-grow: 1;
+          }
+        }
+      }
     }
   }
 }
