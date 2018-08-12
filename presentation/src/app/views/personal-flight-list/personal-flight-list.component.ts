@@ -17,7 +17,7 @@ export class PersonalFlightListComponent implements OnInit {
   private flightListSlug: string;
 
   public flightList: FlightList;
-  public unauthorized: Boolean = false;
+  public unauthorized: true|'pending'|'guest';
 
   public get totalDuration(): Duration {
     if (this.flightList) {
@@ -44,10 +44,6 @@ export class PersonalFlightListComponent implements OnInit {
     }
   }
 
-  public get authenticated() {
-    return this.authService.isAuthenticated;
-  }
-
   public pullFlight(flight: Flight) {
     this.flightList.flights.splice(
       this.flightList.flights.indexOf(flight)
@@ -55,14 +51,17 @@ export class PersonalFlightListComponent implements OnInit {
   }
 
   public sendShareRequest() {
-    this.flightListService.bySlug(this.flightListSlug).shareRequest().create().subscribe();
+    this.flightListService.bySlug(this.flightListSlug).shareRequest().create().subscribe(()=>{
+      this.unauthorized = 'pending';
+    });
   }
 
 
   public acceptShareRequest(userId: string) {
     this.flightListService.bySlug(this.flightListSlug).shared().insert(userId).subscribe(() => {
       const flShareRequest = this.flightList.shareRequest;
-      flShareRequest.splice(flShareRequest.findIndex(uid => uid._id === userId), 1);
+      const [newShared] = flShareRequest.splice(flShareRequest.findIndex(uid => uid._id === userId), 1);
+      this.flightList.shared.push(newShared);
     });
   }
   public declineShareRequest(userId: string) {
@@ -86,18 +85,23 @@ export class PersonalFlightListComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    const flightListSlug = this.activeRoute.snapshot.params.flightListSlug;
-    if (flightListSlug) {
-      this.flightListService.bySlug(flightListSlug).read().subscribe((flightList: FlightList) => {
-        this.flightList = flightList;
-        this.flightListSlug = flightListSlug;
-      }, ({status}) => {
-        if (status === 401) {
-
+    if (this.authService.isAuthenticated) {
+      const flightListSlug = this.activeRoute.snapshot.params.flightListSlug;
+      if (flightListSlug) {
+        this.flightListService.bySlug(flightListSlug).read().subscribe((flightList: FlightList) => {
+          this.flightList = flightList;
           this.flightListSlug = flightListSlug;
-          this.unauthorized = true;
-        }
-      });
+        }, ({status}) => {
+          this.flightListSlug = flightListSlug;
+          if (status === 401) {
+            this.unauthorized = true;
+          } else if (status === 406) {
+            this.unauthorized = 'pending';
+          }
+        });
+      }
+    } else {
+      this.unauthorized = 'guest';
     }
   }
 

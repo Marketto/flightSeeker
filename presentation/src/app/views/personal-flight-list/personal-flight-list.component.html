@@ -38,14 +38,17 @@
     <p-message severity="info" text="Nessun volo in questa lista" *ngIf="!flightList.flights.length"></p-message>
 </p-card>
 
-<p-card class="ui-g-12 error-messages" title="Accesso negato" *ngIf="unauthorized" [ngSwitch]="authenticated">
+<p-card class="ui-g-12 error-messages" title="Accesso negato" *ngIf="unauthorized" [ngSwitch]="unauthorized">
     <div *ngSwitchCase="true">
         <h4>
             Questa lista è privata, per poterla utilizzare richiedi l'accesso
         </h4>
         <button pButton label="Invia richiesta" icon="pi pi-users" (click)="sendShareRequest()"></button>
     </div>
-    <h4 *ngSwitchDefault>
+    <h4 *ngSwitchCase="'pending'">
+        In attesa di approvazione condivisione
+    </h4>
+    <h4 *ngSwitchCase="'guest'">
         Devi effettuare il login per poter interagire con questa pagina
     </h4>
 </p-card>
