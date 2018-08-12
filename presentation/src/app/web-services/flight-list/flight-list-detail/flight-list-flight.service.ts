@@ -1,10 +1,6 @@
-import { Injectable } from '@angular/core';
 import { GenericWebServiceService } from '../../generic-web-service.service';
 import { Observable } from '../../../../../node_modules/rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
 export class FlightListFlightService {
   private get resourceURI(): string {
     return `${this.serviceURI}/flight`;
@@ -31,7 +27,7 @@ export class FlightListFlightService {
   constructor(
     private genericWebService: GenericWebServiceService,
     private serviceURI: string,
-    private flightUUID: string
+    private flightUUID?: string
   ) {
     if (!serviceURI) {
       throw Error('serviceURI must be a valid string');

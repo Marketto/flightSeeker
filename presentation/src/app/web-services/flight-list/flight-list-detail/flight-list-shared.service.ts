@@ -1,10 +1,7 @@
-import { Injectable } from '@angular/core';
 import { GenericWebServiceService } from '../../generic-web-service.service';
 import { Observable } from '../../../../../node_modules/rxjs';
 
-@Injectable({
-  providedIn: 'root'
-})
+
 export class FlightListSharedService {
   private get resourceURI(): string {
     return `${this.serviceURI}/shared`;
