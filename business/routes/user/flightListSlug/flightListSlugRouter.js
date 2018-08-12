@@ -37,7 +37,9 @@ function getFlightListBySlug(req, res, next) {
                     'owner'         : req.flightListPermissions.owner.read,
                     'flights'       : req.flightListPermissions.flights.read,
                     'shared'        : req.flightListPermissions.shared.read,
-                    'shareRequest'  : req.flightListPermissions.shareRequest.read
+                    'shareRequest'  : req.flightListPermissions.shareRequest.read,
+                    'name'          : req.flightListPermissions.read,
+                    'slug'          : true
                 })
             }))
             .toArray()
@@ -46,9 +48,12 @@ function getFlightListBySlug(req, res, next) {
                 next();
             }, logErr);
         }, logErr);
-    } else {
+    } else if (req.flightListPermissions.shareRequest.add) {
         //FlightList Slug exists but user doesn't have rights to read
         res.sendStatus(401);
+    } else {
+        //FlightList Slug exists and share request is pending
+        res.sendStatus(406);
     }
 }
 

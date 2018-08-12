@@ -136,8 +136,8 @@ function checkSlugAndPermissions(req, res, next){
                     },
                     'shareRequest'  : {
                         'read'          : flSettings.owner,
-                        'add'           : !(flSettings.owner || flSettings.shared),
-                        'remove'        : flSettings.owner
+                        'add'           : !(flSettings.owner || flSettings.shared || flSettings.shareRequest),
+                        'remove'        : flSettings.owner || flSettings.shareRequest
                     }
                 };
                 next();

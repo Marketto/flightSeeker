@@ -13,8 +13,18 @@ function logErr(err) {
     res.sendStatus(500);
 }
 
-function modifySucceded(req, res) {
-    console.log("[modifySucceded]");
+function requestAccepted(req, res) {
+    console.log("[requestAccepted]");
+    res.status(202).send({'message': "Share request has been performed"});
+}
+
+function requestRevoked(req, res) {
+    console.log("[requestRevoked]");
+    res.sendStatus(204);
+}
+
+function requestRefused(req, res) {
+    console.log("[requestRefused]");
     res.sendStatus(204);
 }
 
@@ -45,7 +55,7 @@ function deleteFlightListShareRequest(req, res, next) {
     console.log("[deleteFlightListShare]");
     if (req.flightListPermissions.shareRequest.remove) {
         const flightListSlug = req.params.flightListSlug;
-        const shareRequestUserId = new ObjectID(req.params.userId);
+        const shareRequestUserId = req.params.userId ? new ObjectID(req.params.userId) : req.user._id;
 
         mongo().then(db => {
             db.collection('flightLists').updateOne({
@@ -67,8 +77,9 @@ function deleteFlightListShareRequest(req, res, next) {
 
 router.get('/', (req, res) => res.sendStatus(501));
 
-router.delete(`/:userId(${OBJECT_ID_ROUTE_MATCHER})`, deleteFlightListShareRequest);
-router.post('/', newFlightListShareRequest);
+router.delete(`/`, deleteFlightListShareRequest, requestRevoked);
+router.delete(`/:userId(${OBJECT_ID_ROUTE_MATCHER})`, deleteFlightListShareRequest, requestRefused);
+router.post('/', newFlightListShareRequest, requestAccepted);
 
 
 module.exports = router;
