@@ -234,8 +234,8 @@ function flFlights(req, res, next) {
                         if (flights.length) {
                             //store results into db
                             Promise.all(flights.map(flight => {
-                                return new Promise((resolveInsert, rejectInsert) => {
-                                    db.collection('flights').insertMany(flights).then(resolveInsert, err => {
+                                return new Promise(resolveInsert => {
+                                    db.collection('flights').insertOne(flight).then(resolveInsert, err => {
                                         //TODO: throw reject if error is not due to duplicate
                                         console.log(err);
                                         resolveInsert();
