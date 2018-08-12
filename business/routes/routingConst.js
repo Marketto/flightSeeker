@@ -4,7 +4,8 @@ const ROUTING_CONST = {
     DATE_ROUTE_MATCHER          : "\\d{4}-?\\d{2}-?\\d{2}",
     TIME_ROUTE_MATCHER          : "\\d{2}:\\d{2}",
     FLIGHT_NUM_ROUTE_MATCHER    : "\\d+",
-    SLUG_MATCHER                : "[A-Za-z\\d]+[A-Za-z\\d\-]+[A-Za-z\\d]+"
+    SLUG_MATCHER_ROUTE_MATCHER  : "[A-Za-z\\d]+[A-Za-z\\d\-]+[A-Za-z\\d]+",
+    OBJECT_ID_ROUTE_MATCHER     : "[a-f\\d]{24}"
 };
 
 const UUID_CFG = [
@@ -23,6 +24,8 @@ Object.assign(ROUTING_CONST, {
     DATE_REGEXP           : new RegExp(`^${ROUTING_CONST.DATE_ROUTE_MATCHER}$`),
     TIME_REGEXP           : new RegExp(`^${ROUTING_CONST.TIME_ROUTE_MATCHER}$`),
     FLIGHT_NUM_REGEXP     : new RegExp(`^${ROUTING_CONST.FLIGHT_NUM_ROUTE_MATCHER}$`),
+    SLUG_REGEXP           : new RegExp(`^${ROUTING_CONST.SLUG_MATCHER_ROUTE_MATCHER}$`),
+    OBJECT_ID_REGEXP      : new RegExp(`^${ROUTING_CONST.OBJECT_ID_ROUTE_MATCHER}$`),
     FLIGHT_UUID_REGEXP    : new RegExp(`^${UUID_CFG.map(m => `(${m})`).join('')}$`),
 
     POSITIVE_BOOL_REGEXP  : /^(?:true|1|y)$/i,

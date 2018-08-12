@@ -1,12 +1,6 @@
-const express = require('express');
-const router = require('./authUserRouter');
+//User must be authorized
+const authRouter = require('./authUserRouter');
 const flightListRouter = require('./flightListRouter');
-const flightListFlightRouter = require('./flightListFlightRouter');
-const {
-    SLUG_MATCHER
-} = require('../routingConst');
-
-
 
 
 function resUser(req, res) {
@@ -14,13 +8,11 @@ function resUser(req, res) {
     res.send(req.user)
 }
 
-/*router.get('/:userId', checkJwt, getDbUser, (req, res) => {
+/*authRouter.get('/:userId', checkJwt, getDbUser, (req, res) => {
     //TODO
     res.send(req.user)
 });*/
-const flightListPath = '/flight-list';
-router.use(`${flightListPath}/:flightListSlug(${SLUG_MATCHER})`, flightListFlightRouter);
-router.use(`${flightListPath}`, flightListRouter);
-router.get('/', resUser);
+authRouter.use('/flight-list', flightListRouter);
+authRouter.get('/', resUser);
 
-module.exports = router;
+module.exports = authRouter;
