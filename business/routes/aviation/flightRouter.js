@@ -82,7 +82,7 @@ function dbFlights(req, res, next) {
             const queryLimit = (atTime || (flightNumber && airline)) ? 1 : req.query.limit;
 
             const checkQuery = {
-                "uuid": new RegExp(`^${from}${to}${dateTime.format("YYYYMMDD")}`)
+                "uuid": new RegExp(`^${from}${to}${dateTime.format("YYYYMMDD")}`, 'i')
                     /*    "departure.airportIata": from,
                         "arrival.airportIata": to,
                         "departure.dateTime": {
@@ -96,8 +96,8 @@ function dbFlights(req, res, next) {
                 "departure.airportIata": from,
                 "arrival.airportIata": to,
                 "departure.dateTime": atTime ? {
-                    "$lte": moment(dateTime).endOf("hour").toDate(),
-                    "$gte": moment(dateTime).startOf("hour").toDate()
+                    "$gte": moment(dateTime).startOf("hour").toDate(),
+                    "$lte": moment(dateTime).endOf("hour").toDate()
                 } : {
                     "$gte": (afterTime ? dateTime : moment(dateTime).startOf("day")).toDate(),
                     "$lte": moment(dateTime).endOf("day").toDate()
@@ -107,7 +107,6 @@ function dbFlights(req, res, next) {
             } : {}, flightNumber ? {
                 "number": flightNumber
             } : {}, );
-
 
             const flightsCollection = db.collection('flights');
 
@@ -130,6 +129,7 @@ function dbFlights(req, res, next) {
             }, logErr);
         }, logErr);
     } else {
+        console.log("{skipping dbFlights}");
         next();
     }
 }
@@ -228,8 +228,8 @@ function flFlights(req, res, next) {
 
                             return flightToInsert;
                         })
-                    ).then(flightList => {
-                        const flights = flightList.reduce((a, b) => [].concat(a).concat(b)).filter(e => !!e);
+                    ).then(flights => {
+                        //const flights = flightList.reduce((a, b) => [].concat(a).concat(b)).filter(e => !!e);
                         req.dataChecked = true;
                         if (flights.length) {
                             //store results into db
@@ -266,6 +266,7 @@ function flFlights(req, res, next) {
             delete FL_FLIGHT_PROMISE_QUEUE[flightSearchId];
         });
     } else {
+        console.log("{skipping flFlights}");
         next();
     }
 }
@@ -283,12 +284,15 @@ function flightUUIDParse(req, res, next) {
     next();
 }
 
-function resFlights(req, res, next) {
+function resFlights(req, res) {
     if ((req.flights || []).length > 0) {
+        console.log("[resFlights] <results found>");
         res.status(200).send(req.flights);
     } else if (req.params.uuid) {
+        console.log("[resFlights] <uuid not found>");
         res.sendStatus(404);
     } else if (req.query.after) {
+        console.log("[resFlights] <no results, redirect>");
         //Params
         const nextDayUrlSearch = new URLSearchParams();
         if (req.query.limit) {
@@ -299,6 +303,7 @@ function resFlights(req, res, next) {
 
         res.redirect(nextDayUrl);
     } else {
+        console.log("[resFlights] <no results>");
         res.sendStatus(204);
     }
 }

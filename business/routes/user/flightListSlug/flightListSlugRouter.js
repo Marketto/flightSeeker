@@ -7,7 +7,7 @@ const flightListSlugFlight = require('./flightListSlugFlightRouter');
 const flightListSlugShared = require('./flightListSlugSharedRouter');
 const flightListSlugShareRequest = require('./flightListSlugShareRequestRouter');
 const {
-    flightAggregation
+    flightListFlighAggregation
 } = require('../../../services/flightQueryBuilder');
 const {
     cleanProjection
@@ -30,7 +30,7 @@ function getFlightListBySlug(req, res, next) {
             console.log('flightLists found');
             const flightListSlug = req.params.flightListSlug;
             
-            db.collection('flightLists').aggregate(flightAggregation({
+            db.collection('flightLists').aggregate(flightListFlighAggregation({
                 'slug': flightListSlug
             }).concat({
                 '$project' : cleanProjection({
