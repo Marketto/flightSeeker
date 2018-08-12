@@ -18,7 +18,7 @@ function modifySucceded(req, res) {
 
 function insertUuidToFlightList(req, res, next) {
     console.log("[insertUuidToFlightList]");
-    if (req.flightListPermissions.flight.add) {
+    if (req.flightListPermissions.flights.add) {
         const flightListSlug = req.params.flightListSlug;
         const flightUUID = req.flights[0].uuid;
 
@@ -42,7 +42,7 @@ function insertUuidToFlightList(req, res, next) {
 
 function deleteUuidFromFlightList(req, res, next) {
     console.log("[deleteUuidFromFlightList]");
-    if (req.flightListPermissions.flight.remove) {
+    if (req.flightListPermissions.flights.remove) {
         const flightListSlug = req.params.flightListSlug;
         const flightUUID = req.params.flightUUID;
 
