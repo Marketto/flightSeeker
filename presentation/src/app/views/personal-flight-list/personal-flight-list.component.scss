@@ -1,30 +1,63 @@
 :host {
-     ::ng-deep .ui-card {
-        .ui-card-title {
-            text-align: center;
-        }
+  ::ng-deep .ui-card {
+    .ui-card-title {
+      text-align: center;
     }
-    .flight-list {
-         ::ng-deep .ui-card {
-            .ui-card-content {
-                display: flex;
-                flex-direction: row;
-                flex-wrap: wrap;
-                @media screen and (max-width: 799px) {
-                    app-flight-detail {
-                        min-width: 100%;
-                    }
-                }
-                p-message {
-                    margin: 1.2em auto 0.8em auto;
-                    width: auto;
-                }
-            }
+  }
+
+  .list-detail-container {
+    ::ng-deep .ui-card-content {
+      display: flex;
+      >* {
+        flex-basis: 33.33%;
+
+        label {
+          font-weight: bold;
         }
-    }
-    .error-messages {
-        h4 {
-            text-align: center;
+
+        ul>li {
+          display: flex;
+          align-items: center;
+          button {
+            width: 1.5em;
+            height: 1.5em;
+            margin: 0 0.5em;
+          }
         }
+        &.field-list {
+          display: flex;
+          flex-direction: column;
+        }
+
+        p, ul {
+          margin: 0.4em 0.2em;
+        }
+      }
     }
+  }
+
+  .flight-list {
+    ::ng-deep .ui-card {
+      .ui-card-content {
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        @media screen and (max-width: 799px) {
+          app-flight-detail {
+            min-width: 100%;
+          }
+        }
+        p-message {
+          margin: 1.2em auto 0.8em auto;
+          width: auto;
+        }
+      }
+    }
+  }
+  .error-messages {
+    div,
+    h4 {
+      text-align: center;
+    }
+  }
 }

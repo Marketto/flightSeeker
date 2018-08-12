@@ -1,9 +1,10 @@
 import { Moment } from 'moment-timezone';
 import * as moment from 'moment-timezone';
+import { UserSummary } from './user-summary';
 
 export type Gender = 'male'|'female'|null;
 
-export class User {
+export class User extends UserSummary {
   public at_hash: string;
   public aud: string;
   public exp: number;
@@ -12,7 +13,6 @@ export class User {
   public given_name: string;
   public iat: number;
   public locale: string;
-  public name: string;
   public nickname: string;
   public nonce: string;
   public picture: string;
@@ -20,6 +20,7 @@ export class User {
   public updated_at: Moment;
 
   constructor(obj?: any) {
+    super();
     if (obj) {
       this.at_hash = obj.at_hash;
       this.aud = obj.aud;
@@ -29,7 +30,6 @@ export class User {
       this.given_name = obj.given_name;
       this.iat = obj.iat;
       this.locale = obj.locale;
-      this.name = obj.name;
       this.nickname = obj.nickname;
       this.nonce = obj.nonce;
       this.picture = obj.picture;

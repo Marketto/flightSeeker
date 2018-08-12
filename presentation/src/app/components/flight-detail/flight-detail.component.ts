@@ -86,7 +86,7 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
           return {
             'label': fli.name,
             'command': () => {
-              const addFlightSubscription = this.flightListService.get(fli.slug).addFlight(this.flight.uuid).subscribe(() => {
+              const addFlightSubscription = this.flightListService.bySlug(fli.slug).flight().insert(this.flight.uuid).subscribe(() => {
                 if (addFlightSubscription) {
                   addFlightSubscription.unsubscribe();
                 }
@@ -99,7 +99,7 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
           return {
             'label': fli.name,
             'command': () => {
-              const removeFlightSubscription = this.flightListService.get(fli.slug).deleteFlight(this.flight.uuid).subscribe(() => {
+              const removeFlightSubscription = this.flightListService.bySlug(fli.slug).flight(this.flight.uuid).delete().subscribe(() => {
                 if (removeFlightSubscription) {
                   this.removeFromFlightList.emit(this.flight);
                   removeFlightSubscription.unsubscribe();

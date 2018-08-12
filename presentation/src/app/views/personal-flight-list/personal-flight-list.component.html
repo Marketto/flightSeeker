@@ -1,8 +1,32 @@
-<p-card class="ui-g-12" [title]="flightList.name" *ngIf="flightList">
+<p-card class="ui-g-12 list-detail-container" [title]="flightList.name" *ngIf="flightList">
     <!-- TODO: add owner and shared info-->
-    <p>
-        <label>Ore totali di volo:</label> {{totalDuration | amDuration: 'minutes'}}
-    </p>
+    <div class="field-list">
+        <p>
+          <label>Ore totali di volo:</label> {{totalDuration | amDuration: 'minutes'}}
+        </p>
+        <p>
+          <label>Lista di </label> {{flightList.owner.name}}
+        </p>
+    </div>
+    <div *ngIf="flightList.shareRequest.length>0">
+        <label>Richieste di condivisione</label>
+      <ul>
+        <li *ngFor="let shareRequest of flightList.shareRequest">
+          {{shareRequest.name}}
+          <button pButton type="button" icon="pi pi-check" class="ui-button-success" (click)="acceptShareRequest(shareRequest._id)"></button>
+          <button pButton type="button" icon="pi pi-times" class="ui-button-danger" (click)="declineShareRequest(shareRequest._id)"></button>
+        </li>
+      </ul>
+    </div>
+    <div *ngIf="flightList.shared.length>0">
+        <label>Lista condivisa con</label>
+      <ul>
+        <li *ngFor="let shared of flightList.shared">
+          {{shared.name}}
+          <button pButton type="button" icon="pi pi-times" class="ui-button-danger" (click)="revokeShare(shared._id)"></button>
+        </li>
+      </ul>
+    </div>
 </p-card>
 
 <p-card class="ui-g-12 ui-md-12 flight-map" title="Mappa" *ngIf="currentFlight">
@@ -19,9 +43,7 @@
         <h4>
             Questa lista è privata, per poterla utilizzare richiedi l'accesso
         </h4>
-        <button>
-      Invia richiesta
-    </button>
+        <button pButton label="Invia richiesta" icon="pi pi-users" (click)="sendShareRequest()"></button>
     </div>
     <h4 *ngSwitchDefault>
         Devi effettuare il login per poter interagire con questa pagina
