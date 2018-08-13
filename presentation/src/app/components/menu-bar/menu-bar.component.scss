@@ -37,6 +37,31 @@
   @media screen and (min-width: 640px){
     ::ng-deep .ui-panelmenu {
       flex-direction: row;
+      .ui-panelmenu-panel {
+        .ui-widget.ui-panelmenu-header {
+          &, &.ui-corner-top, &.ui-corner-bottom {
+            border-radius: 0;
+          }
+        }
+        &:first-of-type {
+          .ui-widget.ui-panelmenu-header {
+              border-top-left-radius: 3px;
+              border-bottom-left-radius: 3px;
+          }
+          .ui-panelmenu-content-wrapper .ui-panelmenu-content{
+            border-bottom-left-radius: 3px;
+          }
+        }
+        &:last-of-type {
+          .ui-widget.ui-panelmenu-header {
+            border-top-right-radius: 3px;
+            border-bottom-right-radius: 3px;
+          }
+          .ui-panelmenu-content-wrapper .ui-panelmenu-content {
+            border-bottom-right-radius: 3px;
+          }
+        }
+      }
     }
   }
   @media screen and (max-width: 639px){
