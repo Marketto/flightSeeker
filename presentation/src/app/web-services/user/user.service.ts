@@ -9,21 +9,26 @@ import { AuthToken } from '../../classes/user/auth-token';
 })
 export class UserService {
 
+  private serviceURI = 'user';
+
   constructor(
     private genericWebService: GenericWebServiceService
   ) { }
 
   public read(): Observable<User> {
 
-    const serviceURI = `user`;
-
     return this.genericWebService.read<User>(
-      serviceURI,
+      this.serviceURI,
       (data) => new User(data)
     );
   }
 
-  public addAccount(authToken: AuthToken) {
-    return;
+  public addAccount(authToken: AuthToken = new AuthToken): Observable<void> {
+    return this.genericWebService.insert<void>(
+      `${this.serviceURI}/account`,
+      {
+        'token': authToken.idToken
+      }
+    );
   }
 }

@@ -69,7 +69,7 @@ export class GenericWebServiceService {
 
   public insert<ResourceType>(
     endPoint: string,
-    body: ResourceType = null,
+    body: any = null,
     transformResponse?: Function
   ): Observable<ResourceType> {
     return this.webService(

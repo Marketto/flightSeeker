@@ -20,16 +20,16 @@ export class AuthorizingComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.authService.authenticate().subscribe(authData => {
+    this.authService.authenticate().toPromise().then(authData => {
       if (this.authService.isAuthenticated) {
-        /*
-        this.userService.addAccount(authData.auth).subscribe(() => {
+
+        this.userService.addAccount(authData.auth).toPromise().then(() => {
           this.authService.setSession(authData.auth);
           this.router.navigate(authData.route || DEFAULT_ROUTE);
         }, () => {
           this.router.navigate(authData.route || DEFAULT_ROUTE);
         });
-        */
+
       } else {
         this.authService.setSession(authData.auth);
         this.router.navigate(authData.route || DEFAULT_ROUTE);
