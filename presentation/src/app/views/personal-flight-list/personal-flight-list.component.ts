@@ -17,7 +17,7 @@ export class PersonalFlightListComponent implements OnInit {
   private flightListSlug: string;
 
   public flightList: FlightList;
-  public unauthorized: true|'pending'|'guest';
+  private $unauthorized: true|'pending'|'guest';
 
   public get totalDuration(): Duration {
     if (this.flightList) {
@@ -51,8 +51,8 @@ export class PersonalFlightListComponent implements OnInit {
   }
 
   public sendShareRequest() {
-    this.flightListService.bySlug(this.flightListSlug).shareRequest().create().subscribe(()=>{
-      this.unauthorized = 'pending';
+    this.flightListService.bySlug(this.flightListSlug).shareRequest().create().subscribe(() => {
+      this.$unauthorized = 'pending';
     });
   }
 
@@ -77,6 +77,10 @@ export class PersonalFlightListComponent implements OnInit {
     });
   }
 
+  public get unauthorized() {
+    return !this.authService.isAuthenticated || this.$unauthorized;
+  }
+
 
   constructor(
     private activeRoute: ActivatedRoute,
@@ -94,14 +98,14 @@ export class PersonalFlightListComponent implements OnInit {
         }, ({status}) => {
           this.flightListSlug = flightListSlug;
           if (status === 401) {
-            this.unauthorized = true;
+            this.$unauthorized = true;
           } else if (status === 406) {
-            this.unauthorized = 'pending';
+            this.$unauthorized = 'pending';
           }
         });
       }
     } else {
-      this.unauthorized = 'guest';
+      this.$unauthorized = 'guest';
     }
   }
 
