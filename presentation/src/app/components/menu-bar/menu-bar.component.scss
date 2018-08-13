@@ -98,5 +98,9 @@
         }
       }
     }
+    .ui-panelmenu-content .ui-menuitem-link {
+      display: flex;
+      align-items: center;
+    }
   }
 }

@@ -14,6 +14,11 @@
       justify-content: space-between;
       align-items: center;
       text-align: center;
+
+      ::ng-deep .ui-button-icon-only {
+        width: 2em;
+        height: 1.9em;
+      }
     }
 
     .meals {
