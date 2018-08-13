@@ -1,11 +1,11 @@
-<p-card class="ui-g-12 ui-md-6 going-flight" title="Andata" *ngIf="goingFlight">
+<p-card class="ui-g-12 ui-md-6 going-flight" title="Outward trip" *ngIf="goingFlight">
   <app-flight-detail [flight]="goingFlight" [addToFlightListButton]="true"></app-flight-detail>
 </p-card>
 
-<p-card class="ui-g-12 ui-md-6 back-flight" title="Ritorno" *ngIf="backFlight">
+<p-card class="ui-g-12 ui-md-6 back-flight" title="Return trip" *ngIf="backFlight">
   <app-flight-detail [flight]="backFlight" (progressChange)="setBackProgress($event)" [addToFlightListButton]="true"></app-flight-detail>
 </p-card>
 
-<p-card class="ui-g-12 ui-md-12 flight-map" title="Mappa" *ngIf="goingFlight && backFlight">
+<p-card class="ui-g-12 ui-md-12 flight-map" title="Map" *ngIf="goingFlight && backFlight">
   <app-flight-map [flight]="currentFlight"></app-flight-map>
 </p-card>

@@ -22,11 +22,11 @@
     <div class="ui-g-12 ui-md-12 flight-progress">
         <p-progressBar [value]="progress" [showValue]="false"></p-progressBar>
         <p class="flight-eta" [ngSwitch]="progress">
-            <span *ngSwitchCase="null">In partenza tra {{timeToDepartureLeft | amDuration : 'minutes'}}</span>
-            <span *ngSwitchCase="100">Atterrato {{timeToArrivalLeft | amDuration : 'minutes'}} fa</span>
+            <span *ngSwitchCase="null">Departure in {{timeToDepartureLeft | amDuration : 'minutes'}}</span>
+            <span *ngSwitchCase="100">Landed {{timeToArrivalLeft | amDuration : 'minutes'}} ago</span>
             <span *ngSwitchDefault [ngSwitch]="progress < 10">
-        <span *ngSwitchDefault>In arrivo tra {{timeToArrivalLeft | amDuration : 'minutes'}}</span>
-            <span *ngSwitchCase="true">Partito da {{timeToDepartureLeft | amDuration : 'minutes'}}</span>
+              <span *ngSwitchDefault>{{timeToArrivalLeft | amDuration : 'minutes'}} left</span>
+              <span *ngSwitchCase="true">Departed {{timeToDepartureLeft | amDuration : 'minutes'}} ago</span>
             </span>
         </p>
     </div>

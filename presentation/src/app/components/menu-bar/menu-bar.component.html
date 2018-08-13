@@ -6,6 +6,6 @@
 
 </div>
 
-<p-dialog header="Nuova lista voli" [(visible)]="newFlightListDialog" [dismissableMask]="true" [modal]="true">
+<p-dialog header="New flight list" [(visible)]="newFlightListDialog" [dismissableMask]="true" [modal]="true">
   <app-new-flight-list (newFlight)="addNewFlightList($event)"></app-new-flight-list>
 </p-dialog>

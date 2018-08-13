@@ -13,21 +13,21 @@ export class MenuBarComponent implements OnInit {
   public newFlightListDialog: Boolean = false;
   private flightListMenu: MenuItem[] = [
     {
-      label: 'Nuova',
+      label: 'New',
       icon: 'pi pi-plus',
       command: () => this.newFlightListDialog = true
     }
   ];
   private $loggedUserMenu: MenuItem[] = [
     {
-      label: 'Cerca',
+      label: 'Search',
       icon: 'pi pi-search',
       routerLink: ['/'],
       styleClass: 'btn'
     },
     {
       id: 'FLIGHT_LISTS',
-      label: 'Liste',
+      label: 'Lists',
       items: this.flightListMenu
     },
     {
@@ -51,7 +51,7 @@ export class MenuBarComponent implements OnInit {
 
   private $anonMenu: MenuItem[] = [
     {
-      label: 'Cerca',
+      label: 'Search',
       icon: 'pi pi-search',
       routerLink: ['/'],
       styleClass: 'btn'

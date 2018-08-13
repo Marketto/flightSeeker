@@ -2,14 +2,14 @@
   <!-- TODO: add owner and shared info-->
   <div class="field-list">
     <p>
-      <label>Ore totali di volo:</label> {{totalDuration | amDuration: 'minutes'}}
+      <label>{{totalDuration | amDuration: 'minutes'}}</label> of total flight hours
     </p>
     <p>
-      <label>Lista di </label> {{flightList.owner.name}}
+        <label>{{flightList.owner.name}}</label>'s list
     </p>
   </div>
   <div *ngIf="flightList.shareRequest.length>0">
-    <label>Richieste di condivisione</label>
+    <label>Share requests</label>
     <ul>
       <li *ngFor="let shareRequest of flightList.shareRequest">
         {{shareRequest.name}}
@@ -19,7 +19,7 @@
     </ul>
   </div>
   <div *ngIf="flightList.shared.length>0">
-    <label>Lista condivisa con</label>
+    <label>List shared with</label>
     <ul>
       <li *ngFor="let shared of flightList.shared">
         {{shared.name}}
@@ -29,27 +29,27 @@
   </div>
 </p-card>
 
-<p-card class="ui-g-12 ui-md-12 flight-map" title="Mappa" *ngIf="currentFlight">
+<p-card class="ui-g-12 ui-md-12 flight-map" title="Map" *ngIf="currentFlight">
   <app-flight-map [flight]="currentFlight"></app-flight-map>
 </p-card>
 
-<p-card class="ui-g-12 flight-list" title="Voli" *ngIf="flightList && flightList.flights">
+<p-card class="ui-g-12 flight-list" title="Flights" *ngIf="flightList && flightList.flights">
   <app-flight-detail class="ui-g-6 ui-m-12" [flight]="flight" *ngFor="let flight of flightList.flights" [removeFromFlightListButton]="true"
     (removeFromFlightList)="pullFlight($event)"></app-flight-detail>
   <p-message severity="info" text="Nessun volo in questa lista" *ngIf="!flightList.flights.length"></p-message>
 </p-card>
 
-<p-card class="ui-g-12 error-messages" title="Accesso negato" *ngIf="unauthorized" [ngSwitch]="unauthorized">
+<p-card class="ui-g-12 error-messages" title="Access denied" *ngIf="unauthorized" [ngSwitch]="unauthorized">
   <div *ngSwitchCase="true">
     <h4>
-      Questa lista è privata, per poterla utilizzare richiedi l'accesso
+      This is a private list, send a share request to obtain content access
     </h4>
     <button pButton label="Invia richiesta" icon="pi pi-users" (click)="sendShareRequest()"></button>
   </div>
   <h4 *ngSwitchCase="'pending'">
-    In attesa di approvazione condivisione
+    Pending share approval
   </h4>
   <h4 *ngSwitchCase="'guest'">
-    Devi effettuare il login per poter interagire con questa pagina
+    You must be logged in to use this content
   </h4>
 </p-card>
