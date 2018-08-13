@@ -2,16 +2,16 @@ const express = require('express');
 const router = express.Router({
     mergeParams: true
 });
-const mongo = require('../../../connectors/mongo');
+const mongo = require('../../../../connectors/mongo');
 const flightListSlugFlight = require('./flightListSlugFlightRouter');
 const flightListSlugShared = require('./flightListSlugSharedRouter');
 const flightListSlugShareRequest = require('./flightListSlugShareRequestRouter');
 const {
     flightListFlighAggregation
-} = require('../../../services/flightQueryBuilder');
+} = require('../../../../services/flightQueryBuilder');
 const {
     cleanProjection
-} = require('../../../services/queryUtilities');
+} = require('../../../../services/queryUtilities');
 
 function logErr(err) {
     console.error(err);

@@ -1,11 +1,11 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const mongo = require('../../connectors/mongo');
+const mongo = require('../../../connectors/mongo');
 const slug = require('slug');
-const flightListSlugRouter = require('./flightListSlug/flightListSlugRouter');
+const flightListSlugRouter = require('./slug/flightListSlugRouter');
 const {
     SLUG_MATCHER_ROUTE_MATCHER
-} = require('../routingConst');
+} = require('../../routingConst');
 
 
 function logErr(err) {

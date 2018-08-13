@@ -2,11 +2,11 @@ const express = require('express');
 const router = express.Router({
     mergeParams: true
 });
-const mongo = require('../../../connectors/mongo');
+const mongo = require('../../../../connectors/mongo');
 const ObjectID = require('mongodb').ObjectID;
 const {
     OBJECT_ID_ROUTE_MATCHER
-} = require('../../routingConst');
+} = require('../../../routingConst');
 
 function logErr(err) {
     console.error(err);

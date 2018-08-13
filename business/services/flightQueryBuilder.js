@@ -1,6 +1,5 @@
-function airportPipeline(path){
-    return [
-        {
+function airportPipeline(path) {
+    return [{
             $lookup: {
                 from: "airports",
                 localField: `${path}.airportIata`,
@@ -13,9 +12,9 @@ function airportPipeline(path){
         }
     ];
 }
-function airlinePipeline(path){
-    return [
-        {
+
+function airlinePipeline(path) {
+    return [{
             $lookup: {
                 from: "airlines",
                 localField: `${path ? (path + '.') : ''}airlineIata`,
@@ -28,9 +27,9 @@ function airlinePipeline(path){
         }
     ];
 }
-function userPipeline(path){
-    return [
-        {
+
+function userPipeline(path) {
+    return [{
             $lookup: {
                 from: "users",
                 localField: path,
@@ -40,13 +39,14 @@ function userPipeline(path){
         },
         {
             $unwind: {
-                path : `$${path}`,
+                path: `$${path}`,
                 preserveNullAndEmptyArrays: true
             }
         }
     ];
 }
-function flightProjectionPipeline(path, container = {}){
+
+function flightProjectionPipeline(path, container = {}) {
     const projection = {
         departure: {
             airport: {
@@ -91,27 +91,25 @@ function flightProjectionPipeline(path, container = {}){
         uuid: 1
     };
 
-    if(path){
+    if (path) {
         container[path] = projection;
     } else {
         container = projection;
     }
 
-    return [
-        {
+    return [{
             $project: container
         },
         {
-            $sort : {
-                [`${path ? (path + '.') : ''}departure.dateTime`] : -1
+            $sort: {
+                [`${path ? (path + '.') : ''}departure.dateTime`]: -1
             }
         }
     ];
 }
 
 function flightAggregation(findQuery, limit = 0) {
-    const aggCfg = [
-        {
+    const aggCfg = [{
             $match: findQuery
         }]
         .concat(airportPipeline('departure'))
@@ -128,21 +126,21 @@ function flightAggregation(findQuery, limit = 0) {
 }
 
 function flightListFlighAggregation(findQuery, limit = 0) {
-    const aggCfg = [
-        {
-            $match: findQuery
-        },
-        {
-            $lookup: {
-                from: "flights",
-                localField: 'flights',
-                foreignField: 'uuid',
-                as: 'flights'
+    const aggCfg = [{
+                $match: findQuery
+            },
+            {
+                $lookup: {
+                    from: "flights",
+                    localField: 'flights',
+                    foreignField: 'uuid',
+                    as: 'flights'
+                }
+            },
+            {
+                $unwind: "$flights"
             }
-        },
-        {
-            $unwind: "$flights"
-        }]
+        ]
         .concat(airportPipeline('flights.departure'))
         .concat(airportPipeline('flights.arrival'))
         .concat(airlinePipeline('flights'))
@@ -150,37 +148,45 @@ function flightListFlighAggregation(findQuery, limit = 0) {
         .concat(userPipeline('shared'))
         .concat(userPipeline('shareRequest'))
         .concat(flightProjectionPipeline('flights', {
-            owner : {
-                _id:1,
-                name:1
+            name: 1,
+            slug: 1,
+            owner: {
+                _id: 1,
+                name: 1
             },
-            shared : {
-                _id:1,
-                name:1
+            shared: {
+                _id: 1,
+                name: 1
             },
-            shareRequest : {
-                _id:1,
-                name:1
+            shareRequest: {
+                _id: 1,
+                name: 1
             }
         }))
         .concat({
             $group: {
                 _id: "$_id",
-                owner : {
-                    $first : "$owner"
+                name: {
+                    $first: "$name"
                 },
-                shared : {
-                    $addToSet : "$shared"
+                slug: {
+                    $first: "$slug"
                 },
-                shareRequest : {
-                    $addToSet : "$shareRequest"
+                owner: {
+                    $first: "$owner"
                 },
-                flights : {
-                    $push : "$flights"
+                shared: {
+                    $addToSet: "$shared"
+                },
+                shareRequest: {
+                    $addToSet: "$shareRequest"
+                },
+                flights: {
+                    $push: "$flights"
                 }
             }
         });
-        
+
     if (limit > 0) {
         aggCfg.splice(1, 0, {
             $limit: limit

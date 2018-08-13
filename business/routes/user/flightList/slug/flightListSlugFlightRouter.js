@@ -1,10 +1,10 @@
 const express = require('express');
 const router = express.Router({ mergeParams: true });
-const mongo = require('../../../connectors/mongo');
-const flightRouter = require('../../aviation/flightRouter');
+const mongo = require('../../../../connectors/mongo');
+const flightRouter = require('../../../aviation/flightRouter');
 const {
     FLIGHT_UUID_ROUTE_MATCHER
-} = require('../../routingConst');
+} = require('../../../routingConst');
 
 function logErr(err) {
     console.error(err);
