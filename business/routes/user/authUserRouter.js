@@ -38,7 +38,7 @@ function getDbUserHandler(req, res, next) {
             } else {
                 usersCollection.insertOne({
                     'account': [accountId],
-                    'name': req.user.name
+                    'name': `${req.user.given_name} ${req.user.family_name}`
                 }).then(({
                     insertedId
                 }) => {
