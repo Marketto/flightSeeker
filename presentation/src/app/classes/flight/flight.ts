@@ -18,21 +18,8 @@ type Meal =
   |'N'  // No meal service
   |'V'  // Refreshments for purchase
   |'G'  // Food and beverages for purchase
-
-  |'OO'  // Cold meal
-  |'OM'  // Cold meal
-  |'OB'  // Cold Breakfast
-  |'OK'  // Cold Continental breakfast
-  |'OL'  // Cold Lunch
-  |'OD'  // Cold Dinner
-
-  |'HH'  // Hot meal
-  |'HM'  // Hot meal
-  |'HB'  // Hot Breakfast
-  |'HK'  // Hot Continental breakfast
-  |'HL'  // Hot Lunch
-  |'HD'  // Hot Dinner
-
+  |'O'  // Cold meal
+  |'H'  // Hot meal
   ;
 
 export class Flight {
@@ -53,7 +40,7 @@ export class Flight {
         moment.duration(this.arrival.dateTime.diff(this.departure.dateTime)) :
         undefined;
       this.number = obj.number;
-      this.meals = obj.meals ? obj.meals.match(/([OH]?[BCDFGKLMNPRSVY]|HH|OO)/ig) : [];
+      this.meals = (obj.meals || '').split('');
       this.uuid = obj.uuid;
     }
   }

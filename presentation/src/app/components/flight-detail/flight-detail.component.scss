@@ -24,12 +24,10 @@
         $meal-size : 42px;
         $badge-size: $meal-size/2;
 
-        &.S, &.B, &.K, &.F,
-        &.OB, &.OL, &.OD, &.OG, &.OM, &.OO {
+        &.S, &.B, &.K, &.F, &.O {
           background-image: url('../../../assets/img/snack.png');
         }
-        &.L, &.D, &.G, &.M, &.N,
-        &.HB, &.HL, &.HD, &.HG, &.HM, &.HH {
+        &.L, &.D, &.G, &.M, &.N, &.H {
           background-image: url('../../../assets/img/dinner.png');
         }
         &.C,&.P {
