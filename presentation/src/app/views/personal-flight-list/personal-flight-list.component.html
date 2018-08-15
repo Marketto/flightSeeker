@@ -5,7 +5,22 @@
         <label>{{flightList.owner.name}}</label>'s list
     </p>
     <p>
-      Total flight hours: <label>{{totalDuration.hours()}}</label>
+      Total flight time:
+      <label>
+        <span [ngPlural]="totalDuration.hours() + totalDuration.days()*24">
+            <ng-template ngPluralCase="=0"></ng-template>
+            <ng-template ngPluralCase="=1">1 h</ng-template>
+            <ng-template ngPluralCase="other">{{ totalDuration.hours() + totalDuration.days()*24 }} hrs</ng-template>
+        </span>
+        <span *ngIf="(totalDuration.hours() + totalDuration.days()*24)>0 && totalDuration.minutes()>0">
+          &nbsp;and&nbsp;
+        </span>
+        <span [ngPlural]="totalDuration.minutes()">
+            <ng-template ngPluralCase="=0"></ng-template>
+            <ng-template ngPluralCase="=1">1 min</ng-template>
+            <ng-template ngPluralCase="other">{{ totalDuration.minutes() }} mins</ng-template>
+        </span>
+      </label>
     </p>
   </div>
   <div *ngIf="flightList.shareRequest.length>0">

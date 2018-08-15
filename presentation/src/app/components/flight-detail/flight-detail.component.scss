@@ -99,6 +99,11 @@
       }
     }
 
+    .flight-duration {
+      text-align: center;
+      padding: 0;
+    }
+
     ::ng-deep{
       @for $i from 0 through 100 {
         [aria-valuenow='#{$i}'].ui-progressbar.ui-widget.ui-widget-content.ui-progressbar-determinate {

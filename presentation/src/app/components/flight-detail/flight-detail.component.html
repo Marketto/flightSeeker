@@ -12,12 +12,24 @@
             <p-menu #removeFlightListMenu popup="popup" [model]="removeFromFlightListItems"></p-menu>
         </div>
         <i [class]="'meal ' + meal" *ngFor="let meal of flight.meals"></i>
-        <span>
-          {{ flight.duration | amDuration : 'minutes' }}
-        </span>
     </div>
     <div class="ui-g-5 ui-md-5 arrival">
         <app-flight-detail-vector [flightVector]="flight.arrival"></app-flight-detail-vector>
+    </div>
+    <div class="ui-g-12 ui-md-12 flight-duration">
+        <span [ngPlural]="flight.duration.hours()">
+            <ng-template ngPluralCase="=0"></ng-template>
+            <ng-template ngPluralCase="=1">An hour</ng-template>
+            <ng-template ngPluralCase="other">{{flight.duration.hours()}} hours</ng-template>
+        </span>
+        <span *ngIf="flight.duration.hours()>0 && flight.duration.minutes()>0">
+          &nbsp;and&nbsp;
+        </span>
+        <span [ngPlural]="flight.duration.minutes()">
+            <ng-template ngPluralCase="=0"></ng-template>
+            <ng-template ngPluralCase="few">few minutes</ng-template>
+            <ng-template ngPluralCase="other">{{flight.duration.minutes()}} minutes</ng-template>
+        </span>
     </div>
     <div class="ui-g-12 ui-md-12 flight-progress">
         <p-progressBar [value]="progress" [showValue]="false"></p-progressBar>
