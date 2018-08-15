@@ -19,6 +19,67 @@
         width: 2em;
         height: 1.9em;
       }
+
+      .meal {
+        $meal-size : 42px;
+        $badge-size: $meal-size/2;
+
+        &.S, &.B, &.K, &.F,
+        &.OB, &.OL, &.OD, &.OG, &.OM, &.OO {
+          background-image: url('../../../assets/img/snack.png');
+        }
+        &.L, &.D, &.G, &.M, &.N,
+        &.HB, &.HL, &.HD, &.HG, &.HM, &.HH {
+          background-image: url('../../../assets/img/dinner.png');
+        }
+        &.C,&.P {
+          background-image: url('../../../assets/img/alcohol.png');
+        }
+        &.V, &.R {
+          background-image: url('../../../assets/img/beverage.png');
+        }
+
+        &.G, &.V, &.P, &.F {
+          &:after {
+            content: '';
+            display: block;
+            width: $badge-size;
+            height: $badge-size;
+            background-position: center;
+            background-size: $badge-size $badge-size;
+            background-repeat: no-repeat;
+            background-image: url('../../../assets/img/money-gliph.png');
+          }
+        }
+        &.N {
+          &:after {
+            content: "\1F6AB";
+            display: block;
+            font-size: $meal-size*3/4;
+            line-height: $meal-size;
+            font-style: normal;
+            color: #ff0000bd;
+          }
+        }
+        &.Y {
+          background-image: url('../../../assets/img/bag.png');
+          &:after {
+            content: "DUTY FREE";
+            display: block;
+            font-size: $meal-size/5;
+            font-weight: bold;
+            font-style: normal;
+            margin-top: $meal-size/2.8;
+            color: white;
+          }
+        }
+
+        background-position: center;
+        background-size: $meal-size $meal-size;
+        background-repeat: no-repeat;
+        width: $meal-size;
+        height: $meal-size;
+      }
     }
 
     .meals {

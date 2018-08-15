@@ -2,10 +2,10 @@
   <!-- TODO: add owner and shared info-->
   <div class="field-list">
     <p>
-      <label>{{totalDuration | amDuration: 'minutes'}}</label> of total flight hours
+        <label>{{flightList.owner.name}}</label>'s list
     </p>
     <p>
-        <label>{{flightList.owner.name}}</label>'s list
+      Total flight hours: <label>{{totalDuration.hours()}}</label>
     </p>
   </div>
   <div *ngIf="flightList.shareRequest.length>0">
@@ -40,7 +40,7 @@
 </p-card>
 
 <p-card class="ui-g-12 error-messages" title="Access denied" *ngIf="unauthorized" [ngSwitch]="unauthorized">
-  <div *ngSwitchCase="true">
+  <div *ngSwitchCase="'guest'">
     <h4>
       This is a private list, send a share request to obtain content access
     </h4>
@@ -49,7 +49,7 @@
   <h4 *ngSwitchCase="'pending'">
     Pending share approval
   </h4>
-  <h4 *ngSwitchCase="'guest'">
+  <h4 *ngSwitchCase="true">
     You must be logged in to use this content
   </h4>
 </p-card>
