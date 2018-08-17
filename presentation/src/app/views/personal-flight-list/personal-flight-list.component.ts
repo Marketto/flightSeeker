@@ -17,7 +17,7 @@ export class PersonalFlightListComponent implements OnInit {
   private flightListSlug: string;
 
   public flightList: FlightList;
-  private $unauthorized: true|'pending'|'guest';
+  private $unauthorized: 'unauthorized'|'pending'|'guest';
 
   public get totalDuration(): Duration {
     if (this.flightList) {
@@ -98,7 +98,7 @@ export class PersonalFlightListComponent implements OnInit {
         }, ({status}) => {
           this.flightListSlug = flightListSlug;
           if (status === 401) {
-            this.$unauthorized = true;
+            this.$unauthorized = 'unauthorized';
           } else if (status === 406) {
             this.$unauthorized = 'pending';
           }

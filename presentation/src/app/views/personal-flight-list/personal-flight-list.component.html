@@ -1,70 +1,72 @@
-<p-card class="ui-g-12 list-detail-container" [title]="flightList.name" *ngIf="flightList && !unauthorized">
-  <!-- TODO: add owner and shared info-->
-  <div class="field-list">
-    <p>
-        <label>{{flightList.owner.name}}</label>'s list
-    </p>
-    <p>
-      Total flight time:
-      <label>
-        <span [ngPlural]="totalDuration.hours() + totalDuration.days()*24">
-            <ng-template ngPluralCase="=0"></ng-template>
-            <ng-template ngPluralCase="=1">1 h</ng-template>
-            <ng-template ngPluralCase="other">{{ totalDuration.hours() + totalDuration.days()*24 }} hrs</ng-template>
-        </span>
-        <span *ngIf="(totalDuration.hours() + totalDuration.days()*24)>0 && totalDuration.minutes()>0">
-          &nbsp;and&nbsp;
-        </span>
-        <span [ngPlural]="totalDuration.minutes()">
-            <ng-template ngPluralCase="=0"></ng-template>
-            <ng-template ngPluralCase="=1">1 min</ng-template>
-            <ng-template ngPluralCase="other">{{ totalDuration.minutes() }} mins</ng-template>
-        </span>
-      </label>
-    </p>
-  </div>
-  <div *ngIf="flightList.shareRequest.length>0">
-    <label>Share requests</label>
-    <ul>
-      <li *ngFor="let shareRequest of flightList.shareRequest">
-        {{shareRequest.name}}
-        <button pButton type="button" icon="pi pi-check" class="ui-button-success" (click)="acceptShareRequest(shareRequest._id)"></button>
-        <button pButton type="button" icon="pi pi-times" class="ui-button-danger" (click)="declineShareRequest(shareRequest._id)"></button>
-      </li>
-    </ul>
-  </div>
-  <div *ngIf="flightList.shared.length>0">
-    <label>List shared with</label>
-    <ul>
-      <li *ngFor="let shared of flightList.shared">
-        {{shared.name}}
-        <button pButton type="button" icon="pi pi-times" class="ui-button-danger" (click)="revokeShare(shared._id)"></button>
-      </li>
-    </ul>
-  </div>
-</p-card>
+<div [ngSwitch]="!unauthorized && (currentFlight ? 'flying' : (flightList && 'flightList'))">
+  <p-card class="ui-g-12 list-detail-container" [title]="flightList.name" *ngSwitchCase="'flightList' || 'flying'">
+    <!-- TODO: add owner and shared info-->
+    <div class="field-list">
+      <p>
+          <label>{{flightList.owner.name}}</label>'s list
+      </p>
+      <p>
+        Total flight time:
+        <label>
+          <span [ngPlural]="totalDuration.hours() + totalDuration.days()*24">
+              <ng-template ngPluralCase="=0"></ng-template>
+              <ng-template ngPluralCase="=1">1 h</ng-template>
+              <ng-template ngPluralCase="other">{{ totalDuration.hours() + totalDuration.days()*24 }} hrs</ng-template>
+          </span>
+          <span *ngIf="(totalDuration.hours() + totalDuration.days()*24)>0 && totalDuration.minutes()>0">
+            &nbsp;and&nbsp;
+          </span>
+          <span [ngPlural]="totalDuration.minutes()">
+              <ng-template ngPluralCase="=0"></ng-template>
+              <ng-template ngPluralCase="=1">1 min</ng-template>
+              <ng-template ngPluralCase="other">{{ totalDuration.minutes() }} mins</ng-template>
+          </span>
+        </label>
+      </p>
+    </div>
+    <div *ngIf="flightList.shareRequest.length>0">
+      <label>Share requests</label>
+      <ul>
+        <li *ngFor="let shareRequest of flightList.shareRequest">
+          {{shareRequest.name}}
+          <button pButton type="button" icon="pi pi-check" class="ui-button-success" (click)="acceptShareRequest(shareRequest._id)"></button>
+          <button pButton type="button" icon="pi pi-times" class="ui-button-danger" (click)="declineShareRequest(shareRequest._id)"></button>
+        </li>
+      </ul>
+    </div>
+    <div *ngIf="flightList.shared.length>0">
+      <label>List shared with</label>
+      <ul>
+        <li *ngFor="let shared of flightList.shared">
+          {{shared.name}}
+          <button pButton type="button" icon="pi pi-times" class="ui-button-danger" (click)="revokeShare(shared._id)"></button>
+        </li>
+      </ul>
+    </div>
+  </p-card>
 
-<p-card class="ui-g-12 ui-md-12 flight-map" title="Map" *ngIf="currentFlight">
-  <app-flight-map [flight]="currentFlight"></app-flight-map>
-</p-card>
+  <p-card class="ui-g-12 ui-md-12 flight-map" title="Map" *ngSwitchCase="'flying'">
+    <app-flight-map [flight]="currentFlight"></app-flight-map>
+  </p-card>
 
-<p-card class="ui-g-12 flight-list" title="Flights" *ngIf="flightList && flightList.flights">
-  <app-flight-detail class="ui-g-6 ui-m-12" [flight]="flight" *ngFor="let flight of flightList.flights" [removeFromFlightListButton]="true"
-    (removeFromFlightList)="pullFlight($event)"></app-flight-detail>
-  <p-message severity="info" text="Nessun volo in questa lista" *ngIf="!flightList.flights.length"></p-message>
-</p-card>
+  <p-card class="ui-g-12 flight-list" title="Flights" *ngSwitchCase="'flightList' || 'flying'">
+    <app-flight-detail class="ui-g-6 ui-m-12" [flight]="flight" *ngFor="let flight of flightList.flights" [removeFromFlightListButton]="true"
+      (removeFromFlightList)="pullFlight($event)"></app-flight-detail>
+    <p-message severity="info" text="Nessun volo in questa lista" *ngIf="!flightList.flights.length"></p-message>
+  </p-card>
 
-<p-card class="ui-g-12 error-messages" title="Access denied" *ngIf="unauthorized" [ngSwitch]="unauthorized">
-  <div *ngSwitchCase="'guest'">
-    <h4>
-      This is a private list, send a share request to obtain content access
+  <p-card class="ui-g-12 error-messages" title="Access denied" *ngSwitchCase="false" [ngSwitch]="unauthorized">
+    <div *ngSwitchCase="'guest'">
+      <h4>
+        This is a private list, send a share request to obtain content access
+      </h4>
+      <button pButton label="Invia richiesta" icon="pi pi-users" (click)="sendShareRequest()"></button>
+    </div>
+    <h4 *ngSwitchCase="'pending'">
+      Pending share approval
     </h4>
-    <button pButton label="Invia richiesta" icon="pi pi-users" (click)="sendShareRequest()"></button>
-  </div>
-  <h4 *ngSwitchCase="'pending'">
-    Pending share approval
-  </h4>
-  <h4 *ngSwitchCase="true">
-    You must be logged in to use this content
-  </h4>
-</p-card>
+    <h4 *ngSwitchDefault>
+      You must be logged in to use this content
+    </h4>
+  </p-card>
+</div>
