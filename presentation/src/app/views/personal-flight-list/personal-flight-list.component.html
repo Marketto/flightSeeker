@@ -1,4 +1,4 @@
-<div [ngSwitch]="!unauthorized && (currentFlight ? 'flying' : (flightList && 'flightList'))">
+<div [ngSwitch]="!unauthorized && flightList && 'flightList'">
   <p-card class="ui-g-12 list-detail-container" [title]="flightList.name" *ngSwitchCase="'flightList' || 'flying'">
     <!-- TODO: add owner and shared info-->
     <div class="field-list">
@@ -45,11 +45,11 @@
     </div>
   </p-card>
 
-  <p-card class="ui-g-12 ui-md-12 flight-map" title="Map" *ngSwitchCase="'flying'">
+  <p-card class="ui-g-12 ui-md-12 flight-map" title="Map" *ngIf="currentFlight">
     <app-flight-map [flight]="currentFlight"></app-flight-map>
   </p-card>
 
-  <p-card class="ui-g-12 flight-list" title="Flights" *ngSwitchCase="'flightList' || 'flying'">
+  <p-card class="ui-g-12 flight-list" title="Flights" *ngSwitchCase="'flightList'">
     <app-flight-detail class="ui-g-6 ui-m-12" [flight]="flight" *ngFor="let flight of flightList.flights" [removeFromFlightListButton]="true"
       (removeFromFlightList)="pullFlight($event)"></app-flight-detail>
     <p-message severity="info" text="Nessun volo in questa lista" *ngIf="!flightList.flights.length"></p-message>
