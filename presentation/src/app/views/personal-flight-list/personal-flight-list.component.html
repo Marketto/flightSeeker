@@ -45,7 +45,7 @@
     </div>
   </p-card>
 
-  <p-card class="ui-g-12 ui-md-12 flight-map" title="Map" *ngIf="currentFlight">
+  <p-card class="ui-g-12 ui-md-12 flight-map" title="Map" *ngIf="!unauthorized && flightList && currentFlight">
     <app-flight-map [flight]="currentFlight"></app-flight-map>
   </p-card>
 
