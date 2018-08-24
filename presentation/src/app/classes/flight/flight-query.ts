@@ -1,6 +1,5 @@
 import { HttpParams } from '@angular/common/http';
 import { Search } from '../search';
-import * as moment from 'moment-timezone';
 import { Moment } from 'moment-timezone';
 
 export class FlightQuery extends Search {
@@ -28,7 +27,7 @@ export class FlightQuery extends Search {
     let params = new HttpParams();
 
     if (this.after || this.at) {
-      params = params.set(this.after ? 'after' : 'at', (this.after || this.at).utc().format('HH:mm'));
+      params = params.set(this.after ? 'after' : 'at', (this.after || this.at).local().format('HH:mm'));
     }
     if (this.limit) {
       params = params.set('limit', this.limit.toString());
