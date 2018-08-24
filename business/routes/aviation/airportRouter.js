@@ -57,8 +57,10 @@ function reqAirport(req, res, next) {
       }
     );
     
-    db.collection("airports").find(query).toArray().then(result => {
-      res.airportData = (result||[]).map(doc=>Object.assign(doc,{'cityNames':undefined}));
+    const airportsCursor = db.collection("airports").find(query);
+    airportsCursor.project({_id: 0, cityNames: 0});
+    airportsCursor.toArray().then(result => {
+      res.airportData = result || [];
       next();
     }, err => {
       console.error(err);
