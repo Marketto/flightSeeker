@@ -87,7 +87,7 @@ function dbFlights(req, res, next) {
                 const queryLimit = (atTime || (flightNumber && airline)) ? 1 : req.query.limit;
 
                 const checkQuery = {
-                    "uuid": new RegExp(`^${from}${to}${dateTime.format("YYYYMMDD")}`, 'i')
+                    "uuid": new RegExp(`^${from}${to}${moment(req.params.date).format("YYYYMMDD")}`, 'i')
                         /*    "departure.airportIata": from,
                             "arrival.airportIata": to,
                             "departure.dateTime": {
@@ -97,7 +97,9 @@ function dbFlights(req, res, next) {
                             */
                 };
 
-                const findQuery = Object.assign({
+                const findQuery = req.params.flightUUID ? {
+                    "uuid": req.params.flightUUID
+                } : Object.assign({
                     "departure.airportIata": from,
                     "arrival.airportIata": to,
                     "departure.dateTime": atTime ? {
@@ -115,17 +117,23 @@ function dbFlights(req, res, next) {
                     "number": flightNumber
                 } : {}, );
 
+                const querySort = {
+                    "departure.dateTime": 1
+                };
+
+                console.log(`QUERY ${JSON.stringify(findQuery)}`);
+
                 const flightsCollection = db.collection('flights');
 
                 Promise.all([
                     req.dbDataChecked || flightsCollection.find(checkQuery).count(),
 
                     (aggregate ?
-                        flightsCollection.aggregate(flightAggregation(findQuery, queryLimit)) /*.map(enrichFlight)*/ :
-                        flightsCollection.find(findQuery).limit(queryLimit)
-                    ).sort({
-                        "departure.dateTime": 1
-                    }).toArray()
+                        flightsCollection.aggregate(flightAggregation(findQuery, queryLimit, querySort)) /*.map(enrichFlight)*/ :
+                        flightsCollection.find(findQuery)
+                            .sort(querySort)
+                            .limit(queryLimit)
+                    ).toArray()
 
                 ]).then(([dataCheck, flights = []]) => {
                     console.log(`[dataCheck > ${dataCheck ? 'Found' : 'No'} results for ${from} to ${to} @ ${dateTime}]`);

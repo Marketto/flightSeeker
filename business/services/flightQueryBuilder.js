@@ -108,20 +108,24 @@ function flightProjectionPipeline(path, container = {}) {
     ];
 }
 
-function flightAggregation(findQuery, limit = 0) {
+function flightAggregation(findQuery, limit = 0, sort = {"departure.dateTime":1}) {
     const aggCfg = [{
             $match: findQuery
         }]
         .concat(airportPipeline('departure'))
         .concat(airportPipeline('arrival'))
         .concat(airlinePipeline())
-        .concat(flightProjectionPipeline());
-
+        .concat(flightProjectionPipeline())
+        .concat({
+            "$sort": sort
+        });
+    
     if (limit > 0) {
-        aggCfg.splice(1, 0, {
-            $limit: limit
+        aggCfg.push({
+            "$limit": limit
         });
     }
+
     return aggCfg;
 }
 
