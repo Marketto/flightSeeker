@@ -27,7 +27,7 @@ export class FlightQuery extends Search {
     let params = new HttpParams();
 
     if (this.after || this.at) {
-      params = params.set(this.after ? 'after' : 'at', (this.after || this.at).local().format('HH:mm'));
+      params = params.set(this.after ? 'after' : 'at', (this.after || this.at).format('HH:mm'));
     }
     if (this.limit) {
       params = params.set('limit', this.limit.toString());

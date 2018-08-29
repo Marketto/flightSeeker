@@ -24,7 +24,7 @@ export class FlightService {
 
     const serviceURI = `aviation/airport/${departureAirportIata}/to/${arrivalAirportIata}/`
       + (criteria.airlineIata ? `airline/${criteria.airlineIata}/` : '')
-      + `flight/${departureDate.local().format('YYYY-MM-DD')}`;
+      + `flight/${departureDate.format('YYYY-MM-DD')}`;
 
     return this.genericWebService.search<Flight>(
       serviceURI,
