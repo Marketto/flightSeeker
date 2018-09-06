@@ -29,9 +29,9 @@ function reqAirport(req, res, next) {
               {
                 'name' : startsWithRegExp
               },
-              {
+              /*{
                 'city' : startsWithRegExp
-              },
+              },*/
               {
                 'cityNames' : {
                   '$elemMatch': startsWithRegExp
