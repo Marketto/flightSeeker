@@ -10,7 +10,11 @@ const {
 function reqAirport(req, res, next) {
   console.log('[reqAirport]');
   mongo().then(db => {
-    const startsWith = req.query.startsWith;
+    const startsWith = (req.query.startsWith || "").trim() || null;
+    const notInCity = (req.query.notInCity || "").trim() || null;
+    const iataAirport = (req.params.iataAirport || "").trim() || null;
+
+    
     const startsWithRegExp = startsWith ? {
         '$regex': new RegExp(`^${escapeStringRegexp(startsWith)}`, 'i')
       } : null;
@@ -19,38 +23,29 @@ function reqAirport(req, res, next) {
       .reduce((a,b)=>a.concat(b))
       .filter((iata, idx, airports) => iata !== req.params.iataDeparture && airports.indexOf(iata)===idx).sort();
 
-    const query = req.params.iataAirport ? {
-      'iata' : req.params.iataAirport,
+    const query = iataAirport ? {
+      'iata' : iataAirport,
     } : (
       {
         '$and' : [
-          req.query.startsWith && {
+          startsWith && {
             '$or' : [
               {
-                'name' : startsWithRegExp
-              },
-              /*{
-                'city' : startsWithRegExp
-              },*/
-              {
-                'cityNames' : {
-                  '$elemMatch': startsWithRegExp
+                '$text' : {
+                  '$search': startsWith
                 }
-              },
-              {
-                'country': startsWithRegExp
               },
               {
                 'iata': startsWithRegExp
               }
             ]
-          }, req.query.notInCity  && {
+          }, notInCity  && {
             'cityIata': {
-              '$ne': req.query.notInCity
+              '$ne': notInCity
             }
           }, reachableAirports && {
             'iata' : {
-              $in: reachableAirports
+              '$in': reachableAirports
             }
           }
         ].filter(c=>!!c)
