@@ -20,7 +20,7 @@ export class AuthorizingComponent implements OnInit {
   ) { }
 
   ngOnInit() {
-    this.authService.authenticate().toPromise().then(authData => {
+    this.authService.authenticate().toPromise().then( authData => {
       if (this.authService.isAuthenticated) {
 
         this.userService.addAccount(authData.auth).toPromise().then(() => {

@@ -11,23 +11,23 @@ const SERVICE_URI = 'user/flight-list';
 })
 export class FlightListService {
 
+  private static $readAllPromise: Promise<FlightList[]>;
+
   private serviceURI = SERVICE_URI;
 
-  private $readAll = this.genericWebService.search<FlightList>(
-    this.serviceURI,
-    null,
-    (data: any[] = []) => data.map(fl => new FlightList(fl)));
-
-
-  public create(flightList: FlightList): Observable<FlightList> {
+  public create(flightList: FlightList): Promise<FlightList> {
     return this.genericWebService.create<FlightList>(
       this.serviceURI,
       flightList
-    );
+    ).toPromise();
   }
 
-  public readAll(): Observable<FlightList[]> {
-    return this.$readAll;
+  public readAll(): Promise<FlightList[]> {
+    FlightListService.$readAllPromise = FlightListService.$readAllPromise || this.genericWebService.search<FlightList>(
+      this.serviceURI,
+      null,
+      (data: any[] = []) => data.map(fl => new FlightList(fl))).toPromise();
+    return FlightListService.$readAllPromise;
   }
 
   public bySlug(flightListSlug: string): FlightListDetailService {

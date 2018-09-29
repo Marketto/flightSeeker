@@ -81,7 +81,7 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
 
   private retrieveUserFlightLists() {
     if (this.authService.isAuthenticated) {
-      this.flightListService.readAll().subscribe(flightList => {
+      this.flightListService.readAll().then(flightList => {
         this.addToFlightListItems = flightList.map(fli => {
           return {
             'label': fli.name,

@@ -90,7 +90,7 @@ export class MenuBarComponent implements OnInit {
   ) {
     if (this.authService.isAuthenticated) {
       this.$loggedUserMenu.find(m => m.id === 'USER').label = this.authService.user.given_name;
-      this.flightListService.readAll().subscribe((list: FlightList[]) => {
+      this.flightListService.readAll().then((list: FlightList[]) => {
         this.flightListMenu.splice(1);
         list.forEach((flightList: FlightList) => {
           this.flightListMenu.push(this.flightListToMenuItem(flightList));

@@ -14,7 +14,7 @@ export class NewFlightListComponent implements OnInit {
 
   public newFlightList() {
     this.loading = true;
-    this.flightListService.create(this.flightList).subscribe((flightList: FlightList) => {
+    this.flightListService.create(this.flightList).then((flightList: FlightList) => {
       this.newFlight.emit(flightList);
       this.loading = false;
     }, err => {

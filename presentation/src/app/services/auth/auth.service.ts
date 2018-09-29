@@ -4,7 +4,6 @@ import { Router, ActivatedRoute } from '@angular/router';
 import * as auth0 from 'auth0-js';
 import { HttpParams } from '@angular/common/http';
 import * as moment from 'moment-timezone';
-import { Moment } from 'moment';
 import { User } from '../../classes/user/user';
 import { AuthToken } from '../../classes/user/auth-token';
 
@@ -21,6 +20,7 @@ export class AuthService {
 
   private $authToken: string;
   private $user: User;
+  private $isAuthenticated: boolean;
 
   private webAuth = new auth0.WebAuth({
     responseType: 'token id_token',
@@ -61,6 +61,7 @@ export class AuthService {
           observer.error(err);
         } else {
           window.location.hash = '';
+
           observer.next({
             'auth': authResult ? new AuthToken(authResult) : undefined,
             'route': [params[SOURCE_ROUTE_PARAM]]
@@ -77,6 +78,11 @@ export class AuthService {
     localStorage.setItem('id_token', authResult.idToken);
     localStorage.setItem('expires_at', authResult.expiresAt.toJSON());
     localStorage.setItem('user', JSON.stringify(authResult.idTokenPayload));
+
+    this.$isAuthenticated = true;
+    setTimeout(() => {
+      this.destroyAuthSubscription();
+    }, authResult.expiresAt.diff(moment(), 'milliseconds', true) + 1);
   }
 
   public get user(): User {
@@ -103,12 +109,19 @@ export class AuthService {
     localStorage.removeItem('user');
     // Go back to the home route
     this.router.navigate([LOGOUT_ROUTE]);
+    this.destroyAuthSubscription();
   }
 
   public get isAuthenticated(): boolean {
-    // Check whether the current time is past the
-    // Access Token's expiry time
-    const expiresAt: Moment = moment(localStorage.getItem('expires_at'));
-    return expiresAt.isAfter();
+    return this.$isAuthenticated;
   }
+
+  private destroyAuthSubscription() {
+    /*if (this.authExpireObservable) {
+      this.authExpireObservable.unsubscribe();
+      this.authExpireObservable = null;
+    }*/
+    this.$isAuthenticated = false;
+  }
+
 }
