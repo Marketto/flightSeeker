@@ -4,7 +4,7 @@ const ROUTING_CONST = {
     DATE_ROUTE_MATCHER          : "\\d{4}-?\\d{2}-?\\d{2}",
     TIME_ROUTE_MATCHER          : "\\d{2}:\\d{2}",
     FLIGHT_NUM_ROUTE_MATCHER    : "\\d+",
-    SLUG_MATCHER_ROUTE_MATCHER  : "[A-Za-z\\d]+[A-Za-z\\d\-]+[A-Za-z\\d]+",
+    SLUG_MATCHER_ROUTE_MATCHER  : "[A-Za-z\\d]+[A-Za-z\\d-]+[A-Za-z\\d]+",
     OBJECT_ID_ROUTE_MATCHER     : "[a-f\\d]{24}"
 };
 
