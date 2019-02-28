@@ -23,6 +23,12 @@
           </span>
         </label>
       </p>
+      <p>
+        Total flights: <label>{{ totalFlights }}</label>
+      </p>
+      <p>
+        Total distance: <label>{{ totalDistance | number : '1.0-0' }} Km</label>
+      </p>
     </div>
     <div *ngIf="flightList.shareRequest.length>0">
       <label>Share requests</label>
@@ -40,6 +46,25 @@
         <li *ngFor="let shared of flightList.shared">
           {{shared.name}}
           <button pButton type="button" icon="pi pi-times" class="ui-button-danger" (click)="revokeShare(shared._id)"></button>
+        </li>
+      </ul>
+    </div>
+    <div class="statistics">
+      <p>Most Frequent Destinations</p>
+      <ul>
+        <li>
+          Cities:
+          <label *ngFor="let city of mostFrequentDestinationCities">
+            {{ city.name }}
+            <small>{{ city.count }}</small>
+          </label>
+        </li>
+        <li>
+          Countries:
+          <label *ngFor="let country of mostFrequentDestinationCountries">
+            {{ country.name }}
+            <small>{{ country.count }}</small>
+          </label>
         </li>
       </ul>
     </div>

@@ -11,7 +11,7 @@
             <p-button icon="pi pi-minus" (click)="removeFromFlightListItems.length > 1 ? removeFlightListMenu.toggle($event) : removeFromFlightListItems[0].command()" [disabled]="!removeFromFlightListItems.length"></p-button>
             <p-menu #removeFlightListMenu popup="popup" [model]="removeFromFlightListItems"></p-menu>
         </div>
-        <i [class]="'meal ' + meal" *ngFor="let meal of flight.meals"></i>
+        <em [class]="'meal ' + meal" *ngFor="let meal of flight.meals"></em>
     </div>
     <div class="ui-g-5 ui-md-5 arrival">
         <app-flight-detail-vector [flightVector]="flight.arrival"></app-flight-detail-vector>

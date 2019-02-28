@@ -11,7 +11,7 @@ function getServiceUrl(cfg = {}) {
     const flightLookupParams = new URLSearchParams(flightLookupUrl.search);
 
     flightLookupParams.set('key', keys.flightLookupKey);
-    
+
     cfg.params = cfg.params||{};
 
     Object.keys(cfg.params).filter(p => !!cfg.params[p]).forEach(p => {
@@ -25,8 +25,8 @@ function getServiceUrl(cfg = {}) {
 }
 
 module.exports = {
-    'service': async cfg => {
-        const srcData = await genericService(getServiceUrl(cfg))(Object.assign({type: 'xml'}, cfg));
+    'service': async (cfg = {}) => {
+        const srcData = await genericService(getServiceUrl(cfg))({...cfg, type: 'xml'});
         const data = srcData ? srcData[Object.keys(srcData)[0]] : {};
 
         if ((/No\s.+\sfound/i).test((data.FLSWarning || {}).FLSWarningName || "")) {

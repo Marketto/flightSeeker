@@ -1,6 +1,6 @@
 {
     "name": "flight-seeker-presentation",
-    "version": "1.3.5",
+    "version": "1.3.6",
     "scripts": {
         "ng": "ng",
         "start": "ng serve --proxy-config proxy.conf.json",
@@ -31,6 +31,7 @@
         "primeicons": "^1.0.0-beta.9",
         "primeng": "^6.0.0",
         "rxjs": "^6.0.0",
+        "tsgeo": "^1.2.2",
         "zone.js": "^0.8.29"
     },
     "devDependencies": {

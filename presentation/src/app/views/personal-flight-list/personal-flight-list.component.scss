@@ -8,6 +8,7 @@
   .list-detail-container {
     ::ng-deep .ui-card-content {
       display: flex;
+      flex-wrap: wrap;
       >* {
         flex-basis: 33.33%;
 
@@ -27,6 +28,25 @@
         &.field-list {
           display: flex;
           flex-direction: column;
+        }
+        &.statistics {
+          flex-basis: 100%;
+          ul>li>label {
+            &:not(:first-child):before {
+              display: inline;
+              content: ', ';
+              margin-right: 0.5em;
+            }
+            &:first-child {
+              margin-left: 0.5em;
+            }
+            small {
+              font-weight: normal;
+              font-style: italic;
+              font-size: smaller;
+              vertical-align: super;
+            }
+          }
         }
 
         p, ul {

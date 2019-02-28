@@ -4,10 +4,7 @@ const { URLSearchParams } = require('url');
 const flightLookup = require('../../connectors/flight-lookup');
 const mongo = require('../../connectors/mongo');
 const moment = require('moment-timezone');
-const {
-    flightAggregation
-    //    ,enrichFlight
-} = require('../../services/flightQueryBuilder');
+const { flightAggregation } = require('../../services/flightQueryBuilder');
 
 const {
     DATE_ROUTE_MATCHER,
@@ -75,7 +72,7 @@ function dbFlights(req, res, next) {
                 const to = req.params.iataArrival;
                 const airline = req.params.iataAirline;
 
-                const flightNumber = req.params.flightNumber;
+                const {flightNumber} = req.params;
 
                 const atTime = req.query.at;
                 const afterTime = req.query.after;
@@ -83,18 +80,11 @@ function dbFlights(req, res, next) {
 
                 console.log(`Flight DateTime: ${dateTime.toDate().toJSON()}`);
 
-                const aggregate = req.query.aggregate;
+                const {aggregate} = req.query;
                 const queryLimit = (atTime || (flightNumber && airline)) ? 1 : req.query.limit;
 
                 const checkQuery = {
                     "uuid": new RegExp(`^${from}${to}${moment(req.params.date).format("YYYYMMDD")}`, 'i')
-                        /*    "departure.airportIata": from,
-                            "arrival.airportIata": to,
-                            "departure.dateTime": {
-                                "$gte": moment(dateTime).startOf("day").toDate(),
-                                "$lte": moment(dateTime).endOf("day").toDate()
-                            }
-                            */
                 };
 
                 const findQuery = req.params.flightUUID ? {

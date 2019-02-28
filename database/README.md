@@ -6,11 +6,11 @@ Database for Flight Seeker
 
 Run `mongo restore`.
 
+## Backup
+
+Run `mongo backup`.
+
 ## Data sources
-
-### Airports
-
-Airports information are a mix of airports and cities dataset from openflights.org
 
 ### Airports
 
