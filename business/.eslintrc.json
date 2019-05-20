@@ -126,7 +126,7 @@
         "no-catch-shadow": "error",
         "no-confusing-arrow": "error",
         "no-continue": "error",
-        "no-console":"error",
+        "no-console":"off",
         "no-div-regex": "error",
         "no-duplicate-imports": "error",
         "no-else-return": "off",
@@ -174,7 +174,7 @@
                 "allowForLoopAfterthoughts": true
             }
         ],
-        "no-process-env": "error",
+        "no-process-env": "off",
         "no-process-exit": "error",
         "no-proto": "error",
         "no-prototype-builtins": "error",
@@ -272,7 +272,7 @@
         "space-unary-ops": "error",
         "spaced-comment": [
             "error",
-            "never"
+            "always"
         ],
         "strict": "off",
         "switch-colon-spacing": "error",
