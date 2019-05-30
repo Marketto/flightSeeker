@@ -6,22 +6,22 @@ export class FlightListFlightService {
     return `${this.serviceURI}/flight`;
   }
 
-  public insert(flightUuid: string = this.flightUUID): Observable<void> {
+  public insert(flightUuid: string = this.flightUUID): Promise<void> {
     if ( !flightUuid ) {
       throw Error('flightUuid must be a valid string');
     }
     return this.genericWebService.insert<void>(
       `${this.resourceURI}/${flightUuid}`
-    );
+    ).toPromise();
   }
 
-  public delete(flightUuid: string = this.flightUUID): Observable<void> {
+  public delete(flightUuid: string = this.flightUUID): Promise<void> {
     if ( !flightUuid ) {
       throw Error('flightUuid must be a valid string');
     }
     return this.genericWebService.delete<void>(
       `${this.resourceURI}/${flightUuid}`
-    );
+    ).toPromise();
   }
 
   constructor(

@@ -58,6 +58,10 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
     return this.authService.isAuthenticated;
   }
 
+  public get addToFlightListDisabled(): boolean {
+    return !this.addToFlightListItems.some(atfi => !atfi.disabled);
+  }
+
   constructor(
     private nowService: NowService,
     private authService: AuthService,
@@ -83,29 +87,25 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
     if (this.authService.isAuthenticated) {
       this.flightListService.readAll().then(flightList => {
         this.addToFlightListItems = flightList.map(fli => {
-          return {
-            'label': fli.name,
-            'command': () => {
-              const addFlightSubscription = this.flightListService.bySlug(fli.slug).flight().insert(this.flight.uuid).subscribe(() => {
-                if (addFlightSubscription) {
-                  addFlightSubscription.unsubscribe();
-                }
-              });
-            }
+          const isDisabled = () => fli.flights.some((flight: Flight) => flight.uuid === this.flight.uuid);
+          const atfli = {
+            label: fli.name,
+            command: () => this.flightListService.bySlug(fli.slug).flight()
+              .insert(this.flight.uuid)
+              .then(() => {
+                fli.flights.unshift(this.flight);
+                atfli.disabled = isDisabled();
+              }),
+            disabled: isDisabled()
           };
+          return atfli;
         });
 
         this.removeFromFlightListItems = flightList.map(fli => {
           return {
             'label': fli.name,
-            'command': () => {
-              const removeFlightSubscription = this.flightListService.bySlug(fli.slug).flight(this.flight.uuid).delete().subscribe(() => {
-                if (removeFlightSubscription) {
-                  this.removeFromFlightList.emit(this.flight);
-                  removeFlightSubscription.unsubscribe();
-                }
-              });
-            }
+            'command': () => this.flightListService.bySlug(fli.slug).flight(this.flight.uuid)
+              .delete().then(() => this.removeFromFlightList.emit(this.flight))
           };
         });
       });

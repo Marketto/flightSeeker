@@ -1,4 +1,3 @@
-import { Observable } from 'rxjs';
 import { Injectable } from '@angular/core';
 import { GenericWebServiceService } from '../generic-web-service.service';
 import { FlightList } from '../../classes/flight-list/flight-list';

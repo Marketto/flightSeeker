@@ -4,7 +4,7 @@
     </div>
     <div class="ui-g-2 ui-md-2 mid-section" [ngClass]="{'meals': !authenticated}">
         <div *ngIf="authenticated && addToFlightListButton">
-            <p-button icon="pi pi-plus" (click)="addToFlightListItems.length > 1 ? addFlightListMenu.toggle($event) : addToFlightListItems[0].command()" [disabled]="!addToFlightListItems.length"></p-button>
+            <p-button icon="pi pi-plus" (click)="addToFlightListItems.length > 1 ? addFlightListMenu.toggle($event) : addToFlightListItems[0].command()" [disabled]="addToFlightListDisabled"></p-button>
             <p-menu #addFlightListMenu popup="popup" [model]="addToFlightListItems"></p-menu>
         </div>
         <div *ngIf="authenticated && removeFromFlightListButton">
