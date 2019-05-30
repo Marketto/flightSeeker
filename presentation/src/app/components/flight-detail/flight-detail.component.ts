@@ -23,9 +23,13 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
   public set flight(flight: Flight) {
     this.$flight = flight;
 
-    this.subscribeNowMidTime();
-
     this.calculateDurations();
+
+    if (this.progress === 100) {
+      this.showProgressBar = !(this.progress === 100 && this.timeToArrivalLeft.asHours() < -24);
+    } else {
+      this.subscribeNowMidTime();
+    }
   }
   public get flight() {
     return this.$flight;
@@ -38,6 +42,7 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
   public progress: number;
   public addToFlightListItems: MenuItem[] = [];
   public removeFromFlightListItems: MenuItem[] = [];
+  public showProgressBar = true;
   @Output() progressChange = new EventEmitter<number>();
 
   private calculateDurations() {
@@ -113,7 +118,7 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    this.subscribeNowMidTime();
+    //this.subscribeNowMidTime();
     this.retrieveUserFlightLists();
   }
   ngOnDestroy() {

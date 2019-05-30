@@ -32,7 +32,7 @@
         </span>
     </div>
     <div class="ui-g-12 ui-md-12 flight-progress">
-        <p-progressBar [value]="progress" [showValue]="false"></p-progressBar>
+        <p-progressBar [value]="progress" [showValue]="false" *ngIf="showProgressBar"></p-progressBar>
         <p class="flight-eta" [ngSwitch]="progress">
             <span *ngSwitchCase="null">Departure in {{timeToDepartureLeft | amDuration : 'minutes'}}</span>
             <span *ngSwitchCase="100">Landed {{timeToArrivalLeft | amDuration : 'minutes'}} ago</span>
