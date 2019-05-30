@@ -118,11 +118,10 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit() {
-    //this.subscribeNowMidTime();
     this.retrieveUserFlightLists();
   }
   ngOnDestroy() {
-    if (!this.nowMidTimetSubscription.closed) {
+    if (this.nowMidTimetSubscription && !this.nowMidTimetSubscription.closed) {
       this.nowMidTimetSubscription.unsubscribe();
     }
   }

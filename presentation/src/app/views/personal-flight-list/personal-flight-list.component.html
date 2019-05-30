@@ -1,6 +1,5 @@
 <div [ngSwitch]="!unauthorized && flightList && 'flightList'">
   <p-card class="ui-g-12 list-detail-container" [title]="flightList.name" *ngSwitchCase="'flightList' || 'flying'">
-    <!-- TODO: add owner and shared info-->
     <div class="field-list">
       <p>
           <label>{{flightList.owner.name}}</label>'s list
