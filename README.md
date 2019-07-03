@@ -1,6 +1,7 @@
 # class-mitosis
 
-[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=flightSeeker&metric=alert_status)](https://sonarcloud.io/dashboard/index/flightSeeker)
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=flightSeeker&metric=alert_status)](https://sonarcloud.io/dashboard/index/flightSeeker)[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FMarketto%2FflightSeeker.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2FMarketto%2FflightSeeker?ref=badge_shield)
+
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=flightSeeker&metric=coverage)](https://sonarcloud.io/dashboard/index/flightSeeker)
 [![Maintainability](https://sonarcloud.io/api/project_badges/measure?project=flightSeeker&metric=sqale_rating)](https://sonarcloud.io/dashboard/index/flightSeeker)
 [![Reliability](https://sonarcloud.io/api/project_badges/measure?project=flightSeeker&metric=reliability_rating)](https://sonarcloud.io/dashboard/index/flightSeeker)
@@ -21,5 +22,8 @@
 ## License
 This project is licensed under the MIT License - see the [License](/LICENSE) file for details
 
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2FMarketto%2FflightSeeker.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2FMarketto%2FflightSeeker?ref=badge_large)
 
 ## Changelog
