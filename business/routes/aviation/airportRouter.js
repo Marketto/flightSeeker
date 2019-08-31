@@ -15,11 +15,11 @@ function reqAirport(req, res, next) {
     const iataAirport = (req.params.iataAirport || "").trim() || null;
 
     const reachableAirports = res.routesData && [[]].concat(res.routesData.map(r=>r.iataAirports))
-      .reduce((a,b)=>a.concat(b))
+      .reduce((a, b)=>a.concat(b))
       .filter((iata, idx, airports) => iata !== req.params.iataDeparture && airports.indexOf(iata)===idx).sort();
 
     const query = iataAirport ? {
-      'iata' : iataAirport,
+      'iata' : iataAirport
     } : (
       {
         '$and' : [
@@ -39,7 +39,7 @@ function reqAirport(req, res, next) {
         ].filter(c=>!!c)
       }
     );
-    
+
     const airportsCursor = db.collection("airports").find(query);
     airportsCursor.project({_id: 0, cityNames: 0});
     airportsCursor.toArray().then(result => {
@@ -55,20 +55,20 @@ function reqAirport(req, res, next) {
   });
 }
 
+const spellCheckerRegexpGenerator = text => {
+  const fillMatcher = "\\w";
+  const matchers = text.split('')
+    .map((c, i, a) => `${a.slice(0, i).join('')}${fillMatcher}${a.slice(i + 1).join('')}`)
+    .join('|');
+  return new RegExp(`^(?:${matchers})`, 'ui');
+};
+
 function reqAirportSpellChecker(req, res, next) {
   console.log('[reqAirportSpellChecker]');
   const startsWith = (req.query.startsWith || "").trim() || null;
-  if (res.airportData.length > 0 || !startsWith) {
+  if (res.airportData.length > 0 || (startsWith || "").length < 4) {
     next();
   }
-
-  const spellCheckerRegexpGenerator = (text) => {
-    const fillMatcher = "\\w";
-    const matchers = escapedStartsWith.split('')
-      .map((c, i, a) => c.padStart(i * fillMatcher.length + c.length , fillMatcher) + "".padEnd((a.length - i - 1) * fillMatcher.length, fillMatcher)).join('|')
-      .join('|');
-    return new RegExp(`^(?:${matchers})$`, 'ui');
-  };
 
   mongo().then(db => {
     const notInCity = (req.query.notInCity || "").trim() || null;
@@ -76,27 +76,38 @@ function reqAirportSpellChecker(req, res, next) {
     const matchingRegExp = spellCheckerRegexpGenerator(escapedStartsWith);
 
     const reachableAirports = res.routesData && [[]].concat(res.routesData.map(r=>r.iataAirports))
-      .reduce((a,b)=>a.concat(b))
+      .reduce((a, b)=>a.concat(b))
       .filter((iata, idx, airports) => iata !== req.params.iataDeparture && airports.indexOf(iata)===idx).sort();
 
     const query = {
-        '$and' : [
-          {
-            cityNames: {
-              $regex: matchingRegExp
+      '$and' : [
+        {
+          '$or': [
+            {
+              'cityNames': matchingRegExp
+            },
+            {
+              'city': matchingRegExp
+            },
+            {
+              'name': matchingRegExp
+            },
+            {
+              'country': matchingRegExp
             }
-          }, notInCity  && {
-            'cityIata': {
-              '$ne': notInCity
-            }
-          }, reachableAirports && {
-            'iata' : {
-              '$in': reachableAirports
-            }
+          ]
+        }, notInCity  && {
+          'cityIata': {
+            '$ne': notInCity
           }
-        ].filter(c=>!!c)
-      };
-    
+        }, reachableAirports && {
+          'iata' : {
+            '$in': reachableAirports
+          }
+        }
+      ].filter(c=>!!c)
+    };
+
     const airportsCursor = db.collection("airports").find(query);
     airportsCursor.project({_id: 0, cityNames: 0});
     airportsCursor.toArray().then(result => {
@@ -121,7 +132,7 @@ function resAirport(req, res) {
   }
 }
 
-router.get('/', reqAirport, resAirport);
-router.get(`/:iataAirport(${AIRPORT_ROUTE_MATCHER})`, reqAirport, reqAirportSpellChecker, resAirport);
+router.get('/', reqAirport, reqAirportSpellChecker, resAirport);
+router.get(`/:iataAirport(${AIRPORT_ROUTE_MATCHER})`, reqAirport, resAirport);
 
 module.exports = router;
