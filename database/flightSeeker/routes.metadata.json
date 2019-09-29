@@ -1,1 +1,74 @@
-{"options":{"validator":{"$jsonSchema":{"bsonType":"object","properties":{"airlines":{"items":[{"bsonType":"string","description":"Airline IATA Code","pattern":"[A-Z\\d]{2}\\*?","minLength":2,"maxLength":3}],"minItems":1,"bsonType":"array","uniqueItems":true},"airports":{"items":[{"bsonType":"string","description":"Airport IATA Code","pattern":"[A-Z\\d]{3}","minLength":3,"maxLength":3}],"minItems":2,"maxItems":2,"bsonType":"array","uniqueItems":true}},"required":["airlines","airports"],"title":"routes"}},"validationLevel":"moderate","validationAction":"error"},"indexes":[{"v":2,"key":{"_id":1},"name":"_id_","ns":"flightSeeker.routes"},{"v":2,"key":{"airports":1},"name":"_airports","ns":"flightSeeker.routes"},{"v":2,"key":{"airlines":1},"name":"_airline","ns":"flightSeeker.routes"}],"uuid":"5febb94b00a2443fbb49fd8d318ec464"}
+{
+    "options": {
+        "validator": {
+            "$jsonSchema": {
+                "bsonType": "object",
+                "properties": {
+                    "airlines": {
+                        "items": [
+                            {
+                                "bsonType": "string",
+                                "description": "Airline IATA Code",
+                                "pattern": "[A-Z\\d]{2}\\*?",
+                                "minLength": 2,
+                                "maxLength": 3
+                            }
+                        ],
+                        "minItems": 1,
+                        "bsonType": "array",
+                        "uniqueItems": true
+                    },
+                    "airports": {
+                        "items": [
+                            {
+                                "bsonType": "string",
+                                "description": "Airport IATA Code",
+                                "pattern": "[A-Z\\d]{3}",
+                                "minLength": 3,
+                                "maxLength": 3
+                            }
+                        ],
+                        "minItems": 2,
+                        "maxItems": 2,
+                        "bsonType": "array",
+                        "uniqueItems": true
+                    }
+                },
+                "required": [
+                    "airlines",
+                    "airports"
+                ],
+                "title": "routes"
+            }
+        },
+        "validationLevel": "moderate",
+        "validationAction": "error"
+    },
+    "indexes": [
+        {
+            "v": 2,
+            "key": {
+                "_id": 1
+            },
+            "name": "_id_",
+            "ns": "flightSeeker.routes"
+        },
+        {
+            "v": 2,
+            "key": {
+                "airports": 1
+            },
+            "name": "_airports",
+            "ns": "flightSeeker.routes"
+        },
+        {
+            "v": 2,
+            "key": {
+                "airlines": 1
+            },
+            "name": "_airline",
+            "ns": "flightSeeker.routes"
+        }
+    ],
+    "uuid": "a5167642152a4bdb8f38aca84e445a26"
+}
