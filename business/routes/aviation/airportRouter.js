@@ -11,10 +11,22 @@ const MIN_RECORDS = 3;
 const DEFAULT_RECORDS = 6;
 const MAX_RECORDS = 24;
 
+/**
+ * Cleanup given string removing words shorter than the provided length
+ *
+ * @param {string} text
+ * @param {number} [wordMinLength=3]
+ * @returns {string}
+ */
+function cleanUpSearchText(text, wordMinLength = 3) {
+  const trimmedText = (text || "").trim();
+  return (trimmedText.match(new RegExp(`[^\\s.\\-_]{${wordMinLength},}`, 'giu')) || []).join(' ') || trimmedText || null;
+}
+
 function reqAirport(req, res, next) {
   console.log('[reqAirport]');
   mongo().then(db => {
-    const startsWith = (req.query.startsWith || "").trim() || null;
+    const startsWith = cleanUpSearchText(req.query.startsWith, 4);
     const notInCity = (req.query.notInCity || "").trim() || null;
     const iataAirport = (req.params.iataAirport || "").trim() || null;
     const limit = Math.min(Math.max(parseInt(req.query.limit) || DEFAULT_RECORDS, MIN_RECORDS), MAX_RECORDS);
