@@ -1,12 +1,15 @@
 #!/bin/bash
-echo "[0/3] Starting DB backup process"
+echo "[0/4] Starting DB backup process"
 
-echo "[1/3] Performing dump/backup of existing collections";
+echo "[1/4] Performing dump/backup of existing collections";
 mongodump --db flightSeeker --out ./
 
-echo "[2/3] Deleting user-related and 3rd party data"
+echo "[2/4] Deleting user-related and 3rd party data"
 rm ./flightSeeker/flightLists.bson
 rm ./flightSeeker/flights.bson
 rm ./flightSeeker/users.bson
 
-echo "[3/3] Backup DB complete"
+echo "[3/4] Prettyfing metadata"
+node prettify-metadata.js
+
+echo "[4/4] Backup DB complete"

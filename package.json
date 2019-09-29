@@ -5,6 +5,7 @@
     "scripts": {
         "preinstall": "cd ./business && npm i && cd ../presentation && npm i",
         "start": "node ./business/bin/www",
+        "backup-db": "cd database && sh ./backup.sh",
         "restore-db": "cd database && sh ./restore.sh",
         "build-fe": "cd presentation && npm i && npm run-script build"
     },
