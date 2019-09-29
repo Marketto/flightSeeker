@@ -7,12 +7,17 @@ const {
   AIRPORT_ROUTE_MATCHER
 } = require('../routingConst');
 
+const MIN_RECORDS = 3;
+const DEFAULT_RECORDS = 6;
+const MAX_RECORDS = 24;
+
 function reqAirport(req, res, next) {
   console.log('[reqAirport]');
   mongo().then(db => {
     const startsWith = (req.query.startsWith || "").trim() || null;
     const notInCity = (req.query.notInCity || "").trim() || null;
     const iataAirport = (req.params.iataAirport || "").trim() || null;
+    const limit = Math.min(Math.max(parseInt(req.query.limit) || DEFAULT_RECORDS, MIN_RECORDS), MAX_RECORDS);
 
     const reachableAirports = res.routesData && [[]].concat(res.routesData.map(r=>r.iataAirports))
       .reduce((a, b)=>a.concat(b))
@@ -25,7 +30,9 @@ function reqAirport(req, res, next) {
         '$and' : [
           startsWith && {
             '$text' : {
-              '$search': startsWith
+              '$search': startsWith,
+              '$caseSensitive': false,
+              '$diacriticSensitive': false
             }
           }, notInCity  && {
             'cityIata': {
@@ -40,8 +47,21 @@ function reqAirport(req, res, next) {
       }
     );
 
-    const airportsCursor = db.collection("airports").find(query);
-    airportsCursor.project({_id: 0, cityNames: 0});
+    const project = {_id: 0, cityNames: 0};
+    const sort = {};
+    if (startsWith) {
+      const score = {
+        $meta: 'textScore'
+      };
+      project.score = score;
+      sort.score = score;
+    }
+
+    const airportsCursor = db.collection("airports")
+      .find(query)
+      .project(project)
+      .sort(sort)
+      .limit(limit);
     airportsCursor.toArray().then(result => {
       res.airportData = result || [];
       next();
