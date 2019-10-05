@@ -21,7 +21,6 @@ const checkJwtBody = jwt({
 
 function logErr(err) {
     console.error(err);
-    res.sendStatus(500);
 }
 
 function editUserComplete(req, res){
@@ -31,6 +30,7 @@ function editUserComplete(req, res){
 
 function copyLoggedUserId(req, res, next) {
     console.log("[copyLoggedUserId]");
+    // eslint-disable-next-line no-underscore-dangle
     req.loggedUserId = req.user._id;
     next();
 }
@@ -40,7 +40,7 @@ function addUserAccount (req, res, next){
 
     const userId = req.loggedUserId;
     const accountId = req.user.sub;
-    delete req.loggedUserId;
+    Reflect.deleteProperty(req, 'loggedUserId');
 
     mongo().then(db => {
         db.collection('users').updateOne({
@@ -56,12 +56,13 @@ function addUserAccount (req, res, next){
     }, logErr);
 
 }
-
+/*
 function removeUserAccount (req, res, next){
-
 }
+*/
 
 router.put('/', copyLoggedUserId, checkJwtBody, addUserAccount, editUserComplete);
+// TODO
 // router.delete('/:accountId', removeUserAccount, editUserComplete);
 
 module.exports = router;

@@ -20,7 +20,6 @@ const checkJwtRouting = jwt({
 
 function logErr(err) {
     console.error('[authUser]', err);
-    res.sendStatus(500);
 }
 
 function getDbUserHandler(req, res, next) {
@@ -33,6 +32,7 @@ function getDbUserHandler(req, res, next) {
             'account': accountId
         }).then(dbUser => {
             if (dbUser) {
+                // eslint-disable-next-line no-underscore-dangle
                 req.user._id = dbUser._id;
                 next();
             } else {
@@ -43,6 +43,7 @@ function getDbUserHandler(req, res, next) {
                     insertedId
                 }) => {
                     if (insertedId) {
+                        // eslint-disable-next-line no-underscore-dangle
                         req.user._id = insertedId;
                         next();
                     } else {
@@ -55,6 +56,10 @@ function getDbUserHandler(req, res, next) {
 }
 
 module.exports = router.use(
+    (req, res, next) => {
+        console.log("[authUserRouter]");
+        next();
+    },
     checkJwtRouting,
     getDbUserHandler
 );

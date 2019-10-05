@@ -8,7 +8,6 @@ const {
 
 function logErr(err) {
     console.error(err);
-    res.sendStatus(500);
 }
 
 function modifySucceded(req, res) {
@@ -19,23 +18,22 @@ function modifySucceded(req, res) {
 function insertUuidToFlightList(req, res, next) {
     console.log("[insertUuidToFlightList]");
     if (req.flightListPermissions.flights.add) {
-        const flightListSlug = req.params.flightListSlug;
+        const {flightListSlug} = req.params;
         const flightUUID = req.flights[0].uuid;
 
         mongo().then(db => {
-            db.collection('flightLists').updateOne(
-                {
-                    'slug': flightListSlug 
-                }, {
-                    $addToSet: {
-                        'flights': flightUUID
-                    }
-                }).then(() => {
+            db.collection('flightLists').updateOne({
+                'slug': flightListSlug
+            }, {
+                $addToSet: {
+                    'flights': flightUUID
+                }
+            }).then(() => {
                 next();
             }, logErr);
         }, logErr);
     } else {
-        //User is not allowed to add flights
+        // User is not allowed to add flights
         res.sendStatus(401);
     }
 }
@@ -43,8 +41,7 @@ function insertUuidToFlightList(req, res, next) {
 function deleteUuidFromFlightList(req, res, next) {
     console.log("[deleteUuidFromFlightList]");
     if (req.flightListPermissions.flights.remove) {
-        const flightListSlug = req.params.flightListSlug;
-        const flightUUID = req.params.flightUUID;
+        const {flightListSlug, flightUUID} = req.params;
 
         mongo().then(db => {
             db.collection('flightLists').updateOne({
@@ -58,14 +55,17 @@ function deleteUuidFromFlightList(req, res, next) {
             }, logErr);
         }, logErr);
     } else {
-        //User is not allowed to remove flights
+        // User is not allowed to remove flights
         res.sendStatus(401);
     }
 }
 
+
+router.use((req, res, next) => {
+    console.log("[flightListSlugFlightRouter]");
+    next();
+});
 router.get('/', (req, res) => res.sendStatus(501));
-
-
 router.delete(
     `/:flightUUID(${FLIGHT_UUID_ROUTE_MATCHER})`,
     deleteUuidFromFlightList,

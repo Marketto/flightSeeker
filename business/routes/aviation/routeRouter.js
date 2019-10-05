@@ -25,23 +25,30 @@ function reqRoutes(req, res, next) {
             $and: criteria
         }: criteria[0];
 
-        db.collection("routes").aggregate([{
-            $match : query
-        },{
-            $unwind: '$airlines'
-        }, {
-            $project : {
-                airports: 1,
-                airline: "$airlines"
+        db.collection("routes").aggregate([
+            {
+                $match : query
+            },
+            {
+                $unwind: {
+                    "path": `$airlines`,
+                    "preserveNullAndEmptyArrays": false
+                }
+            },
+            {
+                $project : {
+                    airports: 1,
+                    airline: "$airlines"
+                }
             }
-        }]).toArray().then(result => {
+        ]).toArray().then(result => {
             const fromLog = req.params.iataDeparture && ` from ${req.params.iataDeparture}`;
             const toLog = req.params.iataArrival && ` to ${req.params.iataArrival}`;
             const fromToLog = fromLog && !toLog ? ` from/to ${req.params.iataDeparture}` : (fromLog + toLog);
             const byLog = req.params.iataAirline ? ` by ${req.params.iataAirline}` : '';
 
             console.log(`Routes${fromToLog}${byLog}`);
-            
+
             if (result.length) {
                 res.routesData = result.map(route=>({
                     iataAirline: route.airline,

@@ -9,13 +9,9 @@ const flightListSlugShareRequest = require('./flightListSlugShareRequestRouter')
 const {
     flightListFlighAggregation
 } = require('../../../../services/flightQueryBuilder');
-const {
-    cleanProjection
-} = require('../../../../services/queryUtilities');
 
 function logErr(err) {
     console.error(err);
-    res.sendStatus(500);
 }
 
 function resFlightList(req, res) {
@@ -25,34 +21,34 @@ function resFlightList(req, res) {
 
 function getFlightListBySlug(req, res, next) {
     console.log('[getFlightListBySlug]');
-    if (req.flightListPermissions.read) {
+    const {flightListPermissions} = req;
+    if (flightListPermissions.read) {
         mongo().then(db => {
             console.log('flightLists found');
-            const flightListSlug = req.params.flightListSlug;
-            
+            const {flightListSlug} = req.params;
             db.collection('flightLists').aggregate(flightListFlighAggregation({
                 'slug': flightListSlug
             }).concat({
-                '$project' : cleanProjection({
-                    'owner'         : req.flightListPermissions.owner.read,
-                    'flights'       : req.flightListPermissions.flights.read,
-                    'shared'        : req.flightListPermissions.shared.read,
-                    'shareRequest'  : req.flightListPermissions.shareRequest.read,
-                    'name'          : req.flightListPermissions.read,
-                    'slug'          : true
-                })
+                '$project' : {
+                    'owner'         : Boolean(flightListPermissions.owner.read),
+                    'flights'       : Boolean(flightListPermissions.flights.read),
+                    'shared'        : Boolean(flightListPermissions.shared.read),
+                    'shareRequest'  : Boolean(flightListPermissions.shareRequest.read),
+                    'name'          : Boolean(flightListPermissions.read),
+                    'slug'          : 1
+                }
             }))
             .toArray()
             .then(([flightList]) => {
                 req.flightList = flightList;
                 next();
-            }, logErr);
-        }, logErr);
-    } else if (req.flightListPermissions.shareRequest.add) {
-        //FlightList Slug exists but user doesn't have rights to read
+            }).catch(logErr);
+        }).catch(logErr);
+    } else if (flightListPermissions.shareRequest.add) {
+        // FlightList Slug exists but user doesn't have rights to read
         res.sendStatus(401);
     } else {
-        //FlightList Slug exists and share request is pending
+        // FlightList Slug exists and share request is pending
         res.sendStatus(406);
     }
 }
@@ -63,6 +59,10 @@ function logRoute(req, res, next){
 }
 
 
+router.use((req, res, next) => {
+    console.log("[flightListSlugRouter]");
+    next();
+});
 router.use('/flight', logRoute, flightListSlugFlight);
 router.use('/shared', logRoute, flightListSlugShared);
 router.use('/shareRequest', logRoute, flightListSlugShareRequest);

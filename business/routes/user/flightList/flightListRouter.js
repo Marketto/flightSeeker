@@ -10,18 +10,20 @@ const {
 
 function logErr(err) {
     console.error(err);
-    res.sendStatus(500);
 }
 
 function getAllFlightLists(req, res, next) {
     console.log("[getAllFlightLists]");
     mongo().then(db => {
+        // eslint-disable-next-line no-underscore-dangle
+        const userId = req.user._id;
         db.collection('flightLists').find({
-            '$or': [{
-                    'owner': req.user._id
+            '$or': [
+                {
+                    'owner': userId
                 },
                 {
-                    'shared': req.user._id
+                    'shared': userId
                 }
             ]
         }, {
@@ -47,6 +49,7 @@ function newFlightList(req, res, next) {
         const flName = req.body.name;
         const flSlug = req.body.slug || slug(req.body.name);
         const flFlights = req.body.flights || [];
+        // eslint-disable-next-line no-underscore-dangle
         const ownerId = req.user._id;
 
         const newFligthList = {
@@ -81,7 +84,9 @@ function newFlightList(req, res, next) {
 function checkSlugAndPermissions(req, res, next){
     console.log('[checkSlugAndPermissions]');
     mongo().then(db => {
-        const flightListSlug = req.params.flightListSlug;
+        const {flightListSlug} = req.params;
+        // eslint-disable-next-line no-underscore-dangle
+        const userId = req.user._id;
 
         db.collection('flightLists').aggregate([
             {
@@ -98,51 +103,56 @@ function checkSlugAndPermissions(req, res, next){
                     owner : {
                         $eq : [
                             '$owner',
-                            req.user._id
+                            userId
                         ]
                     },
                     shared : {
                         $in : [
-                            req.user._id,
+                            userId,
                             '$shared'
                         ]
                     },
                     shareRequest : {
                         $in : [
-                            req.user._id,
+                            userId,
                             '$shareRequest'
                         ]
                     }
-                }   
-            }
-        ]).toArray().then(([flSettings] = []) => {
-            if (flSettings) {
-                console.log(`[checkSlugAndPermissions] <${flSettings._id}> found`);
-                req.flightListPermissions = {
-                    'read'          : flSettings.owner || flSettings.shared,
-                    'owner'         : {
-                        'read'          : flSettings.owner || flSettings.shared,
-                        'change'        : flSettings.owner
+                }
+            },
+            {
+                $project: {
+                    read: {$or: ['$owner', '$shared']},
+                    owner: {
+                        read: {$or: ['$owner', '$shared']},
+                        change: '$owner'
                     },
-                    'flights'       : {
-                        'read'          : flSettings.owner || flSettings.shared,
-                        'add'           : flSettings.owner || flSettings.shared,
-                        'remove'        : flSettings.owner || flSettings.shared
+                    flights: {
+                        read: {$or: ['$owner', '$shared']},
+                        add: {$or: ['$owner', '$shared']},
+                        remove: {$or: ['$owner', '$shared']}
                     },
-                    'shared'         : {
-                        'read'          : flSettings.owner || flSettings.shared,
-                        'add'           : flSettings.owner,
-                        'remove'        : flSettings.owner
+                    shared: {
+                        read: {$or: ['$owner', '$shared']},
+                        add: '$owner',
+                        remove: '$owner'
                     },
-                    'shareRequest'  : {
-                        'read'          : flSettings.owner,
-                        'add'           : !(flSettings.owner || flSettings.shared || flSettings.shareRequest),
-                        'remove'        : flSettings.owner || flSettings.shareRequest
+                    shareRequest: {
+                        read: '$owner',
+                        add: {$not: {$or: ['$owner', '$shared', '$shareRequest']}},
+                        remove: {$or: ['$owner', '$shareRequest']}
                     }
-                };
+                }
+            }
+        ]).toArray().then(([flightListPermissions] = []) => {
+            if (flightListPermissions) {
+                // eslint-disable-next-line no-underscore-dangle
+                const id = flightListPermissions._id;
+                console.log(`[checkSlugAndPermissions] <${id}> found`);
+                req.flightListPermissions = flightListPermissions;
                 next();
             } else {
-                //FlightList Slug does not exist at all
+                // FlightList Slug does not exist at all
                 res.sendStatus(404);
             }
         }, logErr);
@@ -153,7 +163,10 @@ function resFlightList(req, res) {
     res.send(req.flightList);
 }
 
-
+router.use((req, res, next) => {
+    console.log("[flightListRouter]");
+    next();
+});
 router.use(`/:flightListSlug(${SLUG_MATCHER_ROUTE_MATCHER})`, checkSlugAndPermissions, flightListSlugRouter);
 router.get('/', getAllFlightLists, resAllFlightLists);
 //TODO: Add validation against jsonSchema

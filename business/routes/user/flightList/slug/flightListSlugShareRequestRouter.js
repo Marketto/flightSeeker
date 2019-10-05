@@ -3,7 +3,7 @@ const router = express.Router({
     mergeParams: true
 });
 const mongo = require('../../../../connectors/mongo');
-const ObjectID = require('mongodb').ObjectID;
+const {ObjectID} = require('mongodb');
 const {
     OBJECT_ID_ROUTE_MATCHER
 } = require('../../../routingConst');
@@ -31,7 +31,8 @@ function requestRefused(req, res) {
 function newFlightListShareRequest(req, res, next) {
     console.log("[newFlightListShareRequest]");
     if (req.flightListPermissions.shareRequest.add) {
-        const flightListSlug = req.params.flightListSlug;
+        const {flightListSlug} = req.params;
+        // eslint-disable-next-line no-underscore-dangle
         const requestUserId = req.user._id;
 
         mongo().then(db => {
@@ -46,7 +47,7 @@ function newFlightListShareRequest(req, res, next) {
             }, logErr);
         }, logErr);
     } else {
-        //FlightList Slug exists but user doesn't have rights to read
+        // FlightList Slug exists but user doesn't have rights to read
         res.sendStatus(401);
     }
 }
@@ -54,7 +55,8 @@ function newFlightListShareRequest(req, res, next) {
 function deleteFlightListShareRequest(req, res, next) {
     console.log("[deleteFlightListShare]");
     if (req.flightListPermissions.shareRequest.remove) {
-        const flightListSlug = req.params.flightListSlug;
+        const {flightListSlug} = req.params;
+        // eslint-disable-next-line no-underscore-dangle
         const shareRequestUserId = req.params.userId ? new ObjectID(req.params.userId) : req.user._id;
 
         mongo().then(db => {
@@ -69,14 +71,17 @@ function deleteFlightListShareRequest(req, res, next) {
             }, logErr);
         }, logErr);
     } else {
-        //FlightList Slug exists but user doesn't have rights to read
+        // FlightList Slug exists but user doesn't have rights to read
         res.sendStatus(401);
     }
 }
 
 
+router.use((req, res, next) => {
+    console.log("[flightListSlugShareRequestRouter]");
+    next();
+});
 router.get('/', (req, res) => res.sendStatus(501));
-
 router.delete(`/`, deleteFlightListShareRequest, requestRevoked);
 router.delete(`/:userId(${OBJECT_ID_ROUTE_MATCHER})`, deleteFlightListShareRequest, requestRefused);
 router.post('/', newFlightListShareRequest, requestAccepted);
