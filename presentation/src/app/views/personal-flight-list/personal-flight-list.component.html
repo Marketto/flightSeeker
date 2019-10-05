@@ -1,10 +1,10 @@
-<div [ngSwitch]="!unauthorized && flightList && 'flightList'">
-  <p-card class="ui-g-12 list-detail-container" [title]="flightList.name" *ngSwitchCase="'flightList' || 'flying'">
+<div [ngSwitch]="viewMode">
+  <p-card class="ui-g-12 list-detail-container" [title]="flightList.name" *ngSwitchCase="'flightList'">
     <div class="field-list">
       <p>
           <label>{{flightList.owner.name}}</label>'s list
       </p>
-      <p>
+      <p *ngIf="!isNewFlightList">
         Total flight time:
         <label>
           <span [ngPlural]="totalDuration.hours() + totalDuration.days()*24">
@@ -23,13 +23,13 @@
         </label>
       </p>
       <p>
-        Total flights: <label>{{ totalFlights }}</label>
+        Total flights: <label>{{ totalFlights || 0 }}</label>
       </p>
       <p>
-        Total distance: <label>{{ totalDistance | number : '1.0-0' }} Km</label>
+        Total distance: <label>{{ (totalDistance || 0) | number : '1.0-0' }} Km</label>
       </p>
     </div>
-    <div *ngIf="flightList.shareRequest.length>0">
+    <div *ngIf="flightList.shareRequest && flightList.shareRequest.length>0">
       <label>Share requests</label>
       <ul>
         <li *ngFor="let shareRequest of flightList.shareRequest">
@@ -48,7 +48,7 @@
         </li>
       </ul>
     </div>
-    <div class="statistics">
+    <div class="statistics" *ngIf="!isNewFlightList">
       <p>Most Frequent Destinations</p>
       <ul>
         <li>
@@ -69,17 +69,17 @@
     </div>
   </p-card>
 
-  <p-card class="ui-g-12 ui-md-12 flight-map" title="Map" *ngIf="!unauthorized && flightList && currentFlight">
+  <p-card class="ui-g-12 ui-md-12 flight-map" title="Map" *ngIf="currentFlight">
     <app-flight-map [flight]="currentFlight"></app-flight-map>
   </p-card>
 
   <p-card class="ui-g-12 flight-list" title="Flights" *ngSwitchCase="'flightList'">
     <app-flight-detail class="ui-g-6 ui-m-12" [flight]="flight" *ngFor="let flight of flightList.flights" [removeFromFlightListButton]="true"
       (removeFromFlightList)="pullFlight($event)"></app-flight-detail>
-    <p-message severity="info" text="Nessun volo in questa lista" *ngIf="!flightList.flights.length"></p-message>
+    <p-message severity="info" text="No flights added yet" *ngIf="!flightList.flights.length"></p-message>
   </p-card>
 
-  <p-card class="ui-g-12 error-messages" title="Access denied" *ngSwitchCase="false" [ngSwitch]="unauthorized">
+  <p-card class="ui-g-12 error-messages" title="Access denied" *ngSwitchCase="'unauthorized'" [ngSwitch]="unauthorized">
     <div *ngSwitchCase="'guest'">
       <h4>
         This is a private list, send a share request to obtain content access
