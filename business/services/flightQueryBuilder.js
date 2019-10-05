@@ -1,35 +1,50 @@
-function airportPipeline(path) {
-    return [{
+function pathBuilder(path) {
+    return (path || '').trim() ? `path.` : '';
+}
+
+function airportPipeline(srcPath) {
+    const path = pathBuilder(srcPath);
+    return [
+        {
             $lookup: {
                 from: "airports",
-                localField: `${path}.airportIata`,
+                localField: `${path}airportIata`,
                 foreignField: 'iata',
-                as: `${path}.airport`
+                as: `${path}airport`
             }
         },
         {
-            $unwind: `$${path}.airport`
+            $unwind: {
+                "path": `$${path}airport`,
+                "preserveNullAndEmptyArrays": true
+            }
         }
     ];
 }
 
-function airlinePipeline(path) {
-    return [{
+function airlinePipeline(srcPath) {
+    const path = pathBuilder(srcPath);
+    return [
+        {
             $lookup: {
                 from: "airlines",
-                localField: `${path ? (path + '.') : ''}airlineIata`,
+                localField: `${path}airlineIata`,
                 foreignField: 'iata',
-                as: `${path ? (path + '.') : ''}airline`
+                as: `${path}airline`
             }
         },
         {
-            $unwind: `$${path ? (path + '.') : ''}airline`
+            $unwind: {
+                "path": `$${path}airline`,
+                "preserveNullAndEmptyArrays": true
+            }
         }
     ];
 }
 
 function userPipeline(path) {
-    return [{
+    return [
+        {
             $lookup: {
                 from: "users",
                 localField: path,
@@ -46,7 +61,8 @@ function userPipeline(path) {
     ];
 }
 
-function flightProjectionPipeline(path, container = {}) {
+function flightProjectionPipeline(srcPath, container = {}) {
+    const path = pathBuilder(srcPath);
     const projection = {
         departure: {
             airport: {
@@ -59,7 +75,7 @@ function flightProjectionPipeline(path, container = {}) {
                 position: 1,
                 timeZone: 1
             },
-            terminal: `$${path ? (path + '.') : ''}departure.airportTerminal`,
+            terminal: `$${path}departure.airportTerminal`,
             dateTime: 1,
             delay: 1,
             offset: 1
@@ -75,7 +91,7 @@ function flightProjectionPipeline(path, container = {}) {
                 position: 1,
                 timeZone: 1
             },
-            terminal: `$${path ? (path + '.') : ''}arrival.airportTerminal`,
+            terminal: `$${path}arrival.airportTerminal`,
             dateTime: 1,
             delay: 1,
             offset: 1
@@ -92,34 +108,37 @@ function flightProjectionPipeline(path, container = {}) {
     };
 
     if (path) {
-        container[path] = projection;
+        container[srcPath] = projection;
     } else {
         container = projection;
     }
 
-    return [{
+    return [
+        {
             $project: container
         },
         {
             $sort: {
-                [`${path ? (path + '.') : ''}departure.dateTime`]: -1
+                [`${path}departure.dateTime`]: -1
             }
         }
     ];
 }
 
 function flightAggregation(findQuery, limit = 0, sort = {"departure.dateTime":1}) {
-    const aggCfg = [{
+    const aggCfg = [
+        {
             $match: findQuery
-        }]
-        .concat(airportPipeline('departure'))
-        .concat(airportPipeline('arrival'))
-        .concat(airlinePipeline())
-        .concat(flightProjectionPipeline())
-        .concat({
-            "$sort": sort
-        });
-    
+        }
+    ]
+    .concat(airportPipeline('departure'))
+    .concat(airportPipeline('arrival'))
+    .concat(airlinePipeline())
+    .concat(flightProjectionPipeline())
+    .concat({
+        "$sort": sort
+    });
+
     if (limit > 0) {
         aggCfg.push({
             "$limit": limit
@@ -130,44 +149,49 @@ function flightAggregation(findQuery, limit = 0, sort = {"departure.dateTime":1}
 }
 
 function flightListFlighAggregation(findQuery, limit = 0) {
-    const aggCfg = [{
+    const aggCfg = [
+        {
                 $match: findQuery
-            },
-            {
-                $lookup: {
-                    from: "flights",
-                    localField: 'flights',
-                    foreignField: 'uuid',
-                    as: 'flights'
-                }
-            },
-            {
-                $unwind: "$flights"
+        },
+        {
+            $lookup: {
+                from: "flights",
+                localField: 'flights',
+                foreignField: 'uuid',
+                as: 'flights'
             }
-        ]
-        .concat(airportPipeline('flights.departure'))
-        .concat(airportPipeline('flights.arrival'))
-        .concat(airlinePipeline('flights'))
-        .concat(userPipeline('owner'))
-        .concat(userPipeline('shared'))
-        .concat(userPipeline('shareRequest'))
-        .concat(flightProjectionPipeline('flights', {
-            name: 1,
-            slug: 1,
-            owner: {
-                _id: 1,
-                name: 1
-            },
-            shared: {
-                _id: 1,
-                name: 1
-            },
-            shareRequest: {
-                _id: 1,
-                name: 1
+        },
+        {
+            $unwind: {
+                path: "$flights",
+                preserveNullAndEmptyArrays: true
             }
-        }))
-        .concat({
+        }
+    ]
+    .concat(airportPipeline('flights.departure'))
+    .concat(airportPipeline('flights.arrival'))
+    .concat(airlinePipeline('flights'))
+    .concat(userPipeline('owner'))
+    .concat(userPipeline('shared'))
+    .concat(userPipeline('shareRequest'))
+    .concat(flightProjectionPipeline('flights', {
+        name: 1,
+        slug: 1,
+        owner: {
+            _id: 1,
+            name: 1
+        },
+        shared: {
+            _id: 1,
+            name: 1
+        },
+        shareRequest: {
+            _id: 1,
+            name: 1
+        }
+    }))
+    .concat([
+        {
             $group: {
                 _id: "$_id",
                 name: {
@@ -186,10 +210,33 @@ function flightListFlighAggregation(findQuery, limit = 0) {
                     $addToSet: "$shareRequest"
                 },
                 flights: {
-                    $push: "$flights"
+                    $push: {
+                        $cond: {
+                            if: "$flights.uuid",
+                            then: "$flights",
+                            else: null
+                        }
+                    }
                 }
             }
-        });
+        },
+        {
+            $project: {
+                name:1,
+                slug:1,
+                owner:1,
+                shared:1,
+                shareRequest:1,
+                flights: {
+                    $filter: {
+                        input: '$flights',
+                        as: 'flight',
+                        cond: {$ne:['$$flight', null] }
+                    }
+                }
+            }
+        }
+    ]);
 
     if (limit > 0) {
         aggCfg.splice(1, 0, {

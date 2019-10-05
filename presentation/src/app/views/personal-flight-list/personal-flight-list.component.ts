@@ -50,7 +50,7 @@ export class PersonalFlightListComponent implements OnInit, OnDestroy {
   }
 
   private calculateTotals() {
-    if (this.flightList) {
+    if (this.flightList && this.flightList.flights) {
       const performedFlights: Flight[] = this.flightList.flights
         .filter((flight: Flight) => flight.arrival.dateTime.isSameOrBefore(this.now) || flight === this.currentFlight);
 
@@ -71,20 +71,23 @@ export class PersonalFlightListComponent implements OnInit, OnDestroy {
       const performedFlights: Flight[] = this.flightList.flights
         .filter((flight: Flight) => flight.arrival.dateTime.isSameOrBefore(this.now));
 
-      this.totalDuration = moment.duration(
-        [0, 0].concat(
-          performedFlights
-            .map(flight => flight.duration.asMinutes())
-        ).reduce((d1: number, d2: number) => d1 + d2),
-         'minutes'
-      );
+      const durationList = performedFlights.map(flight => flight.duration.asMinutes());
+      const distanceList = performedFlights.map((flight: Flight) => flight.distance);
 
-      this.totalDistance = Math.round(performedFlights
-        .map((flight: Flight) => flight.distance)
-        .reduce(
-          (totDistance: number, currentDistance: number) => totDistance + currentDistance) *
-          PersonalFlightListComponent.DISTANCE_MULTIPLIER
+      if (performedFlights.length > 1) {
+        this.totalDuration = moment.duration(
+          durationList.reduce((d1: number, d2: number) => d1 + d2),
+          'minutes'
         );
+
+        this.totalDistance = Math.round(
+          distanceList.reduce((totDistance: number, currentDistance: number) => totDistance + currentDistance)
+          * PersonalFlightListComponent.DISTANCE_MULTIPLIER
+        );
+      } else {
+        this.totalDuration = moment.duration(durationList[0] || 0);
+        this.totalDistance = Math.round((distanceList[0] || 0) * PersonalFlightListComponent.DISTANCE_MULTIPLIER);
+      }
 
       if (this.currentFlight) {
         const currentFlightElapsedTime = moment.duration(this.now.diff(this.currentFlight.departure.dateTime));
@@ -160,6 +163,19 @@ export class PersonalFlightListComponent implements OnInit, OnDestroy {
 
   public get unauthorized() {
     return !this.authService.isAuthenticated || this.$unauthorized;
+  }
+
+  public get isNewFlightList() {
+    return this.flightList && !(this.flightList.flights || []).length;
+  }
+
+  public get viewMode() {
+    if (this.unauthorized) {
+      return 'unauthorized';
+    }
+    if (this.flightList) {
+      return 'flightList';
+    }
   }
 
 
