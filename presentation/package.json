@@ -22,7 +22,7 @@
         "@angular/router": "^6.1.10",
         "@ngx-translate/core": "^10.0.2",
         "arc": "^0.1.1",
-        "auth0-js": "^9.11.3",
+        "auth0-js": "^9.13.2",
         "core-js": "^2.6.9",
         "famfamfam-flags": "^1.0.0",
         "moment-timezone": "^0.5.26",
