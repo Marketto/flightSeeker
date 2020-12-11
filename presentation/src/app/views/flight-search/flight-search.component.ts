@@ -185,7 +185,7 @@ export class FlightSearchComponent implements OnInit {
       this.setDepartureAirport(parsedUuid[1].toUpperCase());
       this.setArrivalAirport(parsedUuid[2].toUpperCase());
       this.setAirline(parsedUuid[4].toUpperCase());
-      this.$departureDate = new moment(parsedUuid[3], 'YYYYMMDD').toDate();
+      this.$departureDate = moment(parsedUuid[3], 'YYYYMMDD').toDate();
 
     } else {
 
@@ -199,10 +199,10 @@ export class FlightSearchComponent implements OnInit {
         this.setAirline(params.by.toUpperCase());
       }
       if (DATE_VALIDATOR.test(params.date) && moment(params.date, 'YYYY-MM-DD').isValid()) {
-        this.$departureDate = new moment(params.date, 'YYYY-MM-DD').toDate();
+        this.$departureDate = moment(params.date, 'YYYY-MM-DD').toDate();
       }
       if (TIME_VALIDATOR.test(params.time) && moment(params.time, 'HH:mm').isValid()) {
-        this.$departureTime = new moment(params.time, 'HH:mm').toDate();
+        this.$departureTime = moment(params.time, 'HH:mm').toDate();
       }
 
     }

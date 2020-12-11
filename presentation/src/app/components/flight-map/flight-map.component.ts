@@ -3,8 +3,8 @@ import { Position } from '../../classes/common/position';
 import { Flight } from '../../classes/flight/flight';
 import { Component, OnInit, OnDestroy, Input } from '@angular/core';
 import { NowService } from '../../services/now/now.service';
-import { Moment } from 'moment-timezone';
 import * as moment from 'moment-timezone';
+import { Moment } from 'moment-timezone';
 import { Subscription } from 'rxjs';
 import { LineString, Feature } from 'geojson';
 
@@ -26,7 +26,7 @@ export class FlightMapComponent implements OnInit, OnDestroy {
 
     this.route = this.geoService.geoArc(flight.departure.airport.position, flight.arrival.airport.position, flight.duration.asMinutes());
 
-    this.estimatePosition(new moment());
+    this.estimatePosition(moment());
   }
   public get flight() {
     return this.$flight;

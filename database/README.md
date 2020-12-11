@@ -2,6 +2,9 @@
 
 Database for Flight Seeker
 
+## Requirements
+* MongoDb 3.6
+
 ## Install
 
 Run `mongo restore`.

@@ -1,9 +1,9 @@
 import { ActivatedRoute } from '@angular/router';
 import { Flight } from '../../classes/flight/flight';
 import { Component, OnInit } from '@angular/core';
-import * as moment from 'moment-timezone';
 import { FlightService } from '../../web-services/flight/flight.service';
 import { FlightQuery } from '../../classes/flight/flight-query';
+import * as moment from 'moment-timezone';
 import { Moment } from 'moment-timezone';
 
 @Component({

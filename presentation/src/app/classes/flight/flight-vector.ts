@@ -1,5 +1,5 @@
 import { Airport } from '../airport/airport';
-import * as moment from 'moment';
+import * as moment from 'moment-timezone';
 import { Moment, Duration } from 'moment-timezone';
 
 export class FlightVector {

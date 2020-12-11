@@ -21,7 +21,7 @@ export class PersonalFlightListComponent implements OnInit, OnDestroy {
   private flightListSlug: string;
   private $unauthorized: 'unauthorized'|'pending'|'guest';
   private nowMidTimetSubscription: Subscription;
-  private now: Moment = new moment();
+  private now: Moment = moment();
   public flightList: FlightList;
   public totalDuration: Duration;
   public currentFlight: Flight;

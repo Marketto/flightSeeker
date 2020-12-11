@@ -1,7 +1,7 @@
 import { Airline } from '../airline/airline';
 import { FlightVector } from './flight-vector';
 import * as moment from 'moment-timezone';
-import { Moment, Duration } from 'moment';
+import { Moment, Duration } from 'moment-timezone';
 import { Coordinate } from 'tsgeo/Coordinate';
 import { Vincenty } from 'tsgeo/Distance/Vincenty';
 import { Position } from '../common/position';

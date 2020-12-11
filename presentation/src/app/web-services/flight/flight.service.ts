@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { FlightQuery } from '../../classes/flight/flight-query';
 import { Flight } from '../../classes/flight/flight';
-import { Moment } from 'moment';
+import { Moment } from 'moment-timezone';
 
 
 @Injectable({

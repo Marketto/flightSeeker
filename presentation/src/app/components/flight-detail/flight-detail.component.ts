@@ -1,12 +1,12 @@
 import { FlightListService } from '../../web-services/flight-list/flight-list.service';
 import { AuthService } from '../../services/auth/auth.service';
-import * as moment from 'moment-timezone';
 import { Component, Input, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { Flight } from '../../classes/flight/flight';
-import { Moment, Duration } from 'moment';
 import { NowService } from '../../services/now/now.service';
 import { Subscription } from 'rxjs';
 import { MenuItem } from 'primeng/api';
+import * as moment from 'moment-timezone';
+import { Moment, Duration } from 'moment-timezone';
 
 @Component({
   selector: 'app-flight-detail',
@@ -35,7 +35,7 @@ export class FlightDetailComponent implements OnInit, OnDestroy {
     return this.$flight;
   }
 
-  private now: Moment = new moment();
+  private now: Moment = moment();
   private nowMidTimetSubscription: Subscription;
   public timeToDepartureLeft: Duration;
   public timeToArrivalLeft: Duration;

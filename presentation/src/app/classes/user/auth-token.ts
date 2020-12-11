@@ -1,6 +1,6 @@
 import { User } from './user';
-import { Moment } from 'moment';
 import * as moment from 'moment-timezone';
+import { Moment, Duration } from 'moment-timezone';
 import { isString } from 'util';
 
 export class AuthToken {
@@ -10,7 +10,7 @@ export class AuthToken {
   public idTokenPayload: User;
 
   constructor(obj?: {
-    expiresAt?: string | moment | Date,
+    expiresAt?: string | Moment | Date,
     expiresIn?: number,
     accessToken: string,
     idToken: string,

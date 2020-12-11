@@ -1,12 +1,12 @@
 {
-  "x/api/*": {
+  "/api/*": {
     "target": "http://flightseeker.marketto.it/",
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true
   },
-  "/api/*": {
-    "target": "http://localhost:3000/",
+  "x/api/*": {
+    "target": "http://localhost:3001/",
     "secure": false,
     "logLevel": "debug",
     "changeOrigin": true

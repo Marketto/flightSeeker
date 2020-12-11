@@ -1,5 +1,5 @@
-import { Moment } from 'moment-timezone';
 import * as moment from 'moment-timezone';
+import { Moment, Duration } from 'moment-timezone';
 import { UserSummary } from './user-summary';
 
 export type Gender = 'male'|'female'|null;
@@ -34,7 +34,7 @@ export class User extends UserSummary {
       this.nonce = obj.nonce;
       this.picture = obj.picture;
       this.sub = obj.sub;
-      this.updated_at = obj.updated_at ? new moment(obj.updated_at) : undefined;
+      this.updated_at = obj.updated_at ? moment(obj.updated_at) : undefined;
     }
   }
 }

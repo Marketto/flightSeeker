@@ -10,7 +10,7 @@ const MID_TIME_INTERVAL = 1 * 60 * 1000;
   providedIn: 'root'
 })
 export class NowService {
-  private midTimeInterval = interval(MID_TIME_INTERVAL).pipe<Moment>(map(() => new moment.tz()));
+  private midTimeInterval = interval(MID_TIME_INTERVAL).pipe<Moment>(map(() => moment.tz()));
 
   public get midTime(): Observable<Moment> {
     return this.midTimeInterval;

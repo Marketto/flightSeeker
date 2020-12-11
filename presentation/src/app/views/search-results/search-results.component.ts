@@ -63,10 +63,10 @@ export class SearchResultsComponent implements OnInit {
         this.airlineIata = params.by.toUpperCase();
       }
       if (DATE_VALIDATOR.test(params.date) && moment(params.date, 'YYYY-MM-DD').isValid()) {
-        this.departureDate = new moment(params.date, 'YYYY-MM-DD');
+        this.departureDate = moment(params.date, 'YYYY-MM-DD');
       }
       if (TIME_VALIDATOR.test(params.time) && moment(params.time, 'HH:mm').isValid()) {
-        this.departureTime = new moment(params.time, 'HH:mm');
+        this.departureTime = moment(params.time, 'HH:mm');
       }
 
       this.searchFlights();
