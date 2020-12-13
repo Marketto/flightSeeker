@@ -42,7 +42,7 @@ export class Flight {
       this.airline = new Airline(obj.airline);
       this.duration = this.getDuration(this.departure.dateTime, this.arrival.dateTime);
       this.number = obj.number;
-      this.meals = (obj.meals || '').split('');
+      this.meals = Array.isArray(obj.meals) ? obj.meals : (obj.meals || '').split('');
       this.uuid = obj.uuid;
       this.distance = (this.departure.airport && this.arrival.airport) ?
         this.getDistance(this.departure.airport.position, this.arrival.airport.position) : 0;

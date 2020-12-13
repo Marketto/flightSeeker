@@ -14,12 +14,12 @@ export class Airport {
   constructor(obj?: any) {
     if (obj) {
       this._id = obj._id;
-      this.name = obj.name || obj.locationName;
+      this.name = obj.name;
       this.city = obj.city;
       this.country = obj.country;
-      this.iata = obj.iata || obj.locationCode;
+      this.iata = obj.iata;
       this.icao = obj.icao;
-      this.timeZone = obj.timeZone || obj.tz;
+      this.timeZone = obj.timeZone;
       this.countryCode = obj.countryCode;
       this.cityIata = obj.cityIata;
       this.position = obj.position ? new Position(obj.position) : undefined;
