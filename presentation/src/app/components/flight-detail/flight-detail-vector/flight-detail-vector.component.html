@@ -8,5 +8,5 @@
     {{flightVector.dateTime.toDate() | date : 'EEEEEE dd MMM yy, HH:mm' : flightVector.offset}}
 </p>
 <small *ngIf="flightVector.delay.asMinutes() > 5">
-  ( {{ flightVector.delay | amDuration : 'minutes' }} delay)
+  ( {{ flightVector.delay | amDuration : 'minutes' }} delay )
 </small>
