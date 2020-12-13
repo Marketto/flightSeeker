@@ -6,7 +6,6 @@ const { URLSearchParams } = require('url');
 const flightLookup = require('../../connectors/flight-lookup');
 const mongo = require('../../connectors/mongo');
 const moment = require('moment-timezone');
-const { flightAggregation } = require('../../services/flightQueryBuilder');
 
 const {
     DATE_ROUTE_MATCHER,
@@ -120,30 +119,19 @@ function dbFlights(req, res, next) {
                 }
                 console.log(`Flight DateTime: ${dateTime.toDate().toJSON()}`);
 
-                const querySort = {
-                    "departure.dateTime": 1
-                };
-
                 console.log(`QUERY ${JSON.stringify(findQuery)}`);
 
-                const flightsCollection = db.collection('flights');
-
-                Promise.all([
-                    req.dbDataChecked || flightsCollection.find(checkQuery).count(),
-                    (aggregate
-                        ? flightsCollection.aggregate(flightAggregation(findQuery, queryLimit, querySort))
-                        : flightsCollection.find(findQuery)
-                            .sort(querySort)
-                            .limit(queryLimit)
-                    ).toArray()
-
-                ]).then(([dataCheck, flights = []]) => {
-                    console.log(`[dataCheck > ${dataCheck ? 'Found' : 'No'} results for ${from} to ${to} @ ${dateTime}]`);
-                    req.dbDataChecked = dataCheck > 0;
-                    req.flights = flights;
-
-                    next();
-                }, logErr(res));
+                db.collection('viewFlights')
+                    .find(findQuery)
+                    .limit(queryLimit)
+                    .toArray()
+                    .then(flights => { 
+                        req.dbDataChecked = flightsCollection.length > 0;
+                        req.flights = flights;
+                        console.log(`[dataCheck > ${req.dbDataChecked ? 'Found' : 'No'} results for ${from} to ${to} @ ${dateTime}]`);
+                        next();
+                    })
+                    .catch(next);
             } catch(err){
                 logErr(res)(err);
             }
@@ -287,11 +275,12 @@ function flFlights(req, res, next) {
                                 // store results into db
                                 Promise.all(flights.map(flight => {
                                     return new Promise(resolveInsert => {
-                                        db.collection('flights').insertOne(flight).then(resolveInsert, err => {
-                                            // TODO: throw reject if error is not due to duplicate
-                                            console.log(err);
-                                            resolveInsert();
-                                        });
+                                        db.collection('flights').insertOne(flight)
+                                            .then(resolveInsert, err => {
+                                                // TODO: throw reject if error is not due to duplicate
+                                                console.log(err);
+                                                resolveInsert();
+                                            });
                                     });
                                 })).then(() => {
                                     console.log("[storedFlights]");

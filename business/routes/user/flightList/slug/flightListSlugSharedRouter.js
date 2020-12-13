@@ -25,20 +25,22 @@ function insertFlightListShared(req, res, next) {
         const sharingUserId = new ObjectID(req.params.userId);
 
         console.log(`sharingUserId: ${sharingUserId}`);
-        mongo().then(db => {
-            db.collection('flightLists').updateOne({
-                'slug': flightListSlug
-            }, {
-                $addToSet: {
-                    'shared': sharingUserId
-                },
-                $pull: {
-                    'shareRequest': sharingUserId
-                }
-            }).then(() => {
-                next();
-            }, logErr);
-        }, logErr);
+        mongo()
+            .then(db => {
+                db.collection('flightLists').updateOne({
+                    'slug': flightListSlug
+                }, {
+                    $addToSet: {
+                        'shared': sharingUserId
+                    },
+                    $pull: {
+                        'shareRequest': sharingUserId
+                    }
+                })
+                .then(() => next())
+                .catch(next);
+            })
+            .catch(next);
     } else {
         //FlightList Slug exists but user doesn't have rights to read
         res.sendStatus(401);
@@ -58,10 +60,11 @@ function deleteFlightListShared(req, res, next) {
                 $pull: {
                     'shared': sharingUserId
                 }
-            }).then(() => {
-                next();
-            }, logErr);
-        }, logErr);
+            })
+            .then(() => next())
+            .catch(next);
+        })
+        .catch(next);
     } else {
         //FlightList Slug exists but user doesn't have rights to read
         res.sendStatus(401);

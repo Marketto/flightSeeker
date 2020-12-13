@@ -7,33 +7,35 @@ const {
     SLUG_MATCHER_ROUTE_MATCHER
 } = require('../../routingConst');
 
-
-function logErr(err) {
-    console.error(err);
-    res.sendStatus(500);
-}
-
 function getAllFlightLists(req, res, next) {
     console.log("[getAllFlightLists]");
     mongo().then(db => {
-        db.collection('flightLists').find({
-            '$or': [{
-                    'owner': req.user._id
+        db.collection('viewFlightListsSummary')
+        .find({
+            '$or': [
+                {
+                    'owner._id': req.user._id
                 },
                 {
-                    'shared': req.user._id
+                    'shared._id': req.user._id
                 }
             ]
         }, {
-            _id: 0,
-            flights: 0,
-            owner: 0,
-            shared: 0
-        }).toArray().then((flightLists = []) => {
+            projection: {
+                _id: 0,
+                flights: 0,
+                owner: 0,
+                shared: 0
+            }
+        })
+        .toArray()
+        .then((flightLists = []) => {
             req.allflightLists = flightLists;
             next();
-        }, logErr);
-    }, logErr);
+        })
+        .catch(next);
+    })
+    .catch(next);
 }
 
 function resAllFlightLists(req, res) {
@@ -57,6 +59,7 @@ function newFlightList(req, res, next) {
             'shareRequest': [],
             'flights': flFlights
         };
+
         db.collection('flightLists').insertOne(newFligthList)
         .then(({
             insertedId
@@ -73,8 +76,10 @@ function newFlightList(req, res, next) {
                     message: "Slug already used"
                 });
             }
-        }, logErr);
-    }, logErr);
+        })
+        .catch(next);
+    })
+    .catch(next);
 }
 
 
@@ -83,70 +88,69 @@ function checkSlugAndPermissions(req, res, next){
     mongo().then(db => {
         const flightListSlug = req.params.flightListSlug;
 
-        db.collection('flightLists').aggregate([
-            {
-                $match: {
-                    'slug': flightListSlug
-                }
-            },
-            {
-                $limit: 1
-            },
-            {
-                $project: {
+        db.collection('viewFlightListsSummary')
+            .find({
+                'slug': flightListSlug
+            }, {
+                limit: 1,
+                projection: {
                     _id : 1,
                     owner : {
                         $eq : [
-                            '$owner',
+                            '$owner._id',
                             req.user._id
                         ]
                     },
                     shared : {
                         $in : [
                             req.user._id,
-                            '$shared'
+                            '$shared._id'
                         ]
                     },
                     shareRequest : {
                         $in : [
                             req.user._id,
-                            '$shareRequest'
+                            '$shareRequest._id'
                         ]
                     }
-                }   
-            }
-        ]).toArray().then(([flSettings] = []) => {
-            if (flSettings) {
-                console.log(`[checkSlugAndPermissions] <${flSettings._id}> found`);
-                req.flightListPermissions = {
-                    'read'          : flSettings.owner || flSettings.shared,
-                    'owner'         : {
+                }
+            })
+            .toArray()
+            .then()
+            .then(([flSettings] = []) => {
+                if (flSettings) {
+                    console.log(`[checkSlugAndPermissions] <${flSettings._id}> found`);
+                    req.flightListPermissions = {
                         'read'          : flSettings.owner || flSettings.shared,
-                        'change'        : flSettings.owner
-                    },
-                    'flights'       : {
-                        'read'          : flSettings.owner || flSettings.shared,
-                        'add'           : flSettings.owner || flSettings.shared,
-                        'remove'        : flSettings.owner || flSettings.shared
-                    },
-                    'shared'         : {
-                        'read'          : flSettings.owner || flSettings.shared,
-                        'add'           : flSettings.owner,
-                        'remove'        : flSettings.owner
-                    },
-                    'shareRequest'  : {
-                        'read'          : flSettings.owner,
-                        'add'           : !(flSettings.owner || flSettings.shared || flSettings.shareRequest),
-                        'remove'        : flSettings.owner || flSettings.shareRequest
-                    }
-                };
-                next();
-            } else {
-                //FlightList Slug does not exist at all
-                res.sendStatus(404);
-            }
-        }, logErr);
-    }, logErr);
+                        'owner'         : {
+                            'read'          : flSettings.owner || flSettings.shared,
+                            'change'        : flSettings.owner
+                        },
+                        'flights'       : {
+                            'read'          : flSettings.owner || flSettings.shared,
+                            'add'           : flSettings.owner || flSettings.shared,
+                            'remove'        : flSettings.owner || flSettings.shared
+                        },
+                        'shared'         : {
+                            'read'          : flSettings.owner || flSettings.shared,
+                            'add'           : flSettings.owner,
+                            'remove'        : flSettings.owner
+                        },
+                        'shareRequest'  : {
+                            'read'          : flSettings.owner,
+                            'add'           : !(flSettings.owner || flSettings.shared || flSettings.shareRequest),
+                            'remove'        : flSettings.owner || flSettings.shareRequest
+                        }
+                    };
+                    next();
+                } else {
+                    //FlightList Slug does not exist at all
+                    res.sendStatus(404);
+                }
+            })
+            .catch(next);
+        })
+        .catch(next);
 }
 
 function resFlightList(req, res) {

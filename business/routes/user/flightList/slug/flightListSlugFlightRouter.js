@@ -6,11 +6,6 @@ const {
     FLIGHT_UUID_ROUTE_MATCHER
 } = require('../../../routingConst');
 
-function logErr(err) {
-    console.error(err);
-    res.sendStatus(500);
-}
-
 function modifySucceded(req, res) {
     console.log("[modifySucceded]");
     res.sendStatus(204);
@@ -23,17 +18,19 @@ function insertUuidToFlightList(req, res, next) {
         const flightUUID = req.flights[0].uuid;
 
         mongo().then(db => {
-            db.collection('flightLists').updateOne(
-                {
+            db.collection('flightLists')
+                .updateOne({
                     'slug': flightListSlug 
-                }, {
+                },
+                {
                     $addToSet: {
                         'flights': flightUUID
                     }
-                }).then(() => {
-                next();
-            }, logErr);
-        }, logErr);
+                })
+                .then(() => {
+                    next();
+                }, next);
+        }, next);
     } else {
         //User is not allowed to add flights
         res.sendStatus(401);
@@ -53,10 +50,11 @@ function deleteUuidFromFlightList(req, res, next) {
                 $pull: {
                     'flights': flightUUID
                 }
-            }).then(() => {
-                next();
-            }, logErr);
-        }, logErr);
+            })
+            .then(() => next())
+            .catch(next);
+        })
+        .catch(next);
     } else {
         //User is not allowed to remove flights
         res.sendStatus(401);
