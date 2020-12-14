@@ -9,7 +9,9 @@
                                 "bsonType": "string"
                             }
                         ],
-                        "minItems": 1,
+                        "minItems": {
+                            "$numberInt": "1"
+                        },
                         "bsonType": "array",
                         "uniqueItems": true
                     }
@@ -20,27 +22,35 @@
                 "title": "users"
             }
         },
-        "validationLevel": "moderate",
+        "validationLevel": "strict",
         "validationAction": "error"
     },
     "indexes": [
         {
-            "v": 2,
-            "key": {
-                "_id": 1
+            "v": {
+                "$numberInt": "2"
             },
-            "name": "_id_",
-            "ns": "flightSeeker.users"
+            "key": {
+                "_id": {
+                    "$numberInt": "1"
+                }
+            },
+            "name": "_id_"
         },
         {
-            "v": 2,
+            "v": {
+                "$numberInt": "2"
+            },
             "unique": true,
             "key": {
-                "account": 1
+                "account": {
+                    "$numberInt": "1"
+                }
             },
             "name": "_account",
-            "ns": "flightSeeker.users"
+            "background": true
         }
     ],
-    "uuid": "30cf62de8e3c46a8bf311e3f9aa436ca"
+    "uuid": "62b7a39afa7847d68fe634effca87d5a",
+    "collectionName": "users"
 }

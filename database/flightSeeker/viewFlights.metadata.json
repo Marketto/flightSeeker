@@ -1,0 +1,141 @@
+{
+    "options": {
+        "viewOn": "flights",
+        "pipeline": [
+            {
+                "$sort": {
+                    "departure.dateTime": {
+                        "$numberInt": "-1"
+                    },
+                    "arrival.dateTime": {
+                        "$numberInt": "-1"
+                    }
+                }
+            },
+            {
+                "$lookup": {
+                    "as": "departure.airport",
+                    "from": "airports",
+                    "localField": "departure.airportIata",
+                    "foreignField": "iata"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "airports",
+                    "localField": "arrival.airportIata",
+                    "foreignField": "iata",
+                    "as": "arrival.airport"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "airlines",
+                    "localField": "airlineIata",
+                    "foreignField": "iata",
+                    "as": "airline"
+                }
+            },
+            {
+                "$addFields": {
+                    "departure.airport": {
+                        "$arrayElemAt": [
+                            "$departure.airport",
+                            {
+                                "$numberInt": "0"
+                            }
+                        ]
+                    },
+                    "airline": {
+                        "$arrayElemAt": [
+                            "$airline",
+                            {
+                                "$numberInt": "0"
+                            }
+                        ]
+                    },
+                    "arrival.airport": {
+                        "$arrayElemAt": [
+                            "$arrival.airport",
+                            {
+                                "$numberInt": "0"
+                            }
+                        ]
+                    },
+                    "meals": {
+                        "$map": {
+                            "input": {
+                                "$regexFindAll": {
+                                    "input": "$meals",
+                                    "regex": {
+                                        "$regularExpression": {
+                                            "pattern": ".",
+                                            "options": ""
+                                        }
+                                    }
+                                }
+                            },
+                            "as": "meal",
+                            "in": "$$meal.match"
+                        }
+                    }
+                }
+            },
+            {
+                "$project": {
+                    "airlineIata": {
+                        "$numberInt": "0"
+                    },
+                    "departure": {
+                        "airportIata": {
+                            "$numberInt": "0"
+                        },
+                        "airport": {
+                            "_id": {
+                                "$numberInt": "0"
+                            },
+                            "cityNames": {
+                                "$numberInt": "0"
+                            },
+                            "icao": {
+                                "$numberInt": "0"
+                            },
+                            "dst": {
+                                "$numberInt": "0"
+                            }
+                        }
+                    },
+                    "arrival": {
+                        "airportIata": {
+                            "$numberInt": "0"
+                        },
+                        "airport": {
+                            "dst": {
+                                "$numberInt": "0"
+                            },
+                            "_id": {
+                                "$numberInt": "0"
+                            },
+                            "cityNames": {
+                                "$numberInt": "0"
+                            },
+                            "icao": {
+                                "$numberInt": "0"
+                            }
+                        }
+                    },
+                    "airline": {
+                        "_id": {
+                            "$numberInt": "0"
+                        },
+                        "icao": {
+                            "$numberInt": "0"
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    "indexes": [],
+    "collectionName": "viewFlights"
+}

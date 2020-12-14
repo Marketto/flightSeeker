@@ -1,0 +1,67 @@
+{
+    "options": {
+        "pipeline": [
+            {
+                "$lookup": {
+                    "localField": "owner",
+                    "foreignField": "_id",
+                    "as": "owner",
+                    "from": "users"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "users",
+                    "localField": "shared",
+                    "foreignField": "_id",
+                    "as": "shared"
+                }
+            },
+            {
+                "$lookup": {
+                    "from": "users",
+                    "localField": "shareRequest",
+                    "foreignField": "_id",
+                    "as": "shareRequest"
+                }
+            },
+            {
+                "$project": {
+                    "_id": {
+                        "$numberInt": "0"
+                    },
+                    "owner": {
+                        "account": {
+                            "$numberInt": "0"
+                        }
+                    },
+                    "shared": {
+                        "account": {
+                            "$numberInt": "0"
+                        }
+                    },
+                    "shareRequest": {
+                        "account": {
+                            "$numberInt": "0"
+                        }
+                    }
+                }
+            },
+            {
+                "$addFields": {
+                    "owner": {
+                        "$arrayElemAt": [
+                            "$owner",
+                            {
+                                "$numberInt": "0"
+                            }
+                        ]
+                    }
+                }
+            }
+        ],
+        "viewOn": "flightLists"
+    },
+    "indexes": [],
+    "collectionName": "viewFlightListsSummary"
+}

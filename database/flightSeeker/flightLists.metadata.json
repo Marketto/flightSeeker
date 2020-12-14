@@ -4,52 +4,70 @@
             "$jsonSchema": {
                 "bsonType": "object",
                 "properties": {
+                    "shareRequest": {
+                        "uniqueItems": true,
+                        "items": [
+                            {
+                                "bsonType": "objectId"
+                            }
+                        ],
+                        "minItems": {
+                            "$numberInt": "0"
+                        },
+                        "bsonType": "array"
+                    },
+                    "flights": {
+                        "items": [
+                            {
+                                "pattern": "^[A-Z\\d]{6}\\d{8}[A-Z\\d]{2}\\d+$",
+                                "bsonType": "string",
+                                "minLength": {
+                                    "$numberInt": "17"
+                                },
+                                "maxLength": {
+                                    "$numberInt": "22"
+                                }
+                            }
+                        ],
+                        "minItems": {
+                            "$numberInt": "0"
+                        },
+                        "bsonType": "array",
+                        "uniqueItems": true
+                    },
                     "name": {
                         "bsonType": "string",
-                        "maxLength": 48,
-                        "minLength": 3
+                        "minLength": {
+                            "$numberInt": "3"
+                        },
+                        "maxLength": {
+                            "$numberInt": "48"
+                        }
                     },
                     "slug": {
+                        "pattern": "^[a-zA-Z\\d\\-]+$",
                         "bsonType": "string",
-                        "maxLength": 48,
-                        "minLength": 3,
-                        "pattern": "[a-zA-Z\\d\\-]"
+                        "minLength": {
+                            "$numberInt": "3"
+                        },
+                        "maxLength": {
+                            "$numberInt": "48"
+                        }
                     },
                     "owner": {
                         "bsonType": "objectId"
                     },
                     "shared": {
+                        "minItems": {
+                            "$numberInt": "0"
+                        },
+                        "bsonType": "array",
+                        "uniqueItems": true,
                         "items": [
                             {
                                 "bsonType": "objectId"
                             }
-                        ],
-                        "minItems": 0,
-                        "bsonType": "array",
-                        "uniqueItems": true
-                    },
-                    "shareRequest": {
-                        "items": [
-                            {
-                                "bsonType": "objectId"
-                            }
-                        ],
-                        "minItems": 0,
-                        "bsonType": "array",
-                        "uniqueItems": true
-                    },
-                    "flights": {
-                        "items": [
-                            {
-                                "bsonType": "string",
-                                "maxLength": 22,
-                                "minLength": 17,
-                                "pattern": "[A-Z\\d]{6}\\d{8}[A-Z\\d]{2}\\d+"
-                            }
-                        ],
-                        "minItems": 0,
-                        "bsonType": "array",
-                        "uniqueItems": true
+                        ]
                     }
                 },
                 "required": [
@@ -59,43 +77,59 @@
                 ]
             }
         },
-        "validationLevel": "moderate",
+        "validationLevel": "strict",
         "validationAction": "error"
     },
     "indexes": [
         {
-            "v": 2,
-            "key": {
-                "_id": 1
+            "v": {
+                "$numberInt": "2"
             },
-            "name": "_id_",
-            "ns": "flightSeeker.flightLists"
+            "key": {
+                "_id": {
+                    "$numberInt": "1"
+                }
+            },
+            "name": "_id_"
         },
         {
-            "v": 2,
+            "v": {
+                "$numberInt": "2"
+            },
             "unique": true,
             "key": {
-                "slug": 1
+                "slug": {
+                    "$numberInt": "1"
+                }
             },
             "name": "_slug",
-            "ns": "flightSeeker.flightLists"
+            "background": true
         },
         {
-            "v": 2,
+            "v": {
+                "$numberInt": "2"
+            },
             "key": {
-                "owner": 1
+                "owner": {
+                    "$numberInt": "1"
+                }
             },
             "name": "_owner",
-            "ns": "flightSeeker.flightLists"
+            "background": true
         },
         {
-            "v": 2,
+            "v": {
+                "$numberInt": "2"
+            },
             "key": {
-                "shared": 1
+                "shared": {
+                    "$numberInt": "1"
+                }
             },
             "name": "_shared",
-            "ns": "flightSeeker.flightLists"
+            "background": true
         }
     ],
-    "uuid": "e5cec814dea241bb844d3119e43ab082"
+    "uuid": "ed21673a71e04487902816701a8cf441",
+    "collectionName": "flightLists"
 }

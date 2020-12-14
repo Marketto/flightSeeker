@@ -12,6 +12,41 @@
                     "uuid"
                 ],
                 "properties": {
+                    "number": {
+                        "description": "Flight number",
+                        "minimum": {
+                            "$numberInt": "1"
+                        },
+                        "maximum": {
+                            "$numberInt": "999999"
+                        },
+                        "bsonType": [
+                            "int",
+                            "double"
+                        ]
+                    },
+                    "meals": {
+                        "pattern": "^[BKLDSMRCFPYNVGOH]*$",
+                        "maxLength": {
+                            "$numberInt": "8"
+                        },
+                        "bsonType": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Served meal code"
+                    },
+                    "uuid": {
+                        "bsonType": "string",
+                        "description": "Unique flight identifier",
+                        "pattern": "^[A-Z\\d]{6}\\d{8}[A-Z\\d]{2}\\*?\\d{1,6}$",
+                        "minLength": {
+                            "$numberInt": "17"
+                        },
+                        "maxLength": {
+                            "$numberInt": "23"
+                        }
+                    },
                     "departure": {
                         "bsonType": "object",
                         "description": "Departure informations",
@@ -23,9 +58,13 @@
                             "airportIata": {
                                 "bsonType": "string",
                                 "description": "Airport IATA Code",
-                                "pattern": "[A-Z\\d]{3}",
-                                "minLength": 3,
-                                "maxLength": 3
+                                "pattern": "^[A-Z\\d]+$",
+                                "minLength": {
+                                    "$numberInt": "3"
+                                },
+                                "maxLength": {
+                                    "$numberInt": "3"
+                                }
                             },
                             "terminal": {
                                 "bsonType": [
@@ -53,24 +92,38 @@
                             "delay": {
                                 "bsonType": "string",
                                 "description": "Delay ISO8601 duration",
-                                "pattern": "P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?)?"
+                                "pattern": "^-?P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?)?$"
                             }
                         }
                     },
                     "arrival": {
-                        "bsonType": "object",
-                        "description": "Arrival informations",
                         "required": [
                             "airportIata",
                             "dateTime"
                         ],
                         "properties": {
+                            "offset": {
+                                "bsonType": [
+                                    "int",
+                                    "double"
+                                ],
+                                "description": "Local timezone offset"
+                            },
+                            "delay": {
+                                "bsonType": "string",
+                                "description": "Delay ISO8601 duration",
+                                "pattern": "^-?P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?)?$"
+                            },
                             "airportIata": {
                                 "bsonType": "string",
                                 "description": "Airport IATA Code",
-                                "pattern": "[A-Z\\d]{3}",
-                                "minLength": 3,
-                                "maxLength": 3
+                                "pattern": "^[A-Z\\d]+$",
+                                "minLength": {
+                                    "$numberInt": "3"
+                                },
+                                "maxLength": {
+                                    "$numberInt": "3"
+                                }
                             },
                             "terminal": {
                                 "bsonType": [
@@ -87,89 +140,91 @@
                                     "timestamp"
                                 ],
                                 "description": "Local Date/Time or Timestamp"
-                            },
-                            "offset": {
-                                "bsonType": [
-                                    "int",
-                                    "double"
-                                ],
-                                "description": "Local timezone offset"
-                            },
-                            "delay": {
-                                "bsonType": "string",
-                                "description": "Delay ISO8601 duration",
-                                "pattern": "P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?)?"
                             }
-                        }
+                        },
+                        "bsonType": "object",
+                        "description": "Arrival informations"
                     },
                     "airlineIata": {
                         "bsonType": "string",
                         "description": "Airline IATA Code",
-                        "pattern": "[A-Z\\d]{2}\\*?",
-                        "minLength": 2,
-                        "maxLength": 3
-                    },
-                    "number": {
-                        "bsonType": [
-                            "int",
-                            "double"
-                        ],
-                        "description": "Flight number",
-                        "minimum": 1,
-                        "maximum": 999999
-                    },
-                    "meals": {
-                        "bsonType": [
-                            "string",
-                            "null"
-                        ],
-                        "description": "Served meal code",
-                        "pattern": "[BKLDSMRCFPYNVGOH]*",
-                        "maxLength": 8
-                    },
-                    "uuid": {
-                        "bsonType": "string",
-                        "description": "Unique flight identifier",
-                        "pattern": "[A-Z\\d]{6}\\d{8}[A-Z\\d]{2}\\*?\\d{1,6}",
-                        "minLength": 17,
-                        "maxLength": 23
+                        "pattern": "^[A-Z\\d]{2}\\*?$",
+                        "minLength": {
+                            "$numberInt": "2"
+                        },
+                        "maxLength": {
+                            "$numberInt": "3"
+                        }
                     }
                 }
             }
         },
-        "validationLevel": "moderate",
+        "validationLevel": "strict",
         "validationAction": "error"
     },
     "indexes": [
         {
-            "v": 2,
-            "key": {
-                "_id": 1
+            "v": {
+                "$numberInt": "2"
             },
-            "name": "_id_",
-            "ns": "flightSeeker.flights"
+            "key": {
+                "_id": {
+                    "$numberInt": "1"
+                }
+            },
+            "name": "_id_"
         },
         {
-            "v": 2,
+            "v": {
+                "$numberInt": "2"
+            },
             "unique": true,
             "key": {
-                "uuid": 1
+                "uuid": {
+                    "$numberInt": "1"
+                }
             },
             "name": "_uuid",
-            "ns": "flightSeeker.flights"
+            "background": true
         },
         {
-            "v": 2,
+            "v": {
+                "$numberInt": "2"
+            },
             "unique": true,
             "key": {
-                "departure.airportIata": 1,
-                "departure.dateTime": 1,
-                "arrival.airportIata": 1,
-                "airlineIata": 1
+                "departure.airportIata": {
+                    "$numberInt": "1"
+                },
+                "departure.dateTime": {
+                    "$numberInt": "1"
+                },
+                "arrival.airportIata": {
+                    "$numberInt": "1"
+                },
+                "airlineIata": {
+                    "$numberInt": "1"
+                }
             },
             "name": "departure.airportIata_1_departure.dateTime_1_arrival.airportIata_1_airlineIata_1",
-            "ns": "flightSeeker.flights"
+            "background": true
+        },
+        {
+            "v": {
+                "$numberInt": "2"
+            },
+            "key": {
+                "departure.dateTime": {
+                    "$numberInt": "-1"
+                },
+                "arrival.dateTime": {
+                    "$numberInt": "-1"
+                }
+            },
+            "name": "departure.dateTime_-1_arrival.dateTime_-1",
+            "background": false
         }
     ],
-    "uuid": "c090de5eb0ed40de85d6f7d48cafa6bb"
+    "uuid": "550dcf172f984bb1b14c403830020d08",
+    "collectionName": "flights"
 }

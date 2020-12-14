@@ -5,33 +5,47 @@
                 "bsonType": "object",
                 "properties": {
                     "airlines": {
+                        "bsonType": "array",
+                        "uniqueItems": true,
                         "items": [
                             {
+                                "pattern": "^[A-Z\\d]+\\*?$",
+                                "minLength": {
+                                    "$numberInt": "2"
+                                },
+                                "maxLength": {
+                                    "$numberInt": "3"
+                                },
                                 "bsonType": "string",
-                                "description": "Airline IATA Code",
-                                "pattern": "[A-Z\\d]{2}\\*?",
-                                "minLength": 2,
-                                "maxLength": 3
+                                "description": "Airline IATA Code"
                             }
                         ],
-                        "minItems": 1,
-                        "bsonType": "array",
-                        "uniqueItems": true
+                        "minItems": {
+                            "$numberInt": "1"
+                        }
                     },
                     "airports": {
+                        "minItems": {
+                            "$numberInt": "2"
+                        },
+                        "maxItems": {
+                            "$numberInt": "2"
+                        },
+                        "bsonType": "array",
+                        "uniqueItems": true,
                         "items": [
                             {
+                                "minLength": {
+                                    "$numberInt": "3"
+                                },
+                                "maxLength": {
+                                    "$numberInt": "3"
+                                },
                                 "bsonType": "string",
                                 "description": "Airport IATA Code",
-                                "pattern": "[A-Z\\d]{3}",
-                                "minLength": 3,
-                                "maxLength": 3
+                                "pattern": "^[A-Z\\d]+$"
                             }
-                        ],
-                        "minItems": 2,
-                        "maxItems": 2,
-                        "bsonType": "array",
-                        "uniqueItems": true
+                        ]
                     }
                 },
                 "required": [
@@ -41,34 +55,46 @@
                 "title": "routes"
             }
         },
-        "validationLevel": "moderate",
+        "validationLevel": "strict",
         "validationAction": "error"
     },
     "indexes": [
         {
-            "v": 2,
-            "key": {
-                "_id": 1
+            "v": {
+                "$numberInt": "2"
             },
-            "name": "_id_",
-            "ns": "flightSeeker.routes"
+            "key": {
+                "_id": {
+                    "$numberInt": "1"
+                }
+            },
+            "name": "_id_"
         },
         {
-            "v": 2,
+            "v": {
+                "$numberInt": "2"
+            },
             "key": {
-                "airports": 1
+                "airports": {
+                    "$numberInt": "1"
+                }
             },
             "name": "_airports",
-            "ns": "flightSeeker.routes"
+            "background": true
         },
         {
-            "v": 2,
+            "v": {
+                "$numberInt": "2"
+            },
             "key": {
-                "airlines": 1
+                "airlines": {
+                    "$numberInt": "1"
+                }
             },
             "name": "_airline",
-            "ns": "flightSeeker.routes"
+            "background": true
         }
     ],
-    "uuid": "a5167642152a4bdb8f38aca84e445a26"
+    "uuid": "0d6355c3877e4de38674ff6616c96cf7",
+    "collectionName": "routes"
 }

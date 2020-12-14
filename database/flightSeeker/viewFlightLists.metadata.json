@@ -1,0 +1,42 @@
+{
+    "options": {
+        "viewOn": "viewFlightListsSummary",
+        "pipeline": [
+            {
+                "$lookup": {
+                    "from": "viewFlights",
+                    "localField": "flights",
+                    "foreignField": "uuid",
+                    "as": "flights"
+                }
+            },
+            {
+                "$project": {
+                    "flights": {
+                        "_id": {
+                            "$numberInt": "0"
+                        }
+                    }
+                }
+            },
+            {
+                "$addFields": {
+                    "flights": {
+                        "$filter": {
+                            "input": "$flights",
+                            "as": "flight",
+                            "cond": {
+                                "$ne": [
+                                    "$$flight",
+                                    null
+                                ]
+                            }
+                        }
+                    }
+                }
+            }
+        ]
+    },
+    "indexes": [],
+    "collectionName": "viewFlightLists"
+}
