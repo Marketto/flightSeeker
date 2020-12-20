@@ -23,14 +23,14 @@
                 "$addFields": {
                     "flights": {
                         "$filter": {
-                            "input": "$flights",
                             "as": "flight",
                             "cond": {
                                 "$ne": [
                                     "$$flight",
                                     null
                                 ]
-                            }
+                            },
+                            "input": "$flights"
                         }
                     }
                 }

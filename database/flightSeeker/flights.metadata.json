@@ -12,30 +12,6 @@
                     "uuid"
                 ],
                 "properties": {
-                    "number": {
-                        "description": "Flight number",
-                        "minimum": {
-                            "$numberInt": "1"
-                        },
-                        "maximum": {
-                            "$numberInt": "999999"
-                        },
-                        "bsonType": [
-                            "int",
-                            "double"
-                        ]
-                    },
-                    "meals": {
-                        "pattern": "^[BKLDSMRCFPYNVGOH]*$",
-                        "maxLength": {
-                            "$numberInt": "8"
-                        },
-                        "bsonType": [
-                            "string",
-                            "null"
-                        ],
-                        "description": "Served meal code"
-                    },
                     "uuid": {
                         "bsonType": "string",
                         "description": "Unique flight identifier",
@@ -97,23 +73,13 @@
                         }
                     },
                     "arrival": {
+                        "bsonType": "object",
+                        "description": "Arrival informations",
                         "required": [
                             "airportIata",
                             "dateTime"
                         ],
                         "properties": {
-                            "offset": {
-                                "bsonType": [
-                                    "int",
-                                    "double"
-                                ],
-                                "description": "Local timezone offset"
-                            },
-                            "delay": {
-                                "bsonType": "string",
-                                "description": "Delay ISO8601 duration",
-                                "pattern": "^-?P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?)?$"
-                            },
                             "airportIata": {
                                 "bsonType": "string",
                                 "description": "Airport IATA Code",
@@ -140,10 +106,20 @@
                                     "timestamp"
                                 ],
                                 "description": "Local Date/Time or Timestamp"
+                            },
+                            "offset": {
+                                "bsonType": [
+                                    "int",
+                                    "double"
+                                ],
+                                "description": "Local timezone offset"
+                            },
+                            "delay": {
+                                "bsonType": "string",
+                                "description": "Delay ISO8601 duration",
+                                "pattern": "^-?P(\\d+Y)?(\\d+M)?(\\d+D)?(T(\\d+H)?(\\d+M)?)?$"
                             }
-                        },
-                        "bsonType": "object",
-                        "description": "Arrival informations"
+                        }
                     },
                     "airlineIata": {
                         "bsonType": "string",
@@ -154,6 +130,30 @@
                         },
                         "maxLength": {
                             "$numberInt": "3"
+                        }
+                    },
+                    "number": {
+                        "minimum": {
+                            "$numberInt": "1"
+                        },
+                        "maximum": {
+                            "$numberInt": "999999"
+                        },
+                        "bsonType": [
+                            "int",
+                            "double"
+                        ],
+                        "description": "Flight number"
+                    },
+                    "meals": {
+                        "bsonType": [
+                            "string",
+                            "null"
+                        ],
+                        "description": "Served meal code",
+                        "pattern": "^[BKLDSMRCFPYNVGOH]*$",
+                        "maxLength": {
+                            "$numberInt": "8"
                         }
                     }
                 }

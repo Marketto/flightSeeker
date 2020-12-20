@@ -4,6 +4,7 @@
             "$jsonSchema": {
                 "properties": {
                     "account": {
+                        "uniqueItems": true,
                         "items": [
                             {
                                 "bsonType": "string"
@@ -12,8 +13,7 @@
                         "minItems": {
                             "$numberInt": "1"
                         },
-                        "bsonType": "array",
-                        "uniqueItems": true
+                        "bsonType": "array"
                     }
                 },
                 "required": [

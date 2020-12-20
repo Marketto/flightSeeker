@@ -2,39 +2,7 @@
     "options": {
         "validator": {
             "$jsonSchema": {
-                "bsonType": "object",
                 "properties": {
-                    "shareRequest": {
-                        "uniqueItems": true,
-                        "items": [
-                            {
-                                "bsonType": "objectId"
-                            }
-                        ],
-                        "minItems": {
-                            "$numberInt": "0"
-                        },
-                        "bsonType": "array"
-                    },
-                    "flights": {
-                        "items": [
-                            {
-                                "pattern": "^[A-Z\\d]{6}\\d{8}[A-Z\\d]{2}\\d+$",
-                                "bsonType": "string",
-                                "minLength": {
-                                    "$numberInt": "17"
-                                },
-                                "maxLength": {
-                                    "$numberInt": "22"
-                                }
-                            }
-                        ],
-                        "minItems": {
-                            "$numberInt": "0"
-                        },
-                        "bsonType": "array",
-                        "uniqueItems": true
-                    },
                     "name": {
                         "bsonType": "string",
                         "minLength": {
@@ -58,23 +26,55 @@
                         "bsonType": "objectId"
                     },
                     "shared": {
-                        "minItems": {
-                            "$numberInt": "0"
-                        },
                         "bsonType": "array",
                         "uniqueItems": true,
                         "items": [
                             {
                                 "bsonType": "objectId"
                             }
-                        ]
+                        ],
+                        "minItems": {
+                            "$numberInt": "0"
+                        }
+                    },
+                    "shareRequest": {
+                        "items": [
+                            {
+                                "bsonType": "objectId"
+                            }
+                        ],
+                        "minItems": {
+                            "$numberInt": "0"
+                        },
+                        "bsonType": "array",
+                        "uniqueItems": true
+                    },
+                    "flights": {
+                        "items": [
+                            {
+                                "bsonType": "string",
+                                "minLength": {
+                                    "$numberInt": "17"
+                                },
+                                "maxLength": {
+                                    "$numberInt": "22"
+                                },
+                                "pattern": "^[A-Z\\d]{6}\\d{8}[A-Z\\d]{2}\\d+$"
+                            }
+                        ],
+                        "minItems": {
+                            "$numberInt": "0"
+                        },
+                        "bsonType": "array",
+                        "uniqueItems": true
                     }
                 },
                 "required": [
                     "name",
                     "slug",
                     "owner"
-                ]
+                ],
+                "bsonType": "object"
             }
         },
         "validationLevel": "strict",

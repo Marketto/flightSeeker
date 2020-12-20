@@ -22,10 +22,10 @@
             },
             {
                 "$lookup": {
-                    "from": "airports",
-                    "localField": "arrival.airportIata",
                     "foreignField": "iata",
-                    "as": "arrival.airport"
+                    "as": "arrival.airport",
+                    "from": "airports",
+                    "localField": "arrival.airportIata"
                 }
             },
             {
@@ -83,6 +83,33 @@
             },
             {
                 "$project": {
+                    "arrival": {
+                        "airport": {
+                            "dst": {
+                                "$numberInt": "0"
+                            },
+                            "_id": {
+                                "$numberInt": "0"
+                            },
+                            "cityNames": {
+                                "$numberInt": "0"
+                            },
+                            "icao": {
+                                "$numberInt": "0"
+                            }
+                        },
+                        "airportIata": {
+                            "$numberInt": "0"
+                        }
+                    },
+                    "airline": {
+                        "icao": {
+                            "$numberInt": "0"
+                        },
+                        "_id": {
+                            "$numberInt": "0"
+                        }
+                    },
                     "airlineIata": {
                         "$numberInt": "0"
                     },
@@ -103,33 +130,6 @@
                             "dst": {
                                 "$numberInt": "0"
                             }
-                        }
-                    },
-                    "arrival": {
-                        "airportIata": {
-                            "$numberInt": "0"
-                        },
-                        "airport": {
-                            "dst": {
-                                "$numberInt": "0"
-                            },
-                            "_id": {
-                                "$numberInt": "0"
-                            },
-                            "cityNames": {
-                                "$numberInt": "0"
-                            },
-                            "icao": {
-                                "$numberInt": "0"
-                            }
-                        }
-                    },
-                    "airline": {
-                        "_id": {
-                            "$numberInt": "0"
-                        },
-                        "icao": {
-                            "$numberInt": "0"
                         }
                     }
                 }

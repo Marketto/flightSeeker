@@ -1,0 +1,35 @@
+{
+    "options": {
+        "viewOn": "flights",
+        "pipeline": [
+            {
+                "$group": {
+                    "_id": {
+                        "departureAirportIata": "$departure.airportIata",
+                        "arrivalAirportIata": "$arrival.airportIata"
+                    },
+                    "airlineIata": {
+                        "$addToSet": "$airlineIata"
+                    }
+                }
+            },
+            {
+                "$project": {
+                    "_id": {
+                        "$numberInt": "0"
+                    },
+                    "departureAirportIata": "$_id.departureAirportIata",
+                    "arrivalAirportIata": "$_id.arrivalAirportIata",
+                    "airlineIata": "$airlineIata"
+                }
+            },
+            {
+                "$unwind": {
+                    "path": "$airlineIata"
+                }
+            }
+        ]
+    },
+    "indexes": [],
+    "collectionName": "viewFlightRoutes"
+}

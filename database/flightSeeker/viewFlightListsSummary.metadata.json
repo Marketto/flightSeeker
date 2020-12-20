@@ -3,10 +3,10 @@
         "pipeline": [
             {
                 "$lookup": {
+                    "from": "users",
                     "localField": "owner",
                     "foreignField": "_id",
-                    "as": "owner",
-                    "from": "users"
+                    "as": "owner"
                 }
             },
             {
@@ -19,10 +19,10 @@
             },
             {
                 "$lookup": {
+                    "as": "shareRequest",
                     "from": "users",
                     "localField": "shareRequest",
-                    "foreignField": "_id",
-                    "as": "shareRequest"
+                    "foreignField": "_id"
                 }
             },
             {

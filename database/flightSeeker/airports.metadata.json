@@ -10,43 +10,6 @@
                     "countryCode"
                 ],
                 "properties": {
-                    "iata": {
-                        "minLength": {
-                            "$numberInt": "3"
-                        },
-                        "maxLength": {
-                            "$numberInt": "3"
-                        },
-                        "bsonType": "string",
-                        "description": "IATA Code",
-                        "pattern": "^[A-Z\\d]{3}$"
-                    },
-                    "icao": {
-                        "minLength": {
-                            "$numberInt": "3"
-                        },
-                        "maxLength": {
-                            "$numberInt": "4"
-                        },
-                        "bsonType": "string",
-                        "description": "ICAO Code",
-                        "pattern": "^[A-Z\\d]{3,4}$"
-                    },
-                    "name": {
-                        "bsonType": "string",
-                        "description": "Company name"
-                    },
-                    "cityIata": {
-                        "bsonType": "string",
-                        "description": "City IATA code",
-                        "pattern": "^[A-Z]{3}$",
-                        "minLength": {
-                            "$numberInt": "3"
-                        },
-                        "maxLength": {
-                            "$numberInt": "3"
-                        }
-                    },
                     "countryCode": {
                         "bsonType": "string",
                         "description": "Contry ISO3166 code",
@@ -59,21 +22,18 @@
                         }
                     },
                     "timeZone": {
-                        "pattern": "^[\\w]+(?:/[\\w-]+){1,2}$",
                         "bsonType": [
                             "string",
                             "null"
                         ],
-                        "description": "Airport Time Zone"
+                        "description": "Airport Time Zone",
+                        "pattern": "^[\\w]+(?:/[\\w-]+){1,2}$"
                     },
                     "position": {
-                        "bsonType": "object",
-                        "description": "GPS Position",
-                        "required": [
-                            "latitude",
-                            "longitude"
-                        ],
                         "properties": {
+                            "altitude": {
+                                "bsonType": "number"
+                            },
                             "latitude": {
                                 "bsonType": "double",
                                 "description": "Latitude"
@@ -81,10 +41,50 @@
                             "longitude": {
                                 "bsonType": "double",
                                 "description": "Longitude"
-                            },
-                            "altitude": {
-                                "bsonType": "number"
                             }
+                        },
+                        "bsonType": "object",
+                        "description": "GPS Position",
+                        "required": [
+                            "latitude",
+                            "longitude"
+                        ]
+                    },
+                    "iata": {
+                        "description": "IATA Code",
+                        "pattern": "^[A-Z\\d]{3}$",
+                        "minLength": {
+                            "$numberInt": "3"
+                        },
+                        "maxLength": {
+                            "$numberInt": "3"
+                        },
+                        "bsonType": "string"
+                    },
+                    "icao": {
+                        "bsonType": "string",
+                        "description": "ICAO Code",
+                        "pattern": "^[A-Z\\d]{3,4}$",
+                        "minLength": {
+                            "$numberInt": "3"
+                        },
+                        "maxLength": {
+                            "$numberInt": "4"
+                        }
+                    },
+                    "name": {
+                        "bsonType": "string",
+                        "description": "Company name"
+                    },
+                    "cityIata": {
+                        "maxLength": {
+                            "$numberInt": "3"
+                        },
+                        "bsonType": "string",
+                        "description": "City IATA code",
+                        "pattern": "^[A-Z]{3}$",
+                        "minLength": {
+                            "$numberInt": "3"
                         }
                     }
                 }
