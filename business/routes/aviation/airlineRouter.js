@@ -9,17 +9,25 @@ const {
 
 function reqAirline(req, res, next) {
   console.log('[reqAirline]');
-  mongo().then(db => {
+  
+  const {
+    iataAirline,
+  } = req.params;
+  
+  const {
+    startsWith,
+  } = req.query;
 
-    const airlineQuery = (req.params.iataAirline || res.routesData) ? {
-      'iata': req.params.iataAirline || {
-        '$in': res.routesData.map(route => route.iataAirline).filter((airline, index, airlines)=>airlines.indexOf(airline)===index)
+  mongo().then(db => {
+    const airlineQuery = (iataAirline || res.routesData) ? {
+      'iata': iataAirline || {
+        '$in': res.routesData
+          .map(({ airlineIata }) => airlineIata)
+          .filter((airline, index, airlines) => airlines.indexOf(airline) === index)
       },
     } : null;
 
-    const startsWith = req.query.startsWith;
-
-    const startsWithQuery = req.query.startsWith ? {
+    const startsWithQuery = startsWith ? {
       '$or' : [
         {
           'name': {

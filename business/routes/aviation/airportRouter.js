@@ -31,7 +31,7 @@ function reqAirport(req, res, next) {
     const iataAirport = (req.params.iataAirport || "").trim() || null;
     const limit = Math.min(Math.max(parseInt(req.query.limit) || DEFAULT_RECORDS, MIN_RECORDS), MAX_RECORDS);
 
-    const reachableAirports = res.routesData && [[]].concat(res.routesData.map(r=>r.iataAirports))
+    const reachableAirports = res.routesData && [[]].concat(res.routesData.map(r=>r.airportIata))
       .reduce((a, b)=>a.concat(b))
       .filter((iata, idx, airports) => iata !== req.params.iataDeparture && airports.indexOf(iata)===idx).sort();
 
@@ -39,23 +39,31 @@ function reqAirport(req, res, next) {
       'iata' : iataAirport
     } : (
       {
-        '$and' : [
-          startsWith && {
-            '$text' : {
-              '$search': startsWith,
-              '$caseSensitive': false,
-              '$diacriticSensitive': false
-            }
-          }, notInCity  && {
-            'cityIata': {
-              '$ne': notInCity
-            }
-          }, reachableAirports && {
-            'iata' : {
-              '$in': reachableAirports
-            }
-          }
+        $or: [
+          {
+            '$and' : [
+              startsWith && {
+                '$text' : {
+                  '$search': startsWith,
+                  '$caseSensitive': false,
+                  '$diacriticSensitive': false
+                }
+              }, notInCity  && {
+                'cityIata': {
+                  '$ne': notInCity
+                }
+              }, reachableAirports && {
+                'iata' : {
+                  '$in': reachableAirports
+                }
+              }
+            ].filter(c=>!!c)
+          },
+          startsWith ? {
+            iata: startsWith
+          } : null
         ].filter(c=>!!c)
+        
       }
     );
 
@@ -107,7 +115,13 @@ function reqAirportSpellChecker(req, res, next) {
     const escapedStartsWith = escapeStringRegexp(startsWith);
     const matchingRegExp = spellCheckerRegexpGenerator(escapedStartsWith);
 
-    const reachableAirports = res.routesData && [[]].concat(res.routesData.map(r=>r.iataAirports))
+    const reachableAirports = res.routesData && [[]].concat(res.routesData.map(({
+        departureAirportIata,
+        arrivalAirportIata,
+      }) => [
+        departureAirportIata,
+        arrivalAirportIata,
+      ]))
       .reduce((a, b)=>a.concat(b))
       .filter((iata, idx, airports) => iata !== req.params.iataDeparture && airports.indexOf(iata)===idx).sort();
 

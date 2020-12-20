@@ -5,48 +5,39 @@ const mongo = require('../../connectors/mongo');
 function reqRoutes(req, res, next) {
     console.log('[reqRoutes]');
     mongo().then(db => {
-        const airportList = [
-            req.params.iataDeparture,
-            req.params.iataArrival
-        ].filter(airport => !!airport);
+        const {
+            iataDeparture,
+            iataArrival,
+            iataAirline,
+        } = req.params;
         const airline = req.params.iataAirline;
 
         const criteria = [
-            airline && {
-                'airlines': airline
+            iataAirline && {
+                'airlineIata': iataAirline
             },
-            airportList.length && {
-                'airports': {
-                    $all: airportList
-                }
-            }
+            iataDeparture && {
+                'departureAirportIata': iataDeparture
+            },
+            iataArrival && {
+                'arrivalAirportIata': iataArrival
+            },
         ].filter(c => !!c);
-        const query = criteria.length>1 ? {
+        const query = criteria.length > 1 ? {
             $and: criteria
-        }: criteria[0];
+        } : criteria[0];
 
-        db.collection("routes").aggregate([{
-            $match : query
-        },{
-            $unwind: '$airlines'
-        }, {
-            $project : {
-                airports: 1,
-                airline: "$airlines"
-            }
-        }]).toArray().then(result => {
-            const fromLog = req.params.iataDeparture && ` from ${req.params.iataDeparture}`;
-            const toLog = req.params.iataArrival && ` to ${req.params.iataArrival}`;
-            const fromToLog = fromLog && !toLog ? ` from/to ${req.params.iataDeparture}` : (fromLog + toLog);
-            const byLog = req.params.iataAirline ? ` by ${req.params.iataAirline}` : '';
+        db.collection("viewFlightRoutes").find(query).toArray()
+        .then(result => {
+            const fromLog = iataDeparture && ` from ${iataDeparture}`;
+            const toLog = iataArrival && ` to ${iataArrival}`;
+            const fromToLog = fromLog && !toLog ? ` from/to ${iataDeparture}` : (fromLog + toLog);
+            const byLog = iataAirline ? ` by ${iataAirline}` : '';
 
             console.log(`Routes${fromToLog}${byLog}`);
             
             if (result.length) {
-                res.routesData = result.map(route=>({
-                    iataAirline: route.airline,
-                    iataAirports: route.airports
-                }));
+                res.routesData = result;
                 next();
             } else {
                 res.sendStatus(204);

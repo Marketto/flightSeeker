@@ -67,26 +67,30 @@ function dbFlights(req, res, next) {
     if (!req.dbDataChecked && !req.remoteNoResults) {
         console.log("[dbFlights]");
 
+        const {
+            flightUUID,
+            iataDeparture,
+            iataArrival,
+            iataAirline,
+            flightNumber,
+            date,
+        } = req.params;
+        
+        const {aggregate} = req.query;
+
         mongo().then(db => {
             try {
-                const from = req.params.iataDeparture;
-                const to = req.params.iataArrival;
-                const airline = req.params.iataAirline;
-
-                const {flightNumber} = req.params;
-
-                const {aggregate} = req.query;
 
                 const checkQuery = {
-                    "uuid": new RegExp(`^${from}${to}${moment(req.params.date).format("YYYYMMDD")}`, 'i')
+                    "uuid": new RegExp(`^${iataDeparture}${iataArrival}${moment(date).format("YYYYMMDD")}`, 'i')
                 };
                 let queryLimit = req.query.limit;
-                let dateTime = moment.tz(req.params.date, req.departureAirport.timeZone);
-                const findQuery = req.params.flightUUID ? {
-                    "uuid": req.params.flightUUID
+                let dateTime = moment.tz(date, req.departureAirport.timeZone);
+                const findQuery = flightUUID ? {
+                    "uuid": flightUUID
                 } : {
-                    "departure.airportIata": from,
-                    "arrival.airportIata": to
+                    "departure.airport.iata": iataDeparture,
+                    "arrival.airport.iata": iataArrival
                 };
                 if (!req.params.flightUUID) {
                     const atTime = req.query.at;
@@ -94,11 +98,11 @@ function dbFlights(req, res, next) {
                     if (afterTime || atTime) {
                         dateTime = moment.tz(`${req.params.date}T${afterTime || atTime}`, req.departureAirport.timeZone);
                     }
-                    if (atTime || (flightNumber && airline)) {
+                    if (atTime || (flightNumber && iataAirline)) {
                         queryLimit = 1;
                     }
-                    if (airline) {
-                        findQuery.airlineIata = airline;
+                    if (iataAirline) {
+                        findQuery['airline.iata'] = iataAirline;
                     }
                     if (flightNumber) {
                         findQuery.number = flightNumber
@@ -126,9 +130,9 @@ function dbFlights(req, res, next) {
                     .limit(queryLimit)
                     .toArray()
                     .then(flights => { 
-                        req.dbDataChecked = flightsCollection.length > 0;
+                        req.dbDataChecked = flights.length > 0;
                         req.flights = flights;
-                        console.log(`[dataCheck > ${req.dbDataChecked ? 'Found' : 'No'} results for ${from} to ${to} @ ${dateTime}]`);
+                        console.log(`[dataCheck > ${req.dbDataChecked ? 'Found' : 'No'} results for ${iataDeparture} to ${iataArrival} @ ${date}]`);
                         next();
                     })
                     .catch(next);
@@ -190,6 +194,7 @@ function flFlights(req, res, next) {
                 mongo()
             ]).then(([journeys, db]) => {
 
+                console.log("[flFlights] Storing flights");
                 const airports = {};
 
                 if (req.departureAirport) {
@@ -197,7 +202,7 @@ function flFlights(req, res, next) {
                 }
 
                 function getAirportTz(airportIata) {
-                    return new Promise(function(resolveAirport, rejectAirport) {
+                    return new Promise((resolveAirport, rejectAirport) => {
                         try {
                             if (airports[airportIata]) {
                                 resolveAirport(airports[airportIata].timeZone);
@@ -276,11 +281,12 @@ function flFlights(req, res, next) {
                                 Promise.all(flights.map(flight => {
                                     return new Promise(resolveInsert => {
                                         db.collection('flights').insertOne(flight)
-                                            .then(resolveInsert, err => {
-                                                // TODO: throw reject if error is not due to duplicate
-                                                console.log(err);
-                                                resolveInsert();
-                                            });
+                                            .catch(err => {
+                                                if (err.code !== 11000) {
+                                                    console.log(err);
+                                                }
+                                            })
+                                            .then(resolveInsert);
                                     });
                                 })).then(() => {
                                     console.log("[storedFlights]");
